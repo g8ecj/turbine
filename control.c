@@ -161,30 +161,25 @@ run_control(void)
 
 	// decide what charging mode we are in.
 	if (gCharge < (bankSize * 0.90))
-		charge_mode = BULK;
-	else if (gCharge < bankSize)
-		charge_mode = ABSORB;
-	else
-		charge_mode = FLOAT;
-
-
-	switch (charge_mode)
 	{
-	case BULK:
+		charge_mode = BULK;
 		// only run shunt if volts gets stupidly high!
 		VoltsHI = gVupper;
 		VoltsLO = gVupper * 0.99;
-		break;
-	case ABSORB:
+	}
+	else if (gCharge < bankSize)
+	{
+		charge_mode = ABSORB;
 		// start throttling back once over float volts, never go above absorb volts
 		VoltsHI = absorbVolts;
 		VoltsLO = floatVolts;
-		break;
-	case FLOAT:
+	}
+	else
+	{
+		charge_mode = FLOAT;
 		// never go above float volts
 		VoltsHI = floatVolts;
 		VoltsLO = floatVolts * 0.99;
-		break;
 	}
 
 	// see if we are above shunt load threshold

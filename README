@@ -30,6 +30,35 @@ cd into this ardmega-turbine directory of the new project, delete the ardmega-tu
 
 git clone https://github.com/g8ecj/turbine.git ardmega-turbine
 
+Two quick patches now have to be applied. The first changes the uart to operate in double speed mode for more reliable 115200 bps operation.
+
+diff --git a/bertos/cpu/avr/drv/ser_mega.c b/bertos/cpu/avr/drv/ser_mega.c
+index 6dbf886..b936b54 100644
+--- a/bertos/cpu/avr/drv/ser_mega.c
++++ b/bertos/cpu/avr/drv/ser_mega.c
+@@ -462,10 +462,11 @@ struct AvrSerial
+ 
+ static uint16_t uart_period(unsigned long bps)
+ {
+-       uint16_t period = DIV_ROUND(CPU_FREQ / 16UL, bps) - 1;
++       uint16_t period = DIV_ROUND(CPU_FREQ / 8UL, bps) - 1;
++       UCSR0A = BV(U2X0); /* The Arduino Uno bootloader turns on U2X0 */ \
+ 
+        #ifdef _DEBUG
+-               long skew = bps - ((CPU_FREQ / 16UL) / (long)(period + 1));
++               long skew = bps - ((CPU_FREQ / 8UL) / (long)(period + 1));
+                /* 8N1 is reliable within 3% skew */
+                if ((unsigned long)ABS(skew) > bps / (100 / 3))
+                        kprintf("Baudrate off by %ldbps\n", skew);
+
+
+The other is to remove the eeprom data from the hex file output, otherwise avrdude chokes on it.
+That is done by changing at around line 320 in bertos/rules.mk
+from
+	$$($(1)_OBJCOPY) -O ihex $$< $$@
+to
+	$$($(1)_OBJCOPY) -R .eeprom -O ihex $$< $$@
+
 Move up one level and 'make' will generate the firmware in the 'images' directory.
 
 

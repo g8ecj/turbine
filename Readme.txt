@@ -1,0 +1,68 @@
+The software allows the logging of the following items:
+
+   Date
+   Time
+   Temperature
+   Battery charge
+   Battery volts
+   Charge/discharge current
+   Shunt % load
+   Power
+   Turbine RPM
+   Maximum and minimum power in the last hour and day
+   Event flags (inverter on/off etc)
+
+The record generated looks like this:
+
+27-09-12 09:47:00 E:0 L:0 S:0 F:9 D:0 T:17.08 C:918 V:26.11 A:-0.50 P:-13 R:0 H:-6 Y:-6 h:-19 y:-19 I:453 O:390
+
+   Date & Time
+   E:         - error ON/OFF
+   L:         - load ON/OFF
+   S:         - shunt ON/OFF
+   F:         - event flags
+         DISPLAY     0         - manual request for display
+         OVERVOLT    1         - volts greater than Max
+         UNDERVOLT   2         - volts less than Min
+         MANUALON    3         - inverter turned on manually
+         MANUALOFF   4         - inverter turned off manually
+         CHARGED     5         - inverter turned on in auto mode when at 100%
+         DISCHARGED  6         - inverter turned on in auto mode when at Min Charge
+         SHUNTON     7         - shunt load threshold exceeded
+         SHUNTOFF    8         - dropped below shunt load threshold 
+         MARKTIME    9         - regular 1 minute interval report
+         NEWHOURMAX  10        - new hour maximum recorded
+         NEWDAYMAX   11        - new day maximum recorded
+         NEWHOURMIN  12        - new hour minimum recorded
+         NEWDAYMIN   13        - new day minimum recorded
+         LEAKADJUST  14        - charge level adjusted by 1% to allow for leakage
+
+   D:         - dump % load
+   T:         - temperature
+   C:         - charge in amp-hrs
+   V:         - volts
+   A:         - amps
+   P:         - power
+   R:         - rpm
+   H:         - hour max
+   Y:         - day max
+   h:         - hour min
+   y:         - day min
+   I:         - incoming charge total
+   O:         - outgoing charge total
+
+
+The User Interface.
+
+There are 5 buttons. Up, Down, Left, Right and Centre
+
+At startup, the monitor screens are displayed in a carousel with an interval of about 5 seconds.
+Press Centre to cancel the carousel or press Up/Down to move between monitor screens
+Press Left/Right to move between setup screens.
+When on a setup screen, press Centre to enter screen edit mode. This allows the Up/Down/Left/Right keys to move between the fields on the screen.
+When in screen edit mode, press both Left and Right together to get back to moving between screens or press Centre to get to field edit mode.
+When in field edit mode, Up/Down change the value. Some values have intellegent increments (eg. if over 100 then move in 10's, if over 1000 then 100's).
+When in field edit mode, Left aborts any changes, Right sets the default for this field and Centre saves the value.
+Some fields also have extra facilities, such as calibrate - this not only changes the scaling factor to allow the voltage measurement to track, it
+also runs the 1-wire auto zero algorithm on the current sensor. For this reason the calibration must be done with no load or charging occuring.
+

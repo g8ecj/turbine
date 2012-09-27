@@ -1,3 +1,27 @@
+Build instructions
+
+clone my BeRTOS git repository and switch to the 'g8ecj/all' branch that merges my 1-wire and terminal emulator branches.
+Use the BeRTOS wizard in the resulting branch to create a project based on the Mega 2560 called ardmega-turbine with the following modules checked
+
+algo/crc8
+cfg/debug
+drv/1wire
+drv/kbd
+drv/lcd_hd44
+drv/ow_ds2413
+drv/ow_ds2438
+drv/sd
+drv/ser
+drv/term
+drv/timer
+io/kfile
+mware/formatwr
+mware/sprintf
+
+
+cd to the ardmega-turbine subdirectory of the new project and clone this repo into it.
+Move up one level and 'make' will generate the firmware in the 'images' directory.
+
 
 The software allows the logging of the following items:
 

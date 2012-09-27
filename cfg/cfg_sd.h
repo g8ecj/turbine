@@ -61,7 +61,7 @@
  * $WIZ$ type = "boolean"
  * $WIZ$ conditional_deps = "fat"
  */
-#define CONFIG_SD_AUTOASSIGN_FAT   1
+#define CONFIG_SD_AUTOASSIGN_FAT   0
 
 /**
  * SD bus mode.

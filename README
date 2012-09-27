@@ -1,25 +1,35 @@
 Build instructions
 
 clone my BeRTOS git repository and switch to the 'g8ecj/all' branch that merges my 1-wire and terminal emulator branches.
-Use the BeRTOS wizard in the resulting branch to create a project based on the Mega 2560 called ardmega-turbine with the following modules checked
+Use the BeRTOS wizard in the resulting branch to create a project.
+wizard/bertos.py
+Hit <next>
+Set project name to ardmega-turbine
+Hit <next>
+Select BeRTOS version
+Hit <next>
+Select 'I have a custom board' and select 'ATMega2560'
+Hit <next>
+Select toolchain
+Hit <next>
+Make sure the 'Automatically fix dependencies' is checked
+Select the following modules
 
-algo/crc8
-cfg/debug
-drv/1wire
 drv/kbd
 drv/lcd_hd44
 drv/ow_ds2413
 drv/ow_ds2438
-drv/sd
 drv/ser
 drv/term
-drv/timer
-io/kfile
-mware/formatwr
-mware/sprintf
 
+Hit <next>
+Hit <create>
+Hit <finish>
 
-cd to the ardmega-turbine subdirectory of the new project and clone this repo into it.
+cd into this ardmega-turbine directory of the new project, delete the ardmega-turbine directory already in it and clone this repo into it using
+
+git clone https://github.com/g8ecj/turbine.git ardmega-turbine
+
 Move up one level and 'make' will generate the firmware in the 'images' directory.
 
 

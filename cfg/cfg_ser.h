@@ -227,6 +227,12 @@
 #define CONFIG_UART7_RXBUFSIZE  32
 
 /**
+ * Enable SPI
+ * $WIZ$ type = "boolean"
+ * $WIZ$ supports = "xmega and not xmegad4"
+ */
+#define CONFIG_SPI_ENABLED 0
+/**
  * Size of the outbound FIFO buffer for SPI port [bytes].
  * $WIZ$ type = "int"
  * $WIZ$ min = 2

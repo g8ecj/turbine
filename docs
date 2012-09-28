@@ -66,3 +66,115 @@ When in field edit mode, Left aborts any changes, Right sets the default for thi
 Some fields also have extra facilities, such as calibrate - this not only changes the scaling factor to allow the voltage measurement to track, it
 also runs the 1-wire auto zero algorithm on the current sensor. For this reason the calibration must be done with no load or charging occuring.
 
+
+A few general notes:
+
+The controller relies on charge counting to see what the level of charge is in the batteries. This requires that the user manually synchronises 
+the controller with the batteries from time to time. A couple of methods are used to try and keep the charge tracking accurate.
+
+    The leakage (self discharge) is assumed to be 1% per week. This will get a setup option in due course!
+    During a discharge, the charge recorded is adjusted by the ratio of the total charge/discharge tracking registers. eg if the totals registers 
+    show a 92% efficiency then a 100amp hr discharge will be recorded as 108 amp-hrs to account for the cyclic losses. 
+
+
+The charging control is based on a 3 stage charge such that
+
+    Less than 90% in the batteries then bulk charge where the shunt load is only operated if the Max voltage is exceeded.
+    90% to 100% in the batteries then absorb mode is used where the shunt load starts to come in at float voltage but clamps to the absorb voltage max.
+    100% in the batteries and float mode is used where the voltage is clamped to between 99% and 100% of the float voltage by the shunt load.
+
+
+The shunt load is a PWM output at about 900Hz with opto isolators which in my case drives 4 automotive 160amp MOSFETS in parallel, although the load 
+itself is only 40amps so far!!
+
+The SD card operations all try and minimise the chance of data corruption. Generally the card is written to once a minute so if the card is popped 
+out then hopefully its not in the middle of a data write!! When its put back in then the sense line is used to re-open the current log file (or a 
+new one is created if there isn't one).
+
+The next instalment is the serial interface. I run this via a wireless router (a TPLink 1043ND) that runs OpenWRT software and has the ACM driver 
+loaded. I can ssh into the router and run picocom to get log info back from the controller or I can even reprogram it using the following command 
+line on the router:
+  socat tcp-l:54321,reuseaddr,fork file:/dev/ttyACM0,raw,echo=0,nonblock,waitlock=/var/run/tty0.lock,b115200
+and the following line on my server/development box
+  avrdude -p atmega2560 -c stk500v2 -P net:tplink:54321  -U flash:w:images/ardmega-turbine.hex
+
+Here is the (very basic) help output
+
+>> ?
+
+>>del dir type disk dcs inv log date time find config<<
+
+
+The first few commands are associated with the storage of data on the SD card. I've used command name familiar with DOS/Windows users rather than 
+my preferred Linux (Unix) names!!
+
+del - delete a file
+dir - directory listing
+type - display a file (end early with ESC)
+disk - disk info, such as SD card manufacturer, free space, space used
+dcs - this initialises the dis/charge registers to allow the total charge going in and out of the battery bank to be tracked. The ratio of these 
+      values is also used to determine the charge cycle efficiency.
+inv - toggle the invert on or off
+log - toggle the logging on/off. Handy if you don't want a display messed up with a log line in the middle of it
+date - set the date as dd/mm/yy
+time - set the time as hh:mm:ss. The date & time get lost on a restart as the Arduino has no real time clock. The values do get saved to EEPROM 
+       once per hour so at least any adjustments aren't too onerous!
+find - like type but it only outputs lines that contain the string defined (cf. Unix grep). The number of days to look back by can be defined 
+       with a minus sign. eg. "find -3 F:10" will look over the past 3 days to find log entries where a new hourly maximum power was logged (the flag 
+       value of 10 means that!!).
+config - displays some of the config.
+
+The log info is stored in a FAT32 file system, one file per day.
+
+Some examples:
+>> dir
+
+log-120909.txt      83953
+log-120910.txt     166269
+log-120911.txt     152866
+log-120912.txt     161104
+log-120913.txt     169106
+log-120914.txt     161370
+log-120915.txt     161857
+log-120916.txt     159198
+log-120917.txt     157831
+log-120918.txt     187603
+log-120919.txt     159092
+log-120920.txt     161236
+log-120921.txt     166901
+log-120922.txt     167691
+log-120923.txt     175498
+log-120924.txt     184436
+log-120925.txt     164924
+log-120926.txt     187281
+
+
+>> find -2 F:10
+
+24-09-12 04:49:39 E:0 L:0 S:0 F:10 D:0 T:2.89 C:928 V:27.98 A:10.22 P:285 R:0 H:34 Y:497 h:20 y:-13 I:437 O:359
+24-09-12 04:54:23 E:0 L:0 S:0 F:10 D:0 T:2.95 C:928 V:27.99 A:11.05 P:309 R:0 H:2609 Y:2609 h:20 y:-13 I:437 O:359
+26-09-12 17:11:15 E:0 L:0 S:0 F:10 D:0 T:15.83 C:923 V:26.20 A:0.22 P:5 R:0 H:12 Y:12 h:-51 y:-51 I:453 O:374
+
+
+>> config
+
+System voltage 24, inverter control Yes
+Voltage limits    22.00 - 29.00
+Float Absorb     27.40 - 28.00
+Charge limits     800 - 1000
+
+
+>> disk
+
+manuf:  1d
+oem:    AD
+prod:   SD   
+rev:    10
+serial: 4b3
+date:   2/12
+size:   3747MB
+copy:   0
+wr.pr.: 0/0
+format: 0
+free:   3915522048/0
+

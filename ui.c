@@ -74,7 +74,28 @@
 #include "ui.h"
 
 
+#define DEGREE 1
+#define SDCARD 2
+static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
+static const char lcd_sdcard[8] = { 0x1f, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12, 0x1c };	/* sd card - bent rectangle! */
 
+char degreestr[] = { DEGREE, 'C', 0, };
+
+
+// a table of fields that are flashing
+#define MAXFLASH    10
+static int8_t flashing[MAXFLASH];
+
+
+// Timings (in mS) for various activities
+#define CAROSEL 5000L
+#define BACKLIGHT 5000L
+#define REFRESH 300L
+#define FLASHON 700L
+#define FLASHOFF 300L
+
+extern Serial serial;
+static Term term;
 
 
 typedef int8_t (*IncFunc_t) (int8_t field, int8_t dirn);
@@ -248,8 +269,8 @@ Screen screen1[] = {
 Screen screen2[] = {
 	{eSHUNT, 0, 0, "Shunt      %", 8, 3},
 	{eRPM, 1, 0, "Speed         RPM", 8, 3},
-	{eTEMPERATURE, 2, 0, "Temp          \x01", 8, 6},
-	{-1, 2, 15, "C", 0, 0},
+	{eTEMPERATURE, 2, 0, "Temp", 8, 6},
+	{-1, 2, 15, degreestr, 0, 0},
 	{eHOUR, 3, 0, "  :", 0, 2},
 	{eMINUTE, 3, 3, "  :", 3, 2},
 	{eSECOND, 3, 6, "", 6, 2},
@@ -318,25 +339,7 @@ Screen control[] = {
 #define MAXSCREENS  NUM_INFO + NUM_SETUPS
 
 static Screen *screen_list[] = { screen1, screen2, screen3, system, setup1, setup2, control };
-#define MAXFLASH    10
-static int8_t flashing[MAXFLASH];
 
-
-
-#define DEGREE 1
-#define SDCARD 2
-static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
-static const char lcd_sdcard[8] = { 0x1f, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12, 0x1c };	/* sd card - bent rectangle! */
-
-
-#define DELAY 5000L
-#define BACKLIGHT 5000L
-#define REFRESH 300L
-#define FLASHON 700L
-#define FLASHOFF 300L
-
-extern Serial serial;
-static Term term;
 
 void
 load_eeprom_values(void)
@@ -567,14 +570,6 @@ print_screen (int8_t screen)
 
 
 
-
-// mode values
-#define SETUP       1
-#define MONITOR     2
-#define PAGEEDIT    3
-#define FIELDEDIT   4
-
-
 // scan through a few variables and check their limits to see if they should be flashing
 static void
 flag_warnings(void)
@@ -624,6 +619,14 @@ ui_init (void)
 
 }
 
+
+
+
+// mode values
+#define SETUP       1
+#define MONITOR     2
+#define PAGEEDIT    3
+#define FIELDEDIT   4
 
 
 
@@ -877,7 +880,7 @@ run_ui (void)
 			print_screen (screen_number);
 			break;
 		}
-		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (DELAY))
+		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))
 		{
 			carosel_timer = timer_clock ();
 			refresh_timer = timer_clock ();

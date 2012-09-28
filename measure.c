@@ -106,7 +106,7 @@ measure_init(void)
 		if ((diff == OW_PRESENCE_ERR) || (diff == OW_DATA_ERR))
 			break;					  // <--- early exit!
 
-#if DEBUG > 1
+#ifdef DEBUG
 		kfile_printf(&serial.fd, "Found device %02x:%02x%02x%02x%02x%02x%02x:%02x\r\n", ids[cnt][0], ids[cnt][1],
 						 ids[cnt][2], ids[cnt][3], ids[cnt][4], ids[cnt][5], ids[cnt][6], ids[cnt][7]);
 		if (crc8(ids[cnt], 8))

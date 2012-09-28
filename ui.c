@@ -225,8 +225,10 @@ Vars variables[eNUMVARS] = {
 	{&gVupper, 2600, 3200, 2900, eDECIMAL, deca_inc},	// volt limit high
 	{&floatVolts, 2600, 3200, 2700, eDECIMAL, deca_inc},	// shunt volt low
 	{&absorbVolts, 2600, 3200, 2800, eDECIMAL, deca_inc},	// shunt volt high
-	{&minCharge, 10, 9999, 500, eNORMAL, var_inc},	// charge low
+
 	{&bankSize, 10, 9999, 1000, eNORMAL, var_inc},	// charge high
+	{&minCharge, 10, 9999, 500, eNORMAL, var_inc},	// charge low
+	{&gCharge, 0, 9999, 1000, eNORMAL, var_inc},	// sync
 
 	{&gVoltage, 6, 48, 24, eNORMAL, six_inc},	// system voltage
 	{&gVolts, 500, 5000, 2400, eDECIMAL, cal_inc},	// calibrate
@@ -237,9 +239,10 @@ Vars variables[eNUMVARS] = {
 	{&gDAY, 1, 31, 15, eDATE, int_inc},	// day
 	{&gMONTH, 1, 12, 6, eDATE, int_inc},	// month
 	{&gYEAR, 12, 99, 12, eDATE, int_inc},	// year
-	{&gCharge, 0, 9999, 1000, eNORMAL, var_inc},	// sync
-	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},	// manual on/off
+
 	{&gInverter, 0, 2, 1, eTRILEAN, int_inc},	// control active
+	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},	// manual on/off
+
 	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},	// battery leakage in days
 	{&gIdleCurrent, 0, 999, 7, eDECIMAL, int_inc},	// idle current of controller, router etc
 };
@@ -297,7 +300,7 @@ Screen screen3[] = {
 
 Screen system[] = {
 	{-1, 0, 3, "System", 0, 0},
-	{eSYSTEM_VOLTS, 1, 0, "Voltage     ", 10, 2},
+	{eSYSTEM_VOLTS, 1, 0, "Voltage     ", 10, 5},
 	{eCAL_VOLTS, 2, 0, "Calibrate   ", 10, 6},
 	{eHOUR, 3, 0, "  :", 0, 2},
 	{eMINUTE, 3, 3, "  :", 3, 2},
@@ -329,8 +332,8 @@ Screen setup2[] = {
 
 Screen setup3[] = {
 	{-1, 0, 3, "Battery 2", 0, 0},
-	{eSELFDISCHARGE, 1, 0, "Self Discharge", 12, 4},
-	{eIDLE_CURRENT, 2, 0, "Idle Current", 12, 4},
+	{eSELFDISCHARGE, 1, 0, "Self Discharge", 16, 3},
+	{eIDLE_CURRENT, 2, 0, "Idle Current", 14, 5},
 	{-2, 0, 0, "", 0, 0}
 };
 

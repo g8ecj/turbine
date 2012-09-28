@@ -36,12 +36,17 @@ extern int16_t gMaxhour, gMaxday;
 extern int16_t gMinhour, gMinday;
 extern uint8_t ids[][OW_ROMCODE_SIZE];
 extern int8_t battid, gpioid;
+extern int16_t gSelfDischarge;
+extern int16_t gIdleCurrent;
 
 extern float gVoffset;
 extern int16_t gVoltage;
 
 extern float EEMEM eeVoffset;
 extern int16_t EEMEM eeVoltage;
+extern uint32_t EEMEM eeSelfLeakTime;
+extern uint16_t EEMEM eeSelfDischarge;
+extern int16_t EEMEM eeIdleCurrent;
 
 void measure_init (void);
 void run_measure (void);

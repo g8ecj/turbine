@@ -73,6 +73,8 @@ int16_t gCharge;
 int16_t gMaxhour, gMaxday;
 int16_t gMinhour, gMinday;
 uint16_t gIca;
+int16_t gSelfDischarge;
+int16_t gIdleCurrent;
 
 CTX2438_t Result;
 
@@ -82,10 +84,12 @@ uint8_t ids[3][OW_ROMCODE_SIZE];	// only expect to find 2 actually!!
 int8_t battid = -1, gpioid = -1;
 
 
-int16_t EEMEM eecharge = 0;
+int16_t EEMEM eecharge;
 int16_t EEMEM eeVoltage;
-float EEMEM eeVoffset = 1.0;
-uint32_t EEMEM eeSelfLeak = 0;
+float EEMEM eeVoffset;
+uint32_t EEMEM eeSelfLeakTime;
+uint16_t EEMEM eeSelfDischarge;
+int16_t EEMEM eeIdleCurrent;
 
 
 char ToggleState(uint8_t * id, uint8_t state);
@@ -136,7 +140,7 @@ measure_init(void)
 int
 do_calibration(void)
 {
-	return ow_ds2438_calibrate(ids[battid], 0);	// offset 0 = calculate it
+	return ow_ds2438_calibrate(ids[battid], &Result, gIdleCurrent);	// offset 0 = calculate it
 }
 
 int
@@ -207,12 +211,12 @@ run_measure(void)
 		gMinday = 9999;
 
 		// load last saved discharge time from eeprom
-		eeprom_read_block((void *) &self_discharge_time, (const void *) &eeSelfLeak, sizeof(self_discharge_time));
+		eeprom_read_block((void *) &self_discharge_time, (const void *) &eeSelfLeakTime, sizeof(self_discharge_time));
 		if ((self_discharge_time == 0) || (self_discharge_time == 0xffffffff))
 		{
 			// initialise a totally fresh box
 			self_discharge_time = time();
-			eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeak, sizeof(self_discharge_time));
+			eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
 		}
 	}
 
@@ -263,11 +267,11 @@ run_measure(void)
 		log_event(LOG_NEWDAYMIN);
 
 	// pessimistically assume 1% loss of battery charge per week due to self disharge
-	if (time() >= (self_discharge_time + SELFDISCHARGE))
+	if (time() >= (self_discharge_time + (gSelfDischarge * 3600 * 24)))
 	{
 		gIca *= 0.99;
 		self_discharge_time = time();
-		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeak, sizeof(self_discharge_time));
+		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
 		log_event(LOG_LEAKADJUST);
 	}
 

@@ -240,6 +240,8 @@ Vars variables[eNUMVARS] = {
 	{&gCharge, 0, 9999, 1000, eNORMAL, var_inc},	// sync
 	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},	// manual on/off
 	{&gInverter, 0, 2, 1, eTRILEAN, int_inc},	// control active
+	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},	// battery leakage in days
+	{&gIdleCurrent, 0, 999, 7, eDECIMAL, int_inc},	// idle current of controller, router etc
 };
 
 
@@ -325,6 +327,13 @@ Screen setup2[] = {
 	{-2, 0, 0, "", 0, 0}
 };
 
+Screen setup3[] = {
+	{-1, 0, 3, "Battery 2", 0, 0},
+	{eSELFDISCHARGE, 1, 0, "Self Discharge", 12, 4},
+	{eIDLE_CURRENT, 2, 0, "Idle Current", 12, 4},
+	{-2, 0, 0, "", 0, 0}
+};
+
 
 Screen control[] = {
 	{-1, 0, 3, "Control", 0, 0},
@@ -335,10 +344,10 @@ Screen control[] = {
 
 
 #define NUM_INFO 3
-#define NUM_SETUPS  4
+#define NUM_SETUPS  5
 #define MAXSCREENS  NUM_INFO + NUM_SETUPS
 
-static Screen *screen_list[] = { screen1, screen2, screen3, system, setup1, setup2, control };
+static Screen *screen_list[] = { screen1, screen2, screen3, system, setup1, setup2, setup3, control };
 
 
 void
@@ -354,6 +363,8 @@ load_eeprom_values(void)
 	eeprom_read_block ((void *) &gVoffset, (const void *) &eeVoffset, sizeof (gVoffset));
 	eeprom_read_block ((void *) &gVoltage, (const void *) &eeVoltage, sizeof (gVoltage));
 	eeprom_read_block ((void *) &gInverter, (const void *) &eeInverter, sizeof (gInverter));
+	eeprom_read_block ((void *) &gSelfDischarge, (const void *) &eeSelfDischarge, sizeof (gSelfDischarge));
+	eeprom_read_block ((void *) &gIdleCurrent, (const void *) &eeIdleCurrent, sizeof (gIdleCurrent));
 
 }
 

@@ -243,8 +243,8 @@ Vars variables[eNUMVARS] = {
 	{&gInverter, 0, 2, 1, eTRILEAN, int_inc},	// control active
 	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},	// manual on/off
 
-	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},	// battery leakage in days
-	{&gIdleCurrent, 0, 999, 7, eDECIMAL, int_inc},	// idle current of controller, router etc
+	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},	// battery leakage in days for 1% loss
+	{&gIdleCurrent, -999, 999, 0, eDECIMAL, int_inc},	// idle current of controller, router etc
 };
 
 

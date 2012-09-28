@@ -742,6 +742,8 @@ run_ui (void)
 			eeprom_write_block ((const void *) &gVoffset, (void *) &eeVoffset, sizeof (gVoffset));
 			eeprom_write_block ((const void *) &gVoltage, (void *) &eeVoltage, sizeof (gVoltage));
 			eeprom_write_block ((const void *) &gInverter, (void *) &eeInverter, sizeof (gInverter));
+			eeprom_write_block ((const void *) &gSelfDischarge, (void *) &eeSelfDischarge, sizeof (gSelfDischarge));
+			eeprom_write_block ((const void *) &gIdleCurrent, (void *) &eeIdleCurrent, sizeof (gIdleCurrent));
 
 			mode = PAGEEDIT;
 			set_flash(field, false);

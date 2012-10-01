@@ -72,7 +72,6 @@ uint16_t gCCA;
 int16_t gCharge;
 int16_t gMaxhour, gMaxday;
 int16_t gMinhour, gMinday;
-uint16_t gIca;
 int16_t gSelfDischarge;
 int16_t gIdleCurrent;
 
@@ -269,7 +268,8 @@ run_measure(void)
 	// pessimistically assume 1% loss of battery charge per week due to self disharge
 	if (time() >= (self_discharge_time + (gSelfDischarge * 3600 * 24)))
 	{
-		gIca *= 0.99;
+		gCharge *= 0.99;
+		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
 		self_discharge_time = time();
 		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
 		log_event(LOG_LEAKADJUST);

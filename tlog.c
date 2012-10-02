@@ -568,7 +568,10 @@ process_command (char *command, uint8_t count)
 		kfile_printf(&serial.fd, "Voltage limits   %d.%02u - %d.%02u\r\n", gVlower / 100, gVlower % 100, gVupper / 100, gVupper % 100);
 		kfile_printf(&serial.fd, "Float Absorb     %d.%02u - %d.%02u\r\n", floatVolts / 100, floatVolts % 100, absorbVolts / 100, absorbVolts % 100);
 		kfile_printf(&serial.fd, "Charge limits    %d - %d\r\n", minCharge,  bankSize);
-		
+#if DEBUG > 0
+extern uint16_t StackCount(void);
+		kfile_printf(&serial.fd, "Stack usage      %d\r\n", StackCount());
+#endif
 	}
 
 	else

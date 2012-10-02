@@ -2,7 +2,7 @@
 // Copyright (C) 2011 Robin Gilks
 //
 //
-//  control.c   -   This program measures the output from and controls the load on a wind turbine
+//  measure.c   -   This program measures the output from a wind turbine
 //
 //  History:   1.0 - First release. 
 //
@@ -172,24 +172,6 @@ run_measure(void)
 	static uint8_t minptr = 0, hourptr = 0;
 	int16_t power, j;
 
-	if (battid == -1)				  // see if a DS2438 chip is present
-	{
-		gVolts = gVoltage * 105;
-		gCharge = bankSize * 0.90;
-		return;
-	}
-
-	ow_ds2438_doconvert(ids[battid]);
-	if (!ow_ds2438_readall(ids[battid], &Result))
-		return;						  // bad read - exit fast!!
-
-	// degrees = value * 0.03125:: scaled up by 100
-	gTemp = smooth(&thistory, Result.Temp);
-	// amps = register value / (4096 * shunt); scaled by 100
-	amps = Result.Amps;
-	// volts = as returned scaled by external divider; already scaled by 100, adjusted by calibration offset
-	volts = (Result.Volts * gVoltage / NOMINALVOLTS) * gVoffset;
-
 	if (firstrun)
 	{
 		firstrun = false;
@@ -219,6 +201,31 @@ run_measure(void)
 		}
 	}
 
+	if (battid == -1)				  // see if a DS2438 chip is present
+	{
+		// dummy values if no hardware to read from
+		gVolts = gVoltage * 105;
+		gCharge = bankSize * 0.90;
+		return;
+	}
+
+	ow_ds2438_doconvert(ids[battid]);
+	if (!ow_ds2438_readall(ids[battid], &Result))
+		return;						  // bad read - exit fast!!
+
+	// smoothing function using a running average in a history buffer gets rid of glitches
+	gTemp = smooth(&thistory, Result.Temp);
+	amps = Result.Amps;
+	gAmps = smooth(&ahistory, Result.Amps);
+	// volts = as returned scaled by external divider; already scaled by 100, adjusted by calibration offset
+	volts = (Result.Volts * gVoltage / NOMINALVOLTS) * gVoffset;
+	gVolts = smooth(&vhistory, volts);
+
+	tmp = (float) gAmps *(float) gVolts;
+	// volts & amps are scaled by 100 each so loose 10,000
+	gPower = (int16_t) (tmp / 10000.0);
+
+	// charge totals
 	gCCA = Result.CCA;
 	gDCA = Result.DCA;
 
@@ -232,13 +239,15 @@ run_measure(void)
 		eeprom_write_block((const void *) &gCharge, (void *) &eecharge, sizeof(gCharge));
 	}
 
-	// smoothing function using a running average in a history buffer
-	gVolts = smooth(&vhistory, volts);
-	gAmps = smooth(&ahistory, amps);
-
-	tmp = (float) gAmps *(float) gVolts;
-	// volts & amps are scaled by 100 each so loose 10,000
-	gPower = (int16_t) (tmp / 10000.0);
+	// pessimistically assume 1% loss of battery charge per unit time - units in days
+	if (time() >= (self_discharge_time + (gSelfDischarge * 3600 * 24)))
+	{
+		self_discharge_time = time();
+		gCharge *= 0.99;
+		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
+		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
+		log_event(LOG_LEAKADJUST);
+	}
 
 	/* keep max power for last hour and day */
 
@@ -250,7 +259,7 @@ run_measure(void)
 	// we scan the array of 24 hours and keep the maximum value for the UI to display
 	// same goes for minimum values.
 
-	tmp = (float) amps *(float) volts;
+	tmp = (float) Result.Amps *(float) volts;
 	// volts & amps are scaled by 100 each so loose 10,000
 	power = (int16_t) (tmp / 10000.0);
 
@@ -264,16 +273,6 @@ run_measure(void)
 		log_event(LOG_NEWHOURMIN);
 	if (power < gMinday)
 		log_event(LOG_NEWDAYMIN);
-
-	// pessimistically assume 1% loss of battery charge per week due to self disharge
-	if (time() >= (self_discharge_time + (gSelfDischarge * 3600 * 24)))
-	{
-		gCharge *= 0.99;
-		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
-		self_discharge_time = time();
-		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
-		log_event(LOG_LEAKADJUST);
-	}
 
 	// see if a minute has passed, if so advance the pointer to track the last hour
 	if (time() >= lastmin + 60)

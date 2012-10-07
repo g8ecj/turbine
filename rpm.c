@@ -28,15 +28,14 @@
 #include <drv/timer.h>
 
 #include "features.h"
-#include "utils.h"
+#include "median.h"
 #include "rpm.h"
 
 
 
 uint16_t gPeriod;
 int16_t gRPM;
-S_ARRAY rhistory;
-int16_t rhbuff[20];
+MEDIAN RpmMedian;
 
 void
 rpm_init (void)
@@ -54,7 +53,7 @@ rpm_init (void)
    EICRB |= BV(ISC50) | BV(ISC51);        // interrupt on rising edge
    EIMSK |= BV(INT5);                     // enable int 5
 
-   smooth_init (&rhistory, rhbuff, BUFSIZE(rhbuff));
+   median_init (&RpmMedian, 18);
 
 }
 
@@ -81,7 +80,8 @@ run_rpm (void)
 
       value = (1000000L / 16) * (60 / ROTORMAGNETPAIRS) / gPeriod;       // note order to prevent overflow
       if (value < 1000)
-         gRPM = smooth (&rhistory, value);
+         median_add (&RpmMedian, value);
+         median_getAverage (&RpmMedian, &gRPM);
 
    }
    else

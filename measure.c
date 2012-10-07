@@ -38,9 +38,9 @@
 
 #include "tlog.h"
 #include "features.h"
-#include "utils.h"
 #include "rtc.h"
 #include "control.h"
+#include "median.h"
 #include "measure.h"
 
 extern Serial serial;
@@ -53,13 +53,9 @@ extern Serial serial;
 // in this case 7 days
 #define SELFDISCHARGE 604800L
 
-S_ARRAY ahistory;
-int16_t ahbuff[10];
-S_ARRAY vhistory;
-int16_t vhbuff[10];
-S_ARRAY thistory;
-int16_t thbuff[30];
-
+MEDIAN AmpsMedian;
+MEDIAN VoltsMedian;
+MEDIAN TempMedian;
 
 int16_t gVolts;
 int16_t gAmps;
@@ -120,10 +116,9 @@ measure_init(void)
 		if (ids[cnt][0] == SSWITCH_FAM)
 			gpioid = cnt;
 	}
-
-	smooth_init(&vhistory, vhbuff, BUFSIZE(vhbuff));
-	smooth_init(&ahistory, ahbuff, BUFSIZE(ahbuff));
-	smooth_init(&thistory, thbuff, BUFSIZE(thbuff));
+	median_init(&AmpsMedian, 10);
+	median_init(&VoltsMedian, 10);
+	median_init(&TempMedian, 10);
 
 	if (battid >= 0)                // see if a DS2438 chip is present
 	{
@@ -163,7 +158,8 @@ set_charge(uint16_t value)
 void
 run_measure(void)
 {
-	float volts, amps, tmp;
+	float tmp;
+	int16_t volts, amps;
 	static int8_t firstrun = true;
 	static uint16_t lastcharge;
 	static int16_t hourmax[60], daymax[24];
@@ -214,14 +210,30 @@ run_measure(void)
 		return;						  // bad read - exit fast!!
 
 	// smoothing function using a running average in a history buffer gets rid of glitches
-	gTemp = smooth(&thistory, Result.Temp);
-	amps = Result.Amps;
-	gAmps = smooth(&ahistory, Result.Amps);
-	// volts = as returned scaled by external divider; already scaled by 100, adjusted by calibration offset
-	volts = (Result.Volts * gVoltage / NOMINALVOLTS) * gVoffset;
-	gVolts = smooth(&vhistory, volts);
+	median_add(&TempMedian, Result.Temp);
+	median_getAverage(&TempMedian, &gTemp);
 
-	tmp = (float) gAmps *(float) gVolts;
+	// for current we get the median and the average values. Median removes glitches, average smooths bumps!
+	median_add(&AmpsMedian, Result.Amps);
+	median_getMedian(&AmpsMedian, &amps);
+	median_getAverage(&AmpsMedian, &gAmps);
+
+	// volts = as returned scaled by external divider; already scaled by 100, adjusted by calibration offset
+	median_add(&VoltsMedian, (Result.Volts * gVoltage / NOMINALVOLTS) * gVoffset);
+	median_getMedian(&VoltsMedian, &volts);
+	median_getAverage(&VoltsMedian, &gVolts);
+
+#if 0
+	{
+		int16_t hi, lo;
+		median_getHighest(&AmpsMedian, &hi);
+		median_getLowest(&AmpsMedian, &lo);
+		if ((hi > 3000) || (lo < -3000))
+			kprintf("Glitch hi %d lo %d median %d av %d\n", hi, lo, amps, gAmps);
+	}
+#endif
+
+	tmp = (float)gAmps * (float)gVolts;
 	// volts & amps are scaled by 100 each so loose 10,000
 	gPower = (int16_t) (tmp / 10000.0);
 
@@ -259,7 +271,7 @@ run_measure(void)
 	// we scan the array of 24 hours and keep the maximum value for the UI to display
 	// same goes for minimum values.
 
-	tmp = (float) Result.Amps *(float) volts;
+	tmp = (float)amps * (float)volts;
 	// volts & amps are scaled by 100 each so loose 10,000
 	power = (int16_t) (tmp / 10000.0);
 

@@ -39,7 +39,6 @@
 
 #include "tlog.h"
 #include "features.h"
-#include "utils.h"
 #include "rtc.h"
 #include "measure.h"
 #include "control.h"
@@ -55,8 +54,8 @@ int16_t floatVolts;
 int16_t gLoad;
 int16_t gShunt;
 int16_t gInverter;
-int16_t bankSize;					  // was gTargetHI - actual bank size
-int16_t minCharge;				  // was gTargetLO - minimum level to disharge to when in auto mode
+int16_t bankSize;
+int16_t minCharge;
 
 
 int16_t EEMEM eeVupper;
@@ -64,8 +63,8 @@ int16_t EEMEM eeVlower;
 int16_t EEMEM eeabsorbVolts;
 int16_t EEMEM eefloatVolts;
 int16_t EEMEM eeInverter;
-int16_t EEMEM eebankSize;		  // was gTargetHI - actual bank size
-int16_t EEMEM eeminCharge;		  // was gTargetLO - minimum level to disharge to when in auto mode
+int16_t EEMEM eebankSize;
+int16_t EEMEM eeminCharge;
 
 
 int16_t TargetC;
@@ -90,16 +89,19 @@ char ToggleState(uint8_t * id, uint8_t state);
 void
 control_init(void)
 {
-//set Timer1 in fast pwm mode (7), TOP=0x3ff (1023)
-//clear output on compare match, set at top (COM1A1=1)
+	//set Timer1 in fast pwm mode (7), TOP=0x3ff (1023)
+	//clear output on compare match, set at top (COM1A1=1)
 	TCCR1A = (1 << COM1A1) | (1 << WGM11) | (1 << WGM10);
 	TCCR1B = (1 << WGM12) | PRESCALE;
-	DDRB |= BV(5);					  //output on OCP1A pin (portb.5)
+	//output on OCP1A pin (portb.5)
+	DDRB |= BV(5);
 
-	OCR1A = 0;						  // Set a initial value in the OCR1A-register
+	// Set a initial value in the OCR1A-register
+	OCR1A = 0;
 
-	if (gpioid >= 0)				  // see if a DS2413 chip is present
-		ToggleState(ids[gpioid], false);	// ensure we start at a known state
+	// see if a DS2413 chip is present so we can ensure we start at a known state
+	if (gpioid >= 0)
+		ToggleState(ids[gpioid], false);
 
 	TargetC = bankSize;
 

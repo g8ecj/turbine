@@ -79,7 +79,7 @@
 static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
 static const char lcd_sdcard[8] = { 0x1f, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12, 0x1c };	/* sd card - bent rectangle! */
 
-char degreestr[] = { DEGREE, 'C', 0, };
+char degreestr[] = { DEGREE, 'C', 0 };
 
 
 // a table of fields that are flashing

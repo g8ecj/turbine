@@ -40,11 +40,10 @@
 #include "fat.h"
 
 #include "features.h"
-#include "utils.h"
 
 #include "measure.h"
 #include "control.h"
-	#include "rpm.h"
+#include "rpm.h"
 #include "rtc.h"
 #include "ui.h"
 
@@ -570,7 +569,7 @@ process_command (char *command, uint8_t count)
 		kfile_printf(&serial.fd, "Charge limits    %d - %d\r\n", minCharge,  bankSize);
 #if DEBUG > 0
 extern uint16_t StackCount(void);
-		kfile_printf(&serial.fd, "Stack usage      %d\r\n", StackCount());
+		kfile_printf(&serial.fd, "Stack free       %d\r\n", StackCount());
 #endif
 	}
 

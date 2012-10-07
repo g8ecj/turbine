@@ -11,7 +11,6 @@ ardmega-turbine_PROGRAMMER_PORT = none
 ardmega-turbine_USER_CSRC = \
 	$(ardmega-turbine_SRC_PATH)/main.c \
 	$(ardmega-turbine_SRC_PATH)/control.c \
-	$(ardmega-turbine_SRC_PATH)/utils.c \
 	$(ardmega-turbine_SRC_PATH)/measure.c \
 	$(ardmega-turbine_SRC_PATH)/rpm.c \
 	$(ardmega-turbine_SRC_PATH)/tlog.c \
@@ -21,6 +20,7 @@ ardmega-turbine_USER_CSRC = \
 	$(ardmega-turbine_SRC_PATH)/fat.c \
 	$(ardmega-turbine_SRC_PATH)/partition.c \
 	$(ardmega-turbine_SRC_PATH)/sd_raw.c \
+	$(ardmega-turbine_SRC_PATH)/median.c \
 	#
 
 # Files included by the user.

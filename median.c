@@ -55,7 +55,9 @@ static void sort(MEDIAN *M)
 }
 
 
-
+//< Initialise the buffering array and all variables for this instance
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+// < \param size number of entries in the array
 void median_init(MEDIAN *M,  uint8_t size)
 {
 	M->size = constrain(size, MIN_MEDIAN, MAX_MEDIAN);
@@ -64,13 +66,18 @@ void median_init(MEDIAN *M,  uint8_t size)
 	memset(M->ar, 0, M->size);
 }
 
-
+//< Clears the variables used to build the median array
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
 void median_clear(MEDIAN *M) 
 {
 	M->cnt = 0;
 	M->idx = 0;
 }
 
+
+//< Adds a value to the median array, updates and wraps indices discarding expired data.
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param value 16 bit signed value to add to median array
 void median_add(MEDIAN *M, int16_t value)
 {
 	M->ar[M->idx++] = value;
@@ -78,6 +85,9 @@ void median_add(MEDIAN *M, int16_t value)
 	if (M->cnt < M->size) M->cnt++;
 }
 
+//< Sort the median array and return the centre of the sorted array
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param value pointer to value returned from the centre of the sorted median array
 bool median_getMedian(MEDIAN *M, int16_t *value)
 {
 	if (M->cnt > 0) {
@@ -88,6 +98,9 @@ bool median_getMedian(MEDIAN *M, int16_t *value)
 	return NOK;
 }
 
+// Get the average of the value in the median array
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param value pointer to average value returned
 bool median_getAverage(MEDIAN *M, int16_t *value) 
 {
 	if (M->cnt > 0) {
@@ -99,6 +112,9 @@ bool median_getAverage(MEDIAN *M, int16_t *value)
 	return NOK;
 }
 
+//< Get the highest value by returning the end of the sorted median array
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param value pointer to value highest value returned
 bool median_getHighest(MEDIAN *M, int16_t *value) 
 {
 	if (M->cnt > 0) {
@@ -109,6 +125,10 @@ bool median_getHighest(MEDIAN *M, int16_t *value)
 	return NOK;
 }
 
+
+//< Get the lowest value by returning the start of the sorted median array
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param value pointer to value lowest value returned
 bool median_getLowest(MEDIAN *M, int16_t *value) 
 {
 	if (M->cnt > 0) {
@@ -119,16 +139,23 @@ bool median_getLowest(MEDIAN *M, int16_t *value)
 	return NOK;
 }
 
+
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \return size of median array
 uint8_t median_getSize(MEDIAN *M) 
 {
 	return M->size;
 }
 
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \return number of entries so far in the median array
 uint8_t median_getCount(MEDIAN *M) 
 {
 	return M->cnt;
 }
 
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \return whether there are any entries at all in the median array
 bool median_getStatus(MEDIAN *M) 
 {
 	return (M->cnt > 0 ? OK : NOK);

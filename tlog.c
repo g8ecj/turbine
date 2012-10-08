@@ -155,13 +155,13 @@ print_disk_info (const struct fat_fs_struct *fs)
 	kfile_printf (&serial.fd, "oem:    %s\r\n", disk_info.oem);
 	kfile_printf (&serial.fd, "prod:   %s\r\n", disk_info.product);
 	kfile_printf (&serial.fd, "rev:    %x\r\n", disk_info.revision);
-	kfile_printf (&serial.fd, "serial: %x\r\n", disk_info.serial);
+	kfile_printf (&serial.fd, "serial: %lx\r\n", disk_info.serial);
 	kfile_printf (&serial.fd, "date:   %d/%d\r\n", disk_info.manufacturing_month, disk_info.manufacturing_year);
-	kfile_printf (&serial.fd, "size:   %dMB\r\n", disk_info.capacity / 1024 / 1024);
+	kfile_printf (&serial.fd, "size:   %dMB\r\n", (int)disk_info.capacity / 1024 / 1024);
 	kfile_printf (&serial.fd, "copy:   %d\r\n", disk_info.flag_copy);
 	kfile_printf (&serial.fd, "wr.pr.: %d/%d\r\n", disk_info.flag_write_protect_temp, disk_info.flag_write_protect);
 	kfile_printf (&serial.fd, "format: %d\r\n", disk_info.format);
-	kfile_printf (&serial.fd, "free:   %lu/%lu\r\n", fat_get_fs_free (fs), fat_get_fs_size (fs));
+	kfile_printf (&serial.fd, "free:   %lu/%lu\r\n", (long unsigned int)fat_get_fs_free (fs), (long unsigned int)fat_get_fs_size (fs));
 
 	return 1;
 }
@@ -287,7 +287,7 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 			struct fat_dir_entry_struct dir_entry;
 			while (fat_read_dir (dd, &dir_entry))
 			{
-				kfile_printf (&serial.fd, "%s%c%    10lu\r\n", dir_entry.long_name,
+				kfile_printf (&serial.fd, "%s%c  %10lu\r\n", dir_entry.long_name,
 								  dir_entry.attributes & FAT_ATTRIB_DIR ? '/' : ' ', dir_entry.file_size);
 			}
 			break;

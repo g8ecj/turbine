@@ -58,7 +58,7 @@
 #define LCD_RW    PJ0
 #define LCD_RS    PJ1
 #define LCD_E     PH0
-#define LCD_BL    PH1         /* Backlight - place holder!! */
+#define LCD_BL    PH1         /* Backlight! */
 #define LCD_DB0   /* Implement me! */
 #define LCD_DB1   /* Implement me! */
 #define LCD_DB2   /* Implement me! */
@@ -76,6 +76,8 @@
 #define LCD_RS_PORT_DDR DDRJ
 #define LCD_E_PORT      PORTH
 #define LCD_E_PORT_DDR  DDRH
+#define LCD_BL_PORT     PORTH
+#define LCD_BL_PORT_DDR DDRH
 /*@}*/
 
 /**
@@ -103,6 +105,8 @@
 #define LCD_CLR_E       LCD_E_PORT  &= ~BV(LCD_E);
 #define LCD_SET_E       LCD_E_PORT  |=  BV(LCD_E);
 
+#define LCD_CLR_BL      LCD_BL_PORT &= ~BV(LCD_BL);
+#define LCD_SET_BL      LCD_BL_PORT |= BV(LCD_BL);
 
 #if CONFIG_LCD_4BIT
 	#define LCD_WRITE_H(x) \
@@ -168,6 +172,7 @@ INLINE void lcd_hd44_hw_bus_init(void)
 	LCD_RS_PORT_DDR |= BV(LCD_RS);
 	LCD_RW_PORT_DDR |= BV(LCD_RW);
 	LCD_E_PORT_DDR |= BV(LCD_E);
+	LCD_BL_PORT_DDR |= BV(LCD_BL);
 
 	LCD_SET_RS;
 	LCD_CLR_RD;

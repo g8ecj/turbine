@@ -624,7 +624,6 @@ ui_init (void)
 	lcd_remapChar (lcd_degree, DEGREE);        // put the degree symbol on character 0x01
 	lcd_remapChar (lcd_sdcard, SDCARD);        // put the sd card symbol on character 0x02
 	term_init (&term);
-	DDRH |= BV (1);                       // backlight bit set as an output
 #if PUSHBUTTONS == 1
 	kbd_init();
 	kbd_setRepeatMask(K_UP | K_DOWN);
@@ -672,7 +671,7 @@ run_ui (void)
 	// if key pressed then ignite backlight for a short while
 	if (key)
 	{
-		PORTH |= BV (1);
+		lcd_bl_on();
 		backlight_timer = timer_clock ();
 		key &= K_CENTRE | K_RIGHT | K_LEFT | K_UP | K_DOWN;
 	}
@@ -680,7 +679,7 @@ run_ui (void)
 	{
 		if (timer_clock () - backlight_timer > ms_to_ticks (BACKLIGHT))
 		{
-			PORTH &= ~BV (1);
+			lcd_bl_off();
 		}
 	}
 
@@ -712,7 +711,7 @@ run_ui (void)
 			{
 			case eCAL_VOLTS:
 				// turn off backlight to reduce current before calibration
-				PORTH &= ~BV (1);
+				lcd_bl_off();
 				do_calibration ();
 				break;
 			case eSYNC:

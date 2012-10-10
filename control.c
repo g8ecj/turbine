@@ -2,7 +2,7 @@
 // Copyright (C) 2011 Robin Gilks
 //
 //
-//  control.c   -   This program measures the output from and controls the load on a wind turbine
+//  control.c   -   This program controls the load on a wind turbine
 //
 //  History:   1.0 - First release. 
 //

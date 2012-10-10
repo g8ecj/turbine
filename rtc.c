@@ -1,26 +1,26 @@
-//*****************************************************************************
+//---------------------------------------------------------------------------
+// Copyright (C) 2011 Robin Gilks
 //
-//  File........: RTC.c
 //
-//  Author(s)...: ATMEL Norway
+//  rtc.c   -   Real time clock - provides date, time and seconds since 1st Jan 1970
 //
-//  Target(s)...: ATmega169
+//  History:   1.0 - First release. 
 //
-//  Compiler....: AVR-GCC 4.1.1; avr-libc 1.4.5
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License.
 //
-//  Description.: Real Time Clock (RTC)
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
 //
-//  Revisions...: 1.0
-//
-//  YYYYMMDD - VER. - COMMENT                                       - SIGN.
-//
-//  20021015 - 1.0  - Created                                       - LHM
-//  20031009          port to avr-gcc/avr-libc                      - M.Thomas
-//  20051107          minior correction (volatiles)                 - mt
-//  20070129          SIGNAL->ISR                                   - mt
-//*****************************************************************************
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-//mtA
+// include files
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -168,14 +168,9 @@ time (void)
 *            The interrupt occurs once a second (running from the 32kHz crystal)
 *
 *******************************************************************************/
-// mtA
-// #pragma vector = TIMER2_OVF_vect
-// __interrupt void TIMER2_OVF_interrupt(void)
-// SIGNAL(SIG_OVERFLOW2)
 
 void
 run_rtc (void)
-// mtE
 {
 	int8_t LeapMonth;
 	int32_t diff;

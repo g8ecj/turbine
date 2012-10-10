@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------
-// Copyright (C) 2011 Robin Gilks
+// Copyright (C) 2012 Robin Gilks
 //
 //
-//  log.c   -   This program logs data to dataflash on an ATMEL AVR Butterfly board
+//  tlog.c   -   This program logs data to dataflash on an ATMEL AVR Butterfly board
 //
 //  History:   1.0 - First release. 
 //

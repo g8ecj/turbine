@@ -2,7 +2,7 @@
 // Copyright (C) 2011 Robin Gilks
 //
 //
-//  rpm.c   -   This program interfaces with timer0 an AVR CPU to implement a techometer
+//  rpm.h   -   This program interfaces with timer0 an AVR CPU to implement a techometer
 //
 //  History:   1.0 - First release. 
 //

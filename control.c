@@ -184,6 +184,12 @@ run_control(void)
 		VoltsLO = floatVolts * 0.99;
 	}
 
+	// compensate for temperature - assume set values are for 25C, adjust accordingly
+	// the higher the temp, the lower the volts by 5mV per deg C
+	// Tricky calculation as both volts and temperature are scaled by 100
+	VoltsHI -= 0.005 * (gTemp - 2500);
+	VoltsLO -= 0.005 * (gTemp - 2500);
+
 	// see if we are above shunt load threshold
 	diff = gVolts - VoltsLO;
 	if (diff > 0)

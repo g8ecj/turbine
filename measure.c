@@ -75,8 +75,8 @@ CTX2438_t Result;
 
 
 
-uint8_t ids[3][OW_ROMCODE_SIZE];	// only expect to find 2 actually!!
-int8_t battid = -1, gpioid = -1;
+uint8_t ids[4][OW_ROMCODE_SIZE];	// only expect to find up to 3 actually!!
+int8_t battid = -1, gpioid = -1, thermid = -1;
 
 
 int16_t EEMEM eecharge;
@@ -115,6 +115,9 @@ measure_init(void)
 			battid = cnt;
 		if (ids[cnt][0] == SSWITCH_FAM)
 			gpioid = cnt;
+		if ((ids[cnt][0] == DS18S20_FAMILY_CODE) || (ids[cnt][0] == DS18B20_FAMILY_CODE) || (ids[cnt][0] == DS1822_FAMILY_CODE))
+			thermid = cnt;
+
 	}
 	median_init(&AmpsMedian, 10);
 	median_init(&VoltsMedian, 10);
@@ -209,9 +212,13 @@ run_measure(void)
 	if (!ow_ds2438_readall(ids[battid], &Result))
 		return;						  // bad read - exit fast!!
 
-	// smoothing function using a running average in a history buffer gets rid of glitches
-	median_add(&TempMedian, Result.Temp);
-	median_getAverage(&TempMedian, &gTemp);
+	// see if an external temperature sensor - if not then use what we have!!
+	if (thermid == -1)
+	{
+		// smoothing function using a running average in a history buffer gets rid of glitches
+		median_add(&TempMedian, Result.Temp);
+		median_getAverage(&TempMedian, &gTemp);
+	}
 
 	// for current we get the median and the average values. Median removes glitches, average smooths bumps!
 	median_add(&AmpsMedian, Result.Amps);
@@ -295,6 +302,19 @@ run_measure(void)
 			minptr = 0;				  // reset to the start of the hour array
 		hourmax[minptr] = -9999;		  // clear the next slot in the array
 		hourmin[minptr] = 9999;		    // clear the next slot in the array
+
+		// once per minute, try for an update from the external temperature sensor
+		if (thermid >=0)
+		{
+			int16_t temperature;
+			// select lowest resoltion so its fast
+			ow_ds18x20_resolution(ids[thermid], 9);
+			ow_ds18X20_start (ids[thermid], false);
+			while (ow_busy ());
+			ow_ds18X20_read_temperature (ids[thermid], &temperature);
+			median_add(&TempMedian, temperature);
+			median_getAverage(&TempMedian, &gTemp);
+		}
 	}
 
 	// save the present power level if greater than already there
@@ -327,6 +347,7 @@ run_measure(void)
 		daymax[hourptr] = -9999;
 		daymin[hourptr] = 9999;
 
+		// once per hour save the charge level into eeprom
 		lastcharge = gCharge;
 		eeprom_write_block((const void *) &gCharge, (void *) &eecharge, sizeof(gCharge));
 	}

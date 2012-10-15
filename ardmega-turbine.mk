@@ -27,6 +27,7 @@ ardmega-turbine_WIZARD_CSRC = \
 	bertos/drv/kbd.c \
 	bertos/drv/lcd_hd44.c \
 	bertos/drv/ow_1wire.c \
+	bertos/drv/ow_ds18x20.c \
 	bertos/drv/ow_ds2413.c \
 	bertos/drv/ow_ds2438.c \
 	bertos/drv/sd.c \

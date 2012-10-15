@@ -303,11 +303,11 @@ run_measure(void)
 		hourmax[minptr] = -9999;		  // clear the next slot in the array
 		hourmin[minptr] = 9999;		    // clear the next slot in the array
 
-		// once per minute, try for an update from the external temperature sensor
+		// once per minute, try for an update from the external temperature sensor (if we have one)
 		if (thermid >=0)
 		{
 			int16_t temperature;
-			// select lowest resoltion so its fast
+			// select lowest resolution so its fast
 			ow_ds18x20_resolution(ids[thermid], 9);
 			ow_ds18X20_start (ids[thermid], false);
 			while (ow_busy ());

@@ -186,62 +186,62 @@ enum STYLE
 //   value,    min,      max, default, style,   increment function
 // Note: Its only worth having (real) limits for those values that can be changed.
 Vars variables[eNUMVARS] = {
-	{NULL,    0,    0,    0,  eNORMAL, null_inc},      // dummy 1st entry
-	{&gVolts, 0, 6000, 2400, eDECIMAL, null_inc},	// volts
-	{&gCharge, 0, 9999, 1000, eNORMAL, null_inc},	// charge
-	{&gPower, -5000, 5000, 0, eNORMAL, null_inc},	// power
+	{NULL,     0,    0,    0,  eNORMAL, null_inc},      // dummy 1st entry
+	{&gVolts , 0,    0,    0, eDECIMAL, null_inc},      // volts
+	{&gCharge, 0,    0,    0,  eNORMAL, null_inc},      // charge
+	{&gPower,  0,    0,    0,  eNORMAL, null_inc},      // power
 
-	{&gAmps, -20000, 20000, 0, eDECIMAL, null_inc},	// amps
-	{&gShunt, 0, 100, 0, eNORMAL, null_inc},	// shunt
-	{&gRPM, 0, 400, 0, eNORMAL, null_inc},	// rpm
+	{&gAmps,   0,    0,    0, eDECIMAL, null_inc},      // amps
+	{&gShunt,  0,    0,    0,  eNORMAL, null_inc},      // shunt
+	{&gRPM,    0,    0,    0,  eNORMAL, null_inc},      // rpm
 
-	{&gMaxhour, 0, 0, 0, eNORMAL, null_inc},	// max hours
-	{&gMaxday, 0, 0, 0, eNORMAL, null_inc},	// max day
-	{&gMinhour, 0, 0, 0, eNORMAL, null_inc},	// min hours
-	{&gMinday, 0, 0, 0, eNORMAL, null_inc},	// min day
-	{(int16_t *) & gCCA, 0, 65535, 0, eLARGE, null_inc},	// total
-	{(int16_t *) & gDCA, 0, 65535, 0, eLARGE, null_inc},	// used
+	{&gMaxhour, 0, 0, 0, eNORMAL, null_inc},            // max hours
+	{&gMaxday,  0, 0, 0, eNORMAL, null_inc},            // max day
+	{&gMinhour, 0, 0, 0, eNORMAL, null_inc},            // min hours
+	{&gMinday,  0, 0, 0, eNORMAL, null_inc},            // min day
+	{(int16_t *) & gCCA, 0, 65535, 0, eLARGE, null_inc}, // total
+	{(int16_t *) & gDCA, 0, 65535, 0, eLARGE, null_inc}, // used
 
-	{&gTemp, -3000, 12000, 0, eDECIMAL, null_inc},	// temperature
+	{&gTemp,    0,    0,   0, eDECIMAL, null_inc},      // temperature
 
-	{&gVlower, 2000, 2400, 2200, eDECIMAL, deca_inc},	// volt limit low
-	{&gVupper, 2600, 3200, 2900, eDECIMAL, deca_inc},	// volt limit high
-	{&floatVolts, 2600, 3200, 2700, eDECIMAL, deca_inc},	// shunt volt low
-	{&absorbVolts, 2600, 3200, 2800, eDECIMAL, deca_inc},	// shunt volt high
+	{&gVlower, 2000, 2400, 2200, eDECIMAL, deca_inc},   // volt limit low
+	{&gVupper, 2600, 3200, 2900, eDECIMAL, deca_inc},   // volt limit high
+	{&floatVolts, 2600, 3200, 2700, eDECIMAL, deca_inc}, // shunt volt low
+	{&absorbVolts, 2600, 3200, 2800, eDECIMAL, deca_inc}, // shunt volt high
 
-	{&bankSize, 10, 9999, 1000, eNORMAL, var_inc},	// charge high
-	{&minCharge, 10, 9999, 500, eNORMAL, var_inc},	// charge low
-	{&gCharge, 0, 9999, 1000, eNORMAL, var_inc},	// sync
+	{&bankSize, 10, 9999, 1000, eNORMAL, var_inc},      // charge high
+	{&minCharge, 10, 9999, 500, eNORMAL, var_inc},      // charge low
+	{&gCharge, 0, 9999, 1000, eNORMAL, var_inc},        // sync
 
-	{&gVoltage, 6, 48, 24, eNORMAL, six_inc},	// system voltage
-	{&gVolts, 500, 5000, 2400, eDECIMAL, cal_inc},	// calibrate
+	{&gVoltage, 6, 48, 24, eNORMAL, six_inc},          // system voltage
+	{&gVolts, 500, 5000, 2400, eDECIMAL, cal_inc},     // calibrate
 
-	{&gHOUR, 0, 23, 12, eDATE, int_inc},	// hour
-	{&gMINUTE, 0, 59, 0, eDATE, int_inc},	// minute
-	{&gSECOND, 0, 59, 0, eDATE, int_inc},	// second
-	{&gDAY, 1, 31, 15, eDATE, int_inc},	// day
-	{&gMONTH, 1, 12, 6, eDATE, int_inc},	// month
-	{&gYEAR, 12, 99, 12, eDATE, int_inc},	// year
+	{&gHOUR, 0, 23, 12, eDATE, int_inc},               // hour
+	{&gMINUTE, 0, 59, 0, eDATE, int_inc},              // minute
+	{&gSECOND, 0, 59, 0, eDATE, int_inc},              // second
+	{&gDAY, 1, 31, 15, eDATE, int_inc},                // day
+	{&gMONTH, 1, 12, 6, eDATE, int_inc},               // month
+	{&gYEAR, 12, 99, 12, eDATE, int_inc},              // year
 
-	{&gInverter, 0, 2, 1, eTRILEAN, int_inc},	// control active
-	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},	// manual on/off
+	{&gInverter, 0, 2, 1, eTRILEAN, int_inc},          // control active
+	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},              // manual on/off
 
-	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},	// battery leakage in days for 1% loss
-	{&gIdleCurrent, -999, 999, 0, eDECIMAL, int_inc},	// idle current of controller, router etc
+	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},     // battery leakage in days for 1% loss
+	{&gIdleCurrent, -999, 999, 0, eDECIMAL, int_inc},  // idle current of controller, router etc
 };
 
 
 
 typedef struct screen
 {
-	int8_t field;					  // global field number (relevant across all screens).
+	int8_t field;                // global field number (relevant across all screens).
 	// -1 = no value (text only)
 	// -2 = end of array of structs
-	int8_t row;						  // row of where to start text
-	int8_t col;						  // column of where to start text
-	const char *text;				  // the text!!
-	int8_t vcol;					  // the column of where to display the value
-	int8_t width;					  // width of the field
+	int8_t row;                  // row of where to start text
+	int8_t col;                  // column of where to start text
+	const char *text;            // the text!!
+	int8_t vcol;                 // the column of where to display the value
+	int8_t width;                // width of the field
 } Screen;
 
 

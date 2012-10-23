@@ -44,7 +44,7 @@
  * $WIZ$ type = "enum"
  * $WIZ$ value_list = "log_level"
  */
-#define OW_LOG_LEVEL      LOG_LVL_WARN
+#define OW_LOG_LEVEL      LOG_LVL_INFO
 
 /**
  * Module logging format.

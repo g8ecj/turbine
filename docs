@@ -72,7 +72,7 @@ A few general notes:
 The controller relies on charge counting to see what the level of charge is in the batteries. This requires that the user manually synchronises 
 the controller with the batteries from time to time. A couple of methods are used to try and keep the charge tracking accurate.
 
-    The leakage (self discharge) is assumed to be 1% per week. This will get a setup option in due course!
+    The leakage (self discharge) can be programmed by the number of days for 1% discharge. The default is 7 days. 
     During a discharge, the charge recorded is adjusted by the ratio of the total charge/discharge tracking registers. eg if the totals registers 
     show a 92% efficiency then a 100amp hr discharge will be recorded as 108 amp-hrs to account for the cyclic losses. 
 
@@ -82,6 +82,7 @@ The charging control is based on a 3 stage charge such that
     Less than 90% in the batteries then bulk charge where the shunt load is only operated if the Max voltage is exceeded.
     90% to 100% in the batteries then absorb mode is used where the shunt load starts to come in at float voltage but clamps to the absorb voltage max.
     100% in the batteries and float mode is used where the voltage is clamped to between 99% and 100% of the float voltage by the shunt load.
+    The voltage is temperature compensated at a rate of 5mV per degree Celsius.
 
 
 The shunt load is a PWM output at about 900Hz with opto isolators which in my case drives 4 automotive 160amp MOSFETS in parallel, although the load 

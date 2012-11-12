@@ -137,15 +137,22 @@ measure_init(void)
 int
 do_calibration(void)
 {
-	return ow_ds2438_calibrate(ids[battid], &Result, gIdleCurrent);	// offset 0 = calculate it
+	uint32_t discharge_time;
+
+	// reset leak adjustment time
+	discharge_time = time();
+	eeprom_write_block((const void *) &discharge_time, (void *) &eeSelfLeakTime, sizeof(discharge_time));
+	// add a known offset to account for the current the controller & other bits draws
+	return ow_ds2438_calibrate(ids[battid], &Result, gIdleCurrent);
 }
 
 int
 do_ClearCCADCA(void)
 {
+	// initialisation sets charge efficiency to 90%
 	Result.CCA = 10;
 	Result.DCA = 9;
-	return ow_ds2438_setCCADCA(ids[battid], &Result);	// set both CCA and DCA
+	return ow_ds2438_setCCADCA(ids[battid], &Result);
 }
 
 // used to sync the value we have for battery charge state to the real battery (SG reading etc)

@@ -29,12 +29,13 @@
 
 #include "features.h"
 #include "median.h"
+#include "rtc.h"
 #include "rpm.h"
 
 
 
 uint16_t gPeriod;
-int16_t gRPM;
+int16_t gRPM, gMaxRPM;
 MEDIAN RpmMedian;
 
 void
@@ -68,6 +69,10 @@ void
 run_rpm (void)
 {
    uint16_t value;
+	static int16_t hourmax[60];
+	static uint32_t lastmin = 0;
+	static uint8_t minptr = 0;
+	int16_t j;
 
 
    if (gPeriod)
@@ -86,6 +91,27 @@ run_rpm (void)
    }
    else
       gRPM = 0;
+
+
+	// see if a minute has passed, if so advance the pointer to track the last hour
+	if (time() >= lastmin + 60)
+	{
+		lastmin = time();
+		minptr++;
+		if (minptr >= 60)
+			minptr = 0;				  // reset to the start of the hour array
+		hourmax[minptr] = -9999;		  // clear the next slot in the array
+	}
+
+	// save the present power level if greater than already there
+	if (gRPM > hourmax[minptr])
+		hourmax[minptr] = gRPM;
+
+	// find a new maximum for this last hour & save for the UI and day list
+	gMaxRPM = -9999;
+	for (j = 0; j < 60; j++)
+		if (hourmax[j] > gMaxRPM)
+			gMaxRPM = hourmax[j];
 
 }
 

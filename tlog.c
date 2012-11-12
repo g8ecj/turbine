@@ -109,7 +109,7 @@ format_record (uint8_t event, char *buffer)
 
 	// volts & amps are scaled by 100 each so loose 10,000
 	power = ((float) gAmps * (float) gVolts) / 10000.0;
-	sprintf (buffer + strlen (buffer), "P:%d R:%d H:%d Y:%d h:%d y:%d I:%d O:%d\r\n", (int16_t) power, gRPM, gMaxhour, gMaxday, gMinhour, gMinday, gCCA, gDCA);
+	sprintf (buffer + strlen (buffer), "P:%d R:%d r:%d H:%d Y:%d h:%d y:%d I:%d O:%d\r\n", (int16_t) power, gRPM, gMaxRPM, gMaxhour, gMaxday, gMinhour, gMinday, gCCA, gDCA);
 	return;
 }
 

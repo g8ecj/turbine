@@ -20,7 +20,7 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-extern int16_t gRPM;
+extern int16_t gRPM, gMaxRPM;
 
 void rpm_init (void);
 void rpm_count (void);

@@ -365,7 +365,7 @@ static void
 log_store (uint8_t event)
 {
 	char filename[20];
-	char print_buffer[130];
+	char print_buffer[140];
 
 	// make a new log file name each day - now allows long filenames!!
 	sprintf (filename, "log-%02d%02d%02d.txt", gYEAR, gMONTH, gDAY);
@@ -381,7 +381,7 @@ log_store (uint8_t event)
 static void
 log_print (uint8_t event)
 {
-	char print_buffer[130];
+	char print_buffer[140];
 
 	format_record (event, print_buffer);
 	kfile_printf (&serial.fd, "%s", print_buffer);

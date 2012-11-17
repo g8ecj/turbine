@@ -37,6 +37,8 @@
 #include <drv/ow_ds18x20.h>
 
 #include "tlog.h"
+#include <cfg/log.h>
+
 #include "features.h"
 #include "rtc.h"
 #include "control.h"
@@ -199,6 +201,7 @@ run_measure(void)
 
 		// load last saved discharge time from eeprom
 		eeprom_read_block((void *) &self_discharge_time, (const void *) &eeSelfLeakTime, sizeof(self_discharge_time));
+		LOG_INFO ("Self discharge timer %lu time now %lu expected %lu\n", self_discharge_time, time(), (self_discharge_time + (uint32_t) ((float)gSelfDischarge * 3600.0 * 24.0)));
 		if ((self_discharge_time == 0) || (self_discharge_time == 0xffffffff))
 		{
 			// initialise a totally fresh box
@@ -266,7 +269,7 @@ run_measure(void)
 	}
 
 	// pessimistically assume 1% loss of battery charge per unit time - units in days
-	if (time() >= (self_discharge_time + (gSelfDischarge * 3600 * 24)))
+	if (time() >= (self_discharge_time + (uint32_t) ((float)gSelfDischarge * 3600.0 * 24.0)))
 	{
 		self_discharge_time = time();
 		gCharge *= 0.99;

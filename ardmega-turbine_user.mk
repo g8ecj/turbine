@@ -21,6 +21,7 @@ ardmega-turbine_USER_CSRC = \
 	$(ardmega-turbine_SRC_PATH)/partition.c \
 	$(ardmega-turbine_SRC_PATH)/sd_raw.c \
 	$(ardmega-turbine_SRC_PATH)/median.c \
+	$(ardmega-turbine_SRC_PATH)/minmax.c \
 	#
 
 # Files included by the user.

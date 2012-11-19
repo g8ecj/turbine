@@ -43,6 +43,7 @@
 #include "rtc.h"
 #include "control.h"
 #include "median.h"
+#include "minmax.h"
 #include "measure.h"
 
 extern Serial serial;
@@ -174,30 +175,19 @@ run_measure(void)
 	int16_t volts, amps;
 	static int8_t firstrun = true;
 	static uint16_t lastcharge;
-	static int16_t hourmax[60], daymax[24];
-	static int16_t hourmin[60], daymin[24];
+	static MINMAX hourmax, daymax;
+	static MINMAX hourmin, daymin;
 	static uint32_t lastmin = 0, lasthour = 0, self_discharge_time;
-	static uint8_t minptr = 0, hourptr = 0;
-	int16_t power, j;
+	int16_t power;
 
 	if (firstrun)
 	{
 		firstrun = false;
 
-		for (j = 0; j < 60; j++)
-		{
-			hourmax[j] = -9999;
-			hourmin[j] = 9999;
-		}
-		for (j = 0; j < 24; j++)
-		{
-			daymax[j] = -9999;
-			daymin[j] = 9999;
-		}
-		gMaxhour = -9999;
-		gMaxday = -9999;
-		gMinhour = 9999;
-		gMinday = 9999;
+		minmax_init(&hourmax, 60, true);
+		minmax_init(&hourmin, 60, false);
+		minmax_init(&daymax, 24, true);
+		minmax_init(&daymin, 24, false);
 
 		// load last saved discharge time from eeprom
 		eeprom_read_block((void *) &self_discharge_time, (const void *) &eeSelfLeakTime, sizeof(self_discharge_time));
@@ -307,11 +297,8 @@ run_measure(void)
 	if (time() >= lastmin + 60)
 	{
 		lastmin = time();
-		minptr++;
-		if (minptr >= 60)
-			minptr = 0;				  // reset to the start of the hour array
-		hourmax[minptr] = -9999;		  // clear the next slot in the array
-		hourmin[minptr] = 9999;		    // clear the next slot in the array
+		minmax_add(&hourmax);
+		minmax_add(&hourmin);
 
 		// once per minute, try for an update from the external temperature sensor (if we have one)
 		if (thermid >=0)
@@ -328,58 +315,23 @@ run_measure(void)
 	}
 
 	// save the present power level if greater than already there
-	if (power > hourmax[minptr])
-		hourmax[minptr] = power;
-
-	// save the present power level if less than already there
-	if (power < hourmin[minptr])
-		hourmin[minptr] = power;
-
-	// find a new maximum for this last hour & save for the UI and day list
-	gMaxhour = -9999;
-	for (j = 0; j < 60; j++)
-		if (hourmax[j] > gMaxhour)
-			gMaxhour = hourmax[j];
-
-	// find a new minimum for this last hour & save for the UI and day list
-	gMinhour = 9999;
-	for (j = 0; j < 60; j++)
-		if (hourmin[j] < gMinhour)
-			gMinhour = hourmin[j];
+	gMaxhour = minmax_get(&hourmax, power);
+	gMinhour = minmax_get(&hourmin, power);
 
 	// see if we have finished an hour, if so then move to a new hour
 	if (time() >= lasthour + 3600)
 	{
 		lasthour = time();
-		hourptr++;
-		if (hourptr >= 24)
-			hourptr = 0;
-		daymax[hourptr] = -9999;
-		daymin[hourptr] = 9999;
+		minmax_add(&daymax);
+		minmax_add(&daymin);
 
 		// once per hour save the charge level into eeprom
 		lastcharge = gCharge;
 		eeprom_write_block((const void *) &gCharge, (void *) &eecharge, sizeof(gCharge));
 	}
 
-	// put max in the last hour into the day list if its bigger
-	if (daymax[hourptr] < gMaxhour)
-		daymax[hourptr] = gMaxhour;
+	gMaxday = minmax_get(&daymax, gMaxhour);
+	gMinday = minmax_get(&daymin, gMinhour);
 
-	// put min in the last hour into the day list if its smaller
-	if (daymin[hourptr] > gMinhour)
-		daymin[hourptr] = gMinhour;
-
-	/* find the new max in the last day for the UI */
-	gMaxday = -9999;
-	for (j = 0; j < 24; j++)
-		if (daymax[j] > gMaxday)
-			gMaxday = daymax[j];
-
-	/* find the new min in the last day for the UI */
-	gMinday = 9999;
-	for (j = 0; j < 24; j++)
-		if (daymin[j] < gMinday)
-			gMinday = daymin[j];
 }
 

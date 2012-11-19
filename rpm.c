@@ -29,6 +29,7 @@
 
 #include "features.h"
 #include "median.h"
+#include "minmax.h"
 #include "rtc.h"
 #include "rpm.h"
 
@@ -37,24 +38,26 @@
 uint16_t gPeriod;
 int16_t gRPM, gMaxRPM;
 MEDIAN RpmMedian;
+MINMAX hourmax;
 
 void
 rpm_init (void)
 {
 
-   // Enable timer3 overflow interrupt
-   TIMSK3 = BV(TOIE3);
+	// Enable timer3 overflow interrupt
+	TIMSK3 = BV (TOIE3);
 
 
-   TCCR3A = 0;                            // not using output compare pins
-   TCCR3B = BV(CS32);                     // Set Normal mode, CLK/256 prescaler
+	TCCR3A = 0;                  // not using output compare pins
+	TCCR3B = BV (CS32);          // Set Normal mode, CLK/256 prescaler
 
-   DDRE &= ~BV(5);                        // port E5 as input (INT5)
-   PORTE |= BV(5);                        // turn on pullup on E5
-   EICRB |= BV(ISC50) | BV(ISC51);        // interrupt on rising edge
-   EIMSK |= BV(INT5);                     // enable int 5
+	DDRE &= ~BV (5);             // port E5 as input (INT5)
+	PORTE |= BV (5);             // turn on pullup on E5
+	EICRB |= BV (ISC50) | BV (ISC51);    // interrupt on rising edge
+	EIMSK |= BV (INT5);          // enable int 5
 
-   median_init (&RpmMedian, 18);
+	median_init (&RpmMedian, 18);
+	minmax_init(&hourmax, 60, true);
 
 }
 
@@ -68,50 +71,35 @@ rpm_init (void)
 void
 run_rpm (void)
 {
-   uint16_t value;
-	static int16_t hourmax[60];
+	uint16_t value;
 	static uint32_t lastmin = 0;
-	static uint8_t minptr = 0;
-	int16_t j;
 
 
-   if (gPeriod)
-   {
-      // using the number of magnet pole pairs on the rotor
-      // we count at a rate of 16MHz / 256 = 16uS per count
-      // rpm = freq * 60 / numpoles
-      // freq = 10e6/period(uS)
-      // rpm = 1000000/period * 16 * 60 / numpoles
+	if (gPeriod)
+	{
+		// using the number of magnet pole pairs on the rotor
+		// we count at a rate of 16MHz / 256 = 16uS per count
+		// rpm = freq * 60 / numpoles
+		// freq = 10e6/period(uS)
+		// rpm = 1000000/period * 16 * 60 / numpoles
 
-      value = (1000000L / 16) * (60 / ROTORMAGNETPAIRS) / gPeriod;       // note order to prevent overflow
-      if (value < 1000)
-         median_add (&RpmMedian, value);
-         median_getAverage (&RpmMedian, &gRPM);
+		value = (1000000L / 16) * (60 / ROTORMAGNETPAIRS) / gPeriod;      // note order to prevent overflow
+		if (value < 1000)
+			median_add (&RpmMedian, value);
+		median_getAverage (&RpmMedian, &gRPM);
 
-   }
-   else
-      gRPM = 0;
-
+	}
+	else
+		gRPM = 0;
 
 	// see if a minute has passed, if so advance the pointer to track the last hour
-	if (time() >= lastmin + 60)
+	if (time () >= lastmin + 60)
 	{
-		lastmin = time();
-		minptr++;
-		if (minptr >= 60)
-			minptr = 0;				  // reset to the start of the hour array
-		hourmax[minptr] = -9999;		  // clear the next slot in the array
+		lastmin = time ();
+		minmax_add(&hourmax);
 	}
 
-	// save the present power level if greater than already there
-	if (gRPM > hourmax[minptr])
-		hourmax[minptr] = gRPM;
-
-	// find a new maximum for this last hour & save for the UI and day list
-	gMaxRPM = -9999;
-	for (j = 0; j < 60; j++)
-		if (hourmax[j] > gMaxRPM)
-			gMaxRPM = hourmax[j];
+	gMaxRPM = minmax_get(&hourmax, gRPM);
 
 }
 
@@ -119,13 +107,13 @@ run_rpm (void)
 
 ISR (INT5_vect)
 {
-   gPeriod = TCNT3;
-   TCNT3 = 0;
+	gPeriod = TCNT3;
+	TCNT3 = 0;
 }
 
 // timer interrupt - when hit this means we overflowed to set max count value
 ISR (TIMER3_OVF_vect)
 {
-   gPeriod = 0;
+	gPeriod = 0;
 
 }

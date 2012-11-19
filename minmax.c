@@ -2,7 +2,7 @@
 // Copyright (C) 2012 Robin Gilks
 //
 //
-//  median.c   -   This module provides a set of functions that allow glitches to be detected and ignored.
+//  minmax.c   -   This module provides a set of functions that allow min and max values over a time period to be determined
 //
 //  History:   1.0 - First release. 
 //
@@ -23,6 +23,7 @@
 
 #include "minmax.h"
 
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
 //< \param MM pointer to a struct that holds the variables for this instance
 //< \param size how large the min/max array is (seconds, minutes, hours etc)
@@ -31,10 +32,11 @@ void minmax_init(MINMAX *MM, int16_t size, bool minmax)
 {
 	int8_t j;
 	
-	MM->size = size;
+	MM->size = constrain(size, MIN_MINMAX, MAX_MINMAX);
 	MM->minmax = minmax;
+	MM->idx = 0;
 
-	for (j = 0; j < size; j++)
+	for (j = 0; j < MM->size; j++)
 	{
 		MM->data[j] = MM->minmax ? -32767: 32767;
 	}
@@ -47,10 +49,10 @@ void minmax_init(MINMAX *MM, int16_t size, bool minmax)
 void minmax_add (MINMAX *MM)
 {
 
-	MM->index++;
-	if (MM->index >= MM->size)
-		MM->index = 0;               // reset to the start of the array
-	MM->data[MM->index] = MM->minmax ? -32767: 32767;    // clear the next slot in the array
+	MM->idx++;
+	if (MM->idx >= MM->size)
+		MM->idx = 0;               // reset to the start of the array
+	MM->data[MM->idx] = MM->minmax ? -32767: 32767;    // clear the next slot in the array
 
 }
 
@@ -68,11 +70,11 @@ int16_t minmax_get (MINMAX *MM, int16_t value)
 	if (MM->minmax)
 	{
 	// save the present value if greater than already there in the current slot
-	if (value > MM->data[MM->index])
-		MM->data[MM->index] = value;
+	if (value > MM->data[MM->idx])
+		MM->data[MM->idx] = value;
 	// find a new maximum and return it
 	ret = -32767;
-	for (j = 0; j < 60; j++)
+	for (j = 0; j < MM->size; j++)
 		if (MM->data[j] > ret)
 			ret = MM->data[j];
 	
@@ -80,11 +82,11 @@ int16_t minmax_get (MINMAX *MM, int16_t value)
 	else
 	{
 	// save the present value if less than already there in the current slot
-	if (value < MM->data[MM->index])
-		MM->data[MM->index] = value;
-	// find a new maximum and return it
+	if (value < MM->data[MM->idx])
+		MM->data[MM->idx] = value;
+	// find a new minimum and return it
 	ret = 32767;
-	for (j = 0; j < 60; j++)
+	for (j = 0; j < MM->size; j++)
 		if (MM->data[j] < ret)
 			ret = MM->data[j];
 	}

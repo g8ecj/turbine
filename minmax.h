@@ -2,7 +2,7 @@
 // Copyright (C) 2012 Robin Gilks
 //
 //
-//  median.c   -   This module provides a set of functions that allow glitches to be detected and ignored.
+//  minmax.h   -   This module provides a set of functions that allow min and max values over a time period to be determined
 //
 //  History:   1.0 - First release. 
 //
@@ -33,7 +33,7 @@
 
 typedef struct running_minmax {
    int16_t data[MAX_MINMAX];
-   uint8_t index;
+   uint8_t idx;
    uint8_t size;
    bool minmax;
 } MINMAX;

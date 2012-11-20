@@ -57,57 +57,112 @@ The User Interface.
 
 There are a total of 8 screens, split between information display and setup
 First info screen
-	Volts   
-	Charge        amp-hrs
-	Power          watts
-	Current         amps
+	+--------------------+
+	|Volts  vv.vv        |
+	|Charge cccc amp-hrs |
+	|Power  pppp    watts|
+	|Current aaa.aa  amps|
+	+--------------------+
+
+vv.vv  - voltage to within 20mV
+cccc   - charge in amp-hrs
+pppp   - power - may be -ve
+aaa.aa - current to within 0.24amps (depends on shunt resistor value) - may be -ve
+All these values are averaged over 10 readings (about 2 seconds)
 
 
 Second info screen
-	Shunt      %
-	Speed         RPM
-	Temp       deg
-	HH:MM:SS DD-MM-YY
+	+--------------------+
+	|Shunt   ss %        |
+	|Speed   rrr   RPM   |
+	|Temp tt.tt   deg    |
+	|HH:MM:SS DD-MM-YY   |
+	+--------------------+
+
+ss     - PWM ratio to dump (shunt) load up to 100%
+rrr    - RPM
+tt.tt  - termperature in degree C - may be -ve
+HH:MM:SS DD-MM-YY - time and date
 
 
-Third info screen "Max/Min/Total"
-	Hr          Day
-	Hr          Day
-	In          Out
+Third info screen
+	+--------------------+
+	|Max/Min/Total       |
+	|Hr HHHH  Day DDDD   |
+	|Hr hhhh  Day dddd   |
+	|In iiiii Out ooooo  |
+	+--------------------+
+
+HHHH   - max power in last hour
+DDDD   - max power in last day
+hhhh   - min power in last hour
+dddd   - min power in last day
+iiiii  - total amp-hrs in over lifetime of system
+ooooo  - total amp-hrs out over lifetime of system
+
+First config screen 
+	+--------------------+
+	|     System         |
+	|Voltage     VV      |
+	|Calibrate   vv.vv   |
+	|HH:MM:SS DD-MM-YY   |
+	+--------------------+
+
+VV    - system voltage in 6v steps
+vv.vv - measured voltage for calibration
+HH:MM:SS DD-MM-YY - time and date that can be adjusted!
+
+
+Second setup screen Voltage
+	+--------------------+
+	|     Voltage        |
+	|Min nn.nn Max xx.xx |
+	|Float   ff.ff       |
+	|Absorb  aa.aa       |
+	+--------------------+
+
+nn.nn - low voltage at which inverter will be turned off (1)
+xx.xx - high voltage at which inverter will be turned on (1)
+ff.ff - float voltage when battery bank 100% fully changed
+aa.aa - max voltage when battery bank is 90-100% charged
+(1) only if Control/Inverter is set to 'yes' or 'auto'
+
+
+Third setup screen Battery
+	+--------------------+
+	|    Battery         |
+	|Bank Size   bbbb    |
+	|Min Charge  mmmm    |
+	|Synchronize ssss    |
+	+--------------------+
+
+bbbb  - battery bank size in amp-hrs
+mmmm  - value to discharge bank to if Control/Inverter is set to Auto
+ssss  - charge level adjustable to match the actual battery bank
 
 
 
-First config screen "System"
-	Voltage     
-	Calibrate   
-	HH:MM:SS DD-MM-YY
+Forth setup screen 
+	+--------------------+
+	|    Battery 2       |
+	|Self Discharge  dd  |
+	|Idle Current  ii.ii |
+	+--------------------+
+
+dd     - number of days for self discharge to reduce charge by 1%
+ii.ii  - current (in amps) of all the control systems
 
 
 
-Second setup screen "Voltage"
-	Min            Max
-	Float
-	Absorb
+Fifth screen 
+	+--------------------+
+	|     Control        |
+	|Inverter  iii       |
+	|Override  ooo       |
+	+--------------------+
 
-
-
-Third setup screen "Battery"
-	Bank Size
-	Min Charge
-	Synchronize
-
-
-
-Forth setup screen "Battery 2"
-	Self Discharge
-	Idle Current
-
-
-
-Fifth screen "Control"
-	Inverter
-	Override
-
+iii  - one of off/on/auto to determine what control of an inverter is required (if any)
+ooo  - if Inverter is Yes or Auto then manually turn on
 
 
 

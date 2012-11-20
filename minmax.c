@@ -69,26 +69,25 @@ int16_t minmax_get (MINMAX *MM, int16_t value)
 
 	if (MM->minmax)
 	{
-	// save the present value if greater than already there in the current slot
-	if (value > MM->data[MM->idx])
-		MM->data[MM->idx] = value;
-	// find a new maximum and return it
-	ret = -32767;
-	for (j = 0; j < MM->size; j++)
-		if (MM->data[j] > ret)
-			ret = MM->data[j];
-	
+		// save the present value if greater than already there in the current slot
+		if (value > MM->data[MM->idx])
+			MM->data[MM->idx] = value;
+		// find a new maximum and return it
+		ret = -32767;
+		for (j = 0; j < MM->size; j++)
+			if (MM->data[j] > ret)
+				ret = MM->data[j];
 	}
 	else
 	{
-	// save the present value if less than already there in the current slot
-	if (value < MM->data[MM->idx])
-		MM->data[MM->idx] = value;
-	// find a new minimum and return it
-	ret = 32767;
-	for (j = 0; j < MM->size; j++)
-		if (MM->data[j] < ret)
-			ret = MM->data[j];
+		// save the present value if less than already there in the current slot
+		if (value < MM->data[MM->idx])
+			MM->data[MM->idx] = value;
+		// find a new minimum and return it
+		ret = 32767;
+		for (j = 0; j < MM->size; j++)
+			if (MM->data[j] < ret)
+				ret = MM->data[j];
 	}
 
 	return ret;

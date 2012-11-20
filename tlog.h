@@ -32,20 +32,20 @@ extern bool sd_ok;
 #define LOG_LEVEL LOG_LVL_INFO
 
 // event values
-#define LOG_OVERVOLT    0x01
-#define LOG_UNDERVOLT   0x02
-#define LOG_MANUALON    0x03
-#define LOG_MANUALOFF   0x04
-#define LOG_CHARGED     0x05
-#define LOG_DISCHARGED  0x06
-#define LOG_SHUNTON     0x07
-#define LOG_SHUNTOFF    0x08
-#define LOG_MARKTIME    0x09
-#define LOG_NEWHOURMAX  0x0a
-#define LOG_NEWDAYMAX   0x0b
-#define LOG_NEWHOURMIN  0x0c
-#define LOG_NEWDAYMIN   0x0d
-#define LOG_LEAKADJUST  0x0e
+#define LOG_OVERVOLT    1
+#define LOG_UNDERVOLT   2
+#define LOG_MANUALON    3
+#define LOG_MANUALOFF   4
+#define LOG_CHARGED     5
+#define LOG_DISCHARGED  6
+#define LOG_SHUNTON     7
+#define LOG_SHUNTOFF    8
+#define LOG_MARKTIME    9
+#define LOG_NEWHOURMAX  10
+#define LOG_NEWDAYMAX   11
+#define LOG_NEWHOURMIN  12
+#define LOG_NEWDAYMIN   13
+#define LOG_LEAKADJUST  14
 
 // bit flags
 #define LOG_ERROR       0x10

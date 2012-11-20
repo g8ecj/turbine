@@ -14,7 +14,7 @@ The software allows the logging of the following items:
 
 The record generated looks like this:
 
-27-09-12 09:47:00 E:0 L:0 S:0 F:9 D:0 T:17.08 C:918 V:26.11 A:-0.50 P:-13 R:0 H:-6 Y:-6 h:-19 y:-19 I:453 O:390
+20-11-12 13:19:00 E:0 L:0 S:0 F:9 D:0 T:18.73 C:931 V:26.16 A:-0.24 P:-6 R:0 r:0 H:-6 Y:276 h:-6 y:-1345 I:1234 O:1203
 
    Date & Time
    E:         - error ON/OFF
@@ -44,15 +44,72 @@ The record generated looks like this:
    A:         - amps
    P:         - power
    R:         - rpm
-   H:         - hour max
-   Y:         - day max
-   h:         - hour min
-   y:         - day min
+   r:         - max RPM in last hour
+   H:         - hour max power
+   Y:         - day max power
+   h:         - hour min power
+   y:         - day min power
    I:         - incoming charge total
    O:         - outgoing charge total
 
 
 The User Interface.
+
+There are a total of 8 screens, split between information display and setup
+First info screen
+	Volts   
+	Charge        amp-hrs
+	Power          watts
+	Current         amps
+
+
+Second info screen
+	Shunt      %
+	Speed         RPM
+	Temp       deg
+	HH:MM:SS DD-MM-YY
+
+
+Third info screen "Max/Min/Total"
+	Hr          Day
+	Hr          Day
+	In          Out
+
+
+
+First config screen "System"
+	Voltage     
+	Calibrate   
+	HH:MM:SS DD-MM-YY
+
+
+
+Second setup screen "Voltage"
+	Min            Max
+	Float
+	Absorb
+
+
+
+Third setup screen "Battery"
+	Bank Size
+	Min Charge
+	Synchronize
+
+
+
+Forth setup screen "Battery 2"
+	Self Discharge
+	Idle Current
+
+
+
+Fifth screen "Control"
+	Inverter
+	Override
+
+
+
 
 There are 5 buttons. Up, Down, Left, Right and Centre
 
@@ -152,9 +209,9 @@ log-120926.txt     187281
 
 >> find -2 F:10
 
-24-09-12 04:49:39 E:0 L:0 S:0 F:10 D:0 T:2.89 C:928 V:27.98 A:10.22 P:285 R:0 H:34 Y:497 h:20 y:-13 I:437 O:359
-24-09-12 04:54:23 E:0 L:0 S:0 F:10 D:0 T:2.95 C:928 V:27.99 A:11.05 P:309 R:0 H:2609 Y:2609 h:20 y:-13 I:437 O:359
-26-09-12 17:11:15 E:0 L:0 S:0 F:10 D:0 T:15.83 C:923 V:26.20 A:0.22 P:5 R:0 H:12 Y:12 h:-51 y:-51 I:453 O:374
+24-09-12 04:49:39 E:0 L:0 S:0 F:10 D:0 T:2.89 C:928 V:27.98 A:10.22 P:285 R:0 r:0 H:34 Y:497 h:20 y:-13 I:437 O:359
+24-09-12 04:54:23 E:0 L:0 S:0 F:10 D:0 T:2.95 C:928 V:27.99 A:11.05 P:309 R:0 r:0 H:2609 Y:2609 h:20 y:-13 I:437 O:359
+26-09-12 17:11:15 E:0 L:0 S:0 F:10 D:0 T:15.83 C:923 V:26.20 A:0.22 P:5 R:0 r:0 H:12 Y:12 h:-51 y:-51 I:453 O:374
 
 
 >> config

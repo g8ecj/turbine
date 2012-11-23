@@ -296,7 +296,7 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 	case FA_CAT:
 	case FA_FIND:
 		{
-			uint8_t buffer[130];
+			uint8_t buffer[140];
 			int16_t len;
 			char * p;
 			int32_t offset;
@@ -539,6 +539,7 @@ process_command (char *command, uint8_t count)
 		{
 			command++;
 			command = get_decimal (command, &days);
+			days--;
 			while (*command == ' ')
 				command++;                   // skip spaces
 		}
@@ -554,6 +555,7 @@ process_command (char *command, uint8_t count)
 		while (days >= 0)
 		{
 			sprintf (filename, "log-%02d%02d%02d.txt", gYEAR, gMONTH, gDAY - days);
+			kfile_printf(&serial.fd, "Checking %s for %s\r\n", filename, command);
 			file_action (filename, FA_FIND, command);
 			days--;
 		}

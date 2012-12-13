@@ -83,7 +83,7 @@ log_init (void)
 
 	if (!sd_ok)
 	{
-		LOG_INFO ("%s", "No SD card\n");
+		LOG_WARN ("Unable to initialise SD card\n");
 	}
 
 }
@@ -189,7 +189,7 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 		partition = partition_open (sd_raw_read, sd_raw_read_interval, sd_raw_write, sd_raw_write_interval, -1);
 		if (!partition)
 		{
-			LOG_INFO ("opening partition failed\n");
+			LOG_WARN ("opening partition failed\n");
 			sd_ok = false;
 			return;
 		}
@@ -199,7 +199,7 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 	struct fat_fs_struct *fs = fat_open (partition);
 	if (!fs)
 	{
-		LOG_INFO ("opening filesystem failed\n");
+		LOG_WARN ("opening filesystem failed\n");
 		partition_close (partition);
 		sd_ok = false;
 		return;
@@ -212,7 +212,7 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 	struct fat_dir_struct *dd = fat_open_dir (fs, &directory);
 	if (!dd)
 	{
-		LOG_INFO ("opening root directory failed\n");
+		LOG_WARN ("opening root directory failed\n");
 		fat_close (fs);
 		partition_close (partition);
 		sd_ok = false;
@@ -231,7 +231,7 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 				struct fat_dir_entry_struct file_entry;
 				if (!fat_create_file (dd, filename, &file_entry))
 				{
-					LOG_INFO ("error creating file: %s\n", filename);
+					LOG_WARN ("error creating file: %s\n", filename);
 					return;
 				}
 				fd = open_file_in_dir (fs, dd, filename);
@@ -241,14 +241,14 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 			/* search file in current directory and open it */
 			if (!fd)
 			{
-				LOG_INFO ("error opening %s\n", filename);
+				LOG_WARN ("error opening %s\n", filename);
 				return;
 			}
 
 			int32_t offset = 0;
 			if (!fat_seek_file (fd, &offset, FAT_SEEK_END))
 			{
-				LOG_INFO ("error seeking on %s\n", filename);
+				LOG_WARN ("error seeking on %s\n", filename);
 				fat_close_file (fd);
 				return;
 			}
@@ -257,12 +257,12 @@ file_action (char *filename, enum FILEACTIONS action, char *data)
 			/* write text to file */
 			if (fat_write_file (fd, (uint8_t *) data, data_len) != data_len)
 			{
-				LOG_INFO ("error writing to file %s\n", filename);
+				LOG_WARN ("error writing to file %s\n", filename);
 				return;
 			}
 			fat_close_file (fd);
 			if (!sd_raw_sync ())
-				LOG_INFO ("error syncing disk\n");
+				LOG_WARN ("error syncing disk\n");
 
 			break;
 		}

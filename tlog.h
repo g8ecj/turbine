@@ -29,7 +29,7 @@ void log_clear (void);
 
 extern bool sd_ok;
 
-#define LOG_LEVEL LOG_LVL_INFO
+#define LOG_LEVEL LOG_LVL_WARN
 
 // event values
 #define LOG_OVERVOLT    1

@@ -46,7 +46,7 @@ extern bool sd_ok;
 #define LOG_NEWHOURMIN  12
 #define LOG_NEWDAYMIN   13
 #define LOG_LEAKADJUST  14
-
+#define LOG_MASK_VALUE  0x0f
 // bit flags
 #define LOG_ERROR       0x10
 #define LOG_SHUNT       0x40

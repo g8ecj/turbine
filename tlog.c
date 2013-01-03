@@ -101,8 +101,7 @@ format_record (uint8_t event, char *buffer)
 		flags |= LOG_SHUNT;
 
 	sprintf (buffer, "%02d-%02d-%02d %02d:%02d:%02d ", gDAY, gMONTH, gYEAR, gHOUR, gMINUTE, gSECOND);
-	sprintf (buffer + strlen (buffer), "E:%c L:%c S:%c F:%d ", flags & LOG_ERROR ? '1' : '0',
-				flags & LOG_LOAD ? '1' : '0', flags & LOG_SHUNT ? '1' : '0', flags & 0x0f);
+	sprintf (buffer + strlen (buffer), "E:%c L:%c S:%c F:%d ", flags & LOG_ERROR ? '1' : '0', flags & LOG_LOAD ? '1' : '0', flags & LOG_SHUNT ? '1' : '0', flags & LOG_MASK_VALUE);
 
 	sprintf (buffer + strlen (buffer), "D:%d T:%.*s%d.%02u C:%u ", gShunt, gTemp < 0 ? 1 : 0, "-", abs (gTemp / 100), abs (gTemp % 100), gCharge);
 	sprintf (buffer + strlen (buffer), "V:%d.%02u A:%.*s%d.%02u ", gVolts / 100, gVolts % 100, gAmps < 0 ? 1 : 0, "-", abs (gAmps / 100), abs (gAmps % 100));

@@ -545,6 +545,7 @@ print_screen (int8_t screen)
 {
 	int8_t i = 0;
 	Screen *scrn = screen_list[screen];
+	char tmp[4];
 
 	kfile_printf (&term.fd, "%c", TERM_CLR);
 	while (scrn[i].field != -2)
@@ -560,7 +561,11 @@ print_screen (int8_t screen)
 		i++;
 	}
 	// indicate there is an sd card plugged in (or not!!) with icon or space
-	kfile_printf (&term.fd, "%c%c%c%c%c%c", TERM_CPC, TERM_ROW + 0, TERM_COL + 17, gLoad ? 'I' : 0x20, charge_mode, sd_ok ? SDCARD : 0x20);
+	tmp[0] = gLoad ? 'I' : 0x20;
+	tmp[1] = charge_mode;
+	tmp[2] = sd_ok ? SDCARD : 0x20;
+	tmp[3] = 0;
+	kfile_printf (&term.fd, "%c%c%c%s", TERM_CPC, TERM_ROW + 0, TERM_COL + 17, tmp);
 
 }
 

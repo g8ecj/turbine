@@ -146,15 +146,24 @@ do_calibration(void)
 	discharge_time = time();
 	eeprom_write_block((const void *) &discharge_time, (void *) &eeSelfLeakTime, sizeof(discharge_time));
 	// add a known offset to account for the current the controller & other bits draws
-	return ow_ds2438_calibrate(ids[battid], &Result, gIdleCurrent);
+	return ow_ds2438_calibrate(ids[battid], &Result, 0);
 }
 
 int
-do_ClearCCADCA(void)
+do_CCADCA(int16_t percent)
 {
+	float t;
+
+	if (percent == 0)
+		t = 0.90;
+	else
+		t = percent / 100;
+	// if we haven't yet got anything recorded, then start at an arbitrary non-zero position
+	if (Result.CCA < 10)
+		Result.CCA = 10;
+
 	// initialisation sets charge efficiency to 90%
-	Result.CCA = 10;
-	Result.DCA = 9;
+	Result.DCA = Result.CCA * t;
 	return ow_ds2438_setCCADCA(ids[battid], &Result);
 }
 
@@ -177,7 +186,7 @@ run_measure(void)
 	static uint16_t lastcharge;
 	static MINMAX hourmax, daymax;
 	static MINMAX hourmin, daymin;
-	static uint32_t lastmin = 0, lasthour = 0, self_discharge_time;
+	static uint32_t lastmin = 0, lasthour = 0, lastday = 0, self_discharge_time;
 	int16_t power;
 
 	if (firstrun)
@@ -332,6 +341,14 @@ run_measure(void)
 
 	gMaxday = minmax_get(&daymax, gMaxhour);
 	gMinday = minmax_get(&daymin, gMinhour);
+
+	// see if we have finished a day, if so then total up the idle current
+	if (time() >= lastday + 86400)
+	{
+		lastday = time();
+		gCharge -= gIdleCurrent * 24 / 100;
+		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
+	}
 
 }
 

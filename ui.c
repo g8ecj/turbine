@@ -697,7 +697,6 @@ run_ui (void)
 			// some fields require special action
 			switch (field)
 			{
-			case eIDLE_CURRENT:
 			case eCAL_VOLTS:
 				// turn off backlight to reduce current before calibration
 				lcd_bl_off();

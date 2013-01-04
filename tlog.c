@@ -415,8 +415,16 @@ process_command (char *command, uint8_t count)
 
 	else if (strcmp (command, "dcs") == 0)	// = clear DCS and CCS registers in monitor chip
 	{
+		int16_t t;
+
+		if (command[0] != '\0')
+		{
+			while (*command == ' ')
+				command++;
+		}
+		command = get_decimal (command, &t);
 		kfile_printf (&serial.fd, "DCS/CCS set\r\n");
-		do_ClearCCADCA ();
+		do_CCADCA (t);
 	}
 
 	else if (strcmp (command, "inv") == 0)

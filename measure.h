@@ -54,6 +54,6 @@ char do_dump (char input);
 char do_sync (char input);
 void set_charge (uint16_t value);
 int do_calibration (void);
-int do_ClearCCADCA(void);
+int do_CCADCA(int16_t percent);
 
 #endif

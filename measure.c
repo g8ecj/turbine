@@ -88,6 +88,7 @@ float EEMEM eeVoffset;
 uint32_t EEMEM eeSelfLeakTime;
 uint16_t EEMEM eeSelfDischarge;
 int16_t EEMEM eeIdleCurrent;
+int16_t EEMEM eeidletotal;
 
 
 char ToggleState(uint8_t * id, uint8_t state);
@@ -345,9 +346,22 @@ run_measure(void)
 	// see if we have finished a day, if so then total up the idle current
 	if (time() >= lastday + 86400)
 	{
+		uint16_t total_idle;
+
 		lastday = time();
 		gCharge -= gIdleCurrent * 24 / 100;
 		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
+		// keep a running total of idle current until its big enough to influence DCA register
+		eeprom_read_block((void *) &total_idle, (const void *) &eeidletotal, sizeof(total_idle));
+		total_idle += gIdleCurrent * 24 / 100;
+		if (total_idle > 64)
+		{
+			// indicate that more charge has gone from the battery
+			Result.DCA += total_idle;
+			ow_ds2438_setCCADCA(ids[battid], &Result);
+			total_idle = 0;
+		}
+		eeprom_write_block((const void *) &total_idle, (void *) &eeidletotal, sizeof(total_idle));
 	}
 
 }

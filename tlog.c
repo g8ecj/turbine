@@ -413,7 +413,7 @@ process_command (char *command, uint8_t count)
 		log_print (LOG_NULL);
 	}
 
-	else if (strcmp (command, "dcs") == 0)	// = clear DCS and CCS registers in monitor chip
+	else if (strcmp (command, "dcs") == 0)	// set the ratio of the DCS and CCS registers as a % value (0-99)
 	{
 		int16_t t;
 

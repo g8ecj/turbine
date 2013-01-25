@@ -160,6 +160,7 @@ run_control(void)
 	int16_t VoltsLO = 0;
 	int16_t diff;
 	uint16_t regval, range = 0, tmp;
+	static bool log_reported = false;
 
 	// decide what charging mode we are in.
 	if (gCharge < (bankSize * 0.90))
@@ -206,16 +207,20 @@ run_control(void)
 		OCR1A = regval;
 		tmp = gShunt;
 		gShunt = regval / 10;	  // shunt load is activated - show initial value
-		if (tmp == 0)				  // if going from OFF to ON then log the event
+		if (!log_reported && gShunt >= 50)				  // if going from OFF to ON then log the event
+		{
 			log_event(LOG_SHUNTON);
+			log_reported = true;
+		}
 	}
 	else
 	{
 		OCR1A = 0;
-		if (gShunt > 0)
+		gShunt = 0;
+		if (log_reported)
 		{
-			gShunt = 0;
 			log_event(LOG_SHUNTOFF);
+			log_reported = false;
 		}
 	}
 

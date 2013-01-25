@@ -228,6 +228,7 @@ Vars variables[eNUMVARS] = {
 
 	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},     // battery leakage in days for 1% loss
 	{&gIdleCurrent, -999, 999, 0, eDECIMAL, int_inc},  // idle current of controller, router etc
+	{&gAdjustTime, -999, 999, 0, eNORMAL, int_inc},    // clock adjuster
 };
 
 
@@ -317,14 +318,15 @@ Screen setup3[] = {
 	{-1, 0, 3, "Battery 2", 0, 0},
 	{eSELFDISCHARGE, 1, 0, "Self Discharge", 16, 3},
 	{eIDLE_CURRENT, 2, 0, "Idle Current", 14, 5},
+	{eADJUSTTIME, 3, 0, "Time Correct", 14, 4},
 	{-2, 0, 0, "", 0, 0}
 };
 
 
 Screen control[] = {
 	{-1, 0, 3, "Control", 0, 0},
-	{eINVERTER, 1, 0, "Inverter", 12, 4},
-	{eMANUAL, 2, 0, "Override", 12, 4},
+	{eINVERTER, 1, 0, "Inverter", 14, 4},
+	{eMANUAL, 2, 0, "Override", 14, 4},
 	{-2, 0, 0, "", 0, 0}
 };
 

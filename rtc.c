@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include <drv/timer.h>
 #include <avr/eeprom.h>
@@ -36,6 +37,8 @@ int16_t gHOUR;
 int16_t gDAY;
 int16_t gMONTH;
 int16_t gYEAR;
+int16_t gAdjustTime;
+
 static volatile uint32_t Epoch;
 static volatile ticks_t LastTicks;
 
@@ -197,12 +200,22 @@ run_rtc (void)
 			gMINUTE = 0;
 			gHOUR++;
 			set_epoch_time ();           // used to save time to eeprom
+			if (abs(gAdjustTime) >= 120)   // if time adjustment is greater than 2 minutes a day then do it every hour
+			{
+				gSECOND += (gAdjustTime / 24) % 60;
+				gMINUTE += (gAdjustTime / 24) / 60;
+			}
 
 			if (gHOUR > 23)
 			{
 				gHOUR = 0;
 				gDAY++;
 
+			if (abs(gAdjustTime) < 120)   // if time adjustment is less than 2 minutes a day then do it every day
+			{
+				gSECOND += gAdjustTime % 60;
+				gMINUTE += gAdjustTime / 60;
+			}
 				// Check for leap year if month == February
 				if (gMONTH == 2)
 					if (!(gYEAR & 0x0003))     // if (gYEAR%4 == 0)

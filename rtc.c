@@ -53,6 +53,7 @@ typedef struct datetime
 } DT_t;
 
 DT_t EEMEM eeDateTime;
+int16_t EEMEM eeAdjustTime;
 
 #define HOUR       0
 #define MINUTE     1
@@ -106,6 +107,7 @@ set_epoch_time (void)
 	DateTime.m = gMONTH;
 	DateTime.y = gYEAR;
 	eeprom_write_block ((const void *) &DateTime, (void *) &eeDateTime, sizeof (DateTime));
+	eeprom_write_block ((const void *) &gAdjustTime, (void *) &eeAdjustTime, sizeof (gAdjustTime));
 
 }
 
@@ -140,6 +142,7 @@ rtc_init (void)
 
 	// initial time and date setting
 	eeprom_read_block ((void *) &DateTime, (const void *) &eeDateTime, sizeof (DateTime));
+	eeprom_read_block ((void *) &gAdjustTime, (const void *) &eeAdjustTime, sizeof (gAdjustTime));
 	gSECOND = DateTime.S;
 	gMINUTE = DateTime.M;
 	gHOUR = DateTime.H;

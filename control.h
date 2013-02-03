@@ -33,7 +33,7 @@
 #define MANUALON   4
 
 
-extern int16_t gShunt;
+extern int16_t gDump;
 extern int16_t gLoad;
 extern uint8_t charge_mode;
 

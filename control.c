@@ -52,7 +52,7 @@ int16_t gVlower;
 int16_t absorbVolts;
 int16_t floatVolts;
 int16_t gLoad;
-int16_t gShunt;
+int16_t gDump;
 int16_t gInverter;
 int16_t bankSize;
 int16_t minCharge;
@@ -205,9 +205,9 @@ run_control(void)
 			regval = 1000 / range * diff;
 
 		OCR1A = regval;
-		tmp = gShunt;
-		gShunt = regval / 10;	  // shunt load is activated - show initial value
-		if (!log_reported && gShunt >= 50)				  // if going from OFF to ON then log the event
+		tmp = gDump;
+		gDump = regval / 10;	  // shunt load is activated - show initial value
+		if (!log_reported && gDump >= 50)				  // if going from OFF to ON then log the event
 		{
 			log_event(LOG_SHUNTON);
 			log_reported = true;
@@ -216,7 +216,7 @@ run_control(void)
 	else
 	{
 		OCR1A = 0;
-		gShunt = 0;
+		gDump = 0;
 		if (log_reported)
 		{
 			log_event(LOG_SHUNTOFF);

@@ -97,18 +97,18 @@ format_record (uint8_t event, char *buffer)
 
 	if (gLoad != LOADOFF)
 		flags |= LOG_LOAD;
-	if (gShunt > 0)
+	if (gDump > 0)
 		flags |= LOG_SHUNT;
 
 	sprintf (buffer, "%02d-%02d-%02d %02d:%02d:%02d ", gDAY, gMONTH, gYEAR, gHOUR, gMINUTE, gSECOND);
 	sprintf (buffer + strlen (buffer), "E:%c L:%c S:%c F:%d ", flags & LOG_ERROR ? '1' : '0', flags & LOG_LOAD ? '1' : '0', flags & LOG_SHUNT ? '1' : '0', flags & LOG_MASK_VALUE);
 
-	sprintf (buffer + strlen (buffer), "D:%d T:%.*s%d.%02u C:%u ", gShunt, gTemp < 0 ? 1 : 0, "-", abs (gTemp / 100), abs (gTemp % 100), gCharge);
+	sprintf (buffer + strlen (buffer), "D:%d T:%.*s%d.%02u C:%u ", gDump, gTemp < 0 ? 1 : 0, "-", abs (gTemp / 100), abs (gTemp % 100), gCharge);
 	sprintf (buffer + strlen (buffer), "V:%d.%02u A:%.*s%d.%02u ", gVolts / 100, gVolts % 100, gAmps < 0 ? 1 : 0, "-", abs (gAmps / 100), abs (gAmps % 100));
 
 	// volts & amps are scaled by 100 each so loose 10,000
 	power = ((float) gAmps * (float) gVolts) / 10000.0;
-	sprintf (buffer + strlen (buffer), "P:%d R:%d r:%d H:%d Y:%d h:%d y:%d I:%d O:%d\r\n", (int16_t) power, gRPM, gMaxRPM, gMaxhour, gMaxday, gMinhour, gMinday, gCCA, gDCA);
+	sprintf (buffer + strlen (buffer), "P:%d R:%d r:%d H:%d Y:%d h:%d y:%d I:%u O:%u\r\n", (int16_t) power, gRPM, gMaxRPM, gMaxhour, gMaxday, gMinhour, gMinday, (uint16_t)gCCA, (uint16_t)gDCA);
 	return;
 }
 
@@ -413,18 +413,20 @@ process_command (char *command, uint8_t count)
 		log_print (LOG_NULL);
 	}
 
-	else if (strcmp (command, "dcs") == 0)	// set the ratio of the DCS and CCS registers as a % value (0-99)
+	else if (strncmp (command, "dcs", 3) == 0)	// set the ratio of the DCS and CCS registers as a % value (0-99)
 	{
-		int16_t t;
+		int16_t p = 0, b = 0;
 
+		command += 3;
 		if (command[0] != '\0')
 		{
 			while (*command == ' ')
 				command++;
+			command = get_decimal (command, &p);
+			command = get_decimal (command, &b);
 		}
-		command = get_decimal (command, &t);
 		kfile_printf (&serial.fd, "DCS/CCS set\r\n");
-		do_CCADCA (t);
+		do_CCADCA (p, b);
 	}
 
 	else if (strcmp (command, "inv") == 0)

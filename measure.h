@@ -28,6 +28,8 @@
 extern int16_t gVolts;
 extern int16_t gAmps;
 extern int16_t gPower;
+extern int16_t gShunt;
+
 extern int16_t gTemp;
 extern uint16_t gDCA;
 extern uint16_t gCCA;
@@ -47,6 +49,7 @@ extern int16_t EEMEM eeVoltage;
 extern uint32_t EEMEM eeSelfLeakTime;
 extern uint16_t EEMEM eeSelfDischarge;
 extern int16_t EEMEM eeIdleCurrent;
+extern int16_t EEMEM eeShunt;
 
 void measure_init (void);
 void run_measure (void);
@@ -54,6 +57,6 @@ char do_dump (char input);
 char do_sync (char input);
 void set_charge (uint16_t value);
 int do_calibration (void);
-int do_CCADCA(int16_t percent);
+int do_CCADCA(int16_t percent, int16_t base);
 
 #endif

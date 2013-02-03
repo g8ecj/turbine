@@ -63,6 +63,7 @@ MEDIAN TempMedian;
 int16_t gVolts;
 int16_t gAmps;
 int16_t gPower;
+int16_t gShunt;
 int16_t gTemp;
 float gVoffset;
 int16_t gVoltage;
@@ -89,6 +90,7 @@ uint32_t EEMEM eeSelfLeakTime;
 uint16_t EEMEM eeSelfDischarge;
 int16_t EEMEM eeIdleCurrent;
 int16_t EEMEM eeidletotal;
+int16_t EEMEM eeShunt;
 
 
 char ToggleState(uint8_t * id, uint8_t state);
@@ -132,7 +134,7 @@ measure_init(void)
 		// load last saved charge value from eeprom
 		eeprom_read_block((void *) &gCharge, (const void *) &eecharge, sizeof(gCharge));
 		// set mode and init expanded charge handler
-		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
+		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 	}
 
 }
@@ -151,20 +153,23 @@ do_calibration(void)
 }
 
 int
-do_CCADCA(int16_t percent)
+do_CCADCA(int16_t percent, int16_t base)
 {
 	float t;
 
 	if (percent == 0)
 		t = 0.90;
 	else
-		t = percent / 100;
+		t = (float)percent / 100.0;
 	// if we haven't yet got anything recorded, then start at an arbitrary non-zero position
 	if (Result.CCA < 10)
 		Result.CCA = 10;
+	// if we are passing in a value then use it
+	if (base > 0)
+		Result.CCA = base;
 
 	// initialisation sets charge efficiency to 90%
-	Result.DCA = Result.CCA * t;
+	Result.DCA = (float)Result.CCA * t;
 	return ow_ds2438_setCCADCA(ids[battid], &Result);
 }
 
@@ -173,7 +178,7 @@ void
 set_charge(uint16_t value)
 {
 	gCharge = value;
-	ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
+	ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 	eeprom_write_block((const void *) &gCharge, (void *) &eecharge, sizeof(gCharge));
 }
 
@@ -273,7 +278,7 @@ run_measure(void)
 	{
 		self_discharge_time = time();
 		gCharge *= 0.99;
-		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
+		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
 		log_event(LOG_LEAKADJUST);
 	}
@@ -350,7 +355,7 @@ run_measure(void)
 
 		lastday = time();
 		gCharge -= gIdleCurrent * 24 / 100;
-		ow_ds2438_init(ids[battid], &Result, Rshunt, gCharge);
+		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 		// keep a running total of idle current until its big enough to influence DCA register
 		eeprom_read_block((void *) &total_idle, (const void *) &eeidletotal, sizeof(total_idle));
 		total_idle += gIdleCurrent * 24 / 100;

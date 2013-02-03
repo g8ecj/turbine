@@ -203,7 +203,9 @@ run_rtc (void)
 			gMINUTE = 0;
 			gHOUR++;
 			set_epoch_time ();           // used to save time to eeprom
-			if (abs(gAdjustTime) >= 120)   // if time adjustment is greater than 2 minutes a day then do it every hour
+
+			// if time adjustment is greater than 2 minutes a day then do it every hour
+			if (abs(gAdjustTime) >= 120)
 			{
 				gSECOND += (gAdjustTime / 24) % 60;
 				gMINUTE += (gAdjustTime / 24) / 60;
@@ -214,11 +216,13 @@ run_rtc (void)
 				gHOUR = 0;
 				gDAY++;
 
-			if (abs(gAdjustTime) < 120)   // if time adjustment is less than 2 minutes a day then do it every day
-			{
-				gSECOND += gAdjustTime % 60;
-				gMINUTE += gAdjustTime / 60;
-			}
+				// if time adjustment is less than 2 minutes a day then do it every day
+				if (abs(gAdjustTime) < 120)
+				{
+					gSECOND += gAdjustTime % 60;
+					gMINUTE += gAdjustTime / 60;
+				}
+
 				// Check for leap year if month == February
 				if (gMONTH == 2)
 					if (!(gYEAR & 0x0003))     // if (gYEAR%4 == 0)

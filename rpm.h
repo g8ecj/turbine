@@ -21,6 +21,8 @@
 
 
 extern int16_t gRPM, gMaxRPM;
+extern int16_t gPoles;
+extern int16_t EEMEM eePoles;
 
 void rpm_init (void);
 void rpm_count (void);

@@ -30,7 +30,7 @@ enum VARS
 	ePOWER,
 
 	eAMPS,
-	eSHUNT,
+	eDUMP,
 	eRPM,
 
 	eMAXHOUR,
@@ -63,6 +63,8 @@ enum VARS
 	eINVERTER,
 	eMANUAL,
 
+	eSHUNT,
+	ePOLES,
 	eSELFDISCHARGE,
 	eIDLE_CURRENT,
 	eADJUSTTIME,

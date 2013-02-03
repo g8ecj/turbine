@@ -192,7 +192,7 @@ Vars variables[eNUMVARS] = {
 	{&gPower,  0,    0,    0,  eNORMAL, null_inc},      // power
 
 	{&gAmps,   0,    0,    0, eDECIMAL, null_inc},      // amps
-	{&gShunt,  0,    0,    0,  eNORMAL, null_inc},      // shunt
+	{&gDump,   0,    0,    0,  eNORMAL, null_inc},      // shunt regulator (dump load)
 	{&gRPM,    0,    0,    0,  eNORMAL, null_inc},      // rpm
 
 	{&gMaxhour, 0, 0, 0, eNORMAL, null_inc},            // max hours
@@ -221,13 +221,15 @@ Vars variables[eNUMVARS] = {
 	{&gSECOND, 0, 59, 0, eDATE, int_inc},              // second
 	{&gDAY, 1, 31, 15, eDATE, int_inc},                // day
 	{&gMONTH, 1, 12, 6, eDATE, int_inc},               // month
-	{&gYEAR, 12, 99, 12, eDATE, int_inc},              // year
+	{&gYEAR, 12, 99, 13, eDATE, int_inc},              // year
 
 	{&gInverter, 0, 2, 1, eTRILEAN, int_inc},          // control active
 	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},              // manual on/off
 
+	{&gShunt, 0, 9999, 1000, eNORMAL, int_inc},        // shunt conductance in Siemens
+	{&gPoles, 0, 99, 6, eNORMAL, int_inc},             // magnetic poles in generator
 	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},     // battery leakage in days for 1% loss
-	{&gIdleCurrent, -999, 999, 0, eDECIMAL, int_inc},  // idle current of controller, router etc
+	{&gIdleCurrent, 0, 999, 0, eDECIMAL, int_inc},     // idle current of controller, router etc
 	{&gAdjustTime, -999, 999, 0, eNORMAL, int_inc},    // clock adjuster
 };
 
@@ -256,7 +258,7 @@ Screen screen1[] = {
 
 
 Screen screen2[] = {
-	{eSHUNT, 0, 0, "Shunt      %", 8, 3},
+	{eDUMP, 0, 0, "Dump       %", 8, 3},
 	{eRPM, 1, 0, "Speed         RPM", 8, 3},
 	{eTEMPERATURE, 2, 0, "Temp", 8, 6},
 	{-1, 2, 15, degreestr, 0, 0},
@@ -315,10 +317,12 @@ Screen setup2[] = {
 };
 
 Screen setup3[] = {
-	{-1, 0, 3, "Battery 2", 0, 0},
-	{eSELFDISCHARGE, 1, 0, "Self Discharge", 16, 3},
-	{eIDLE_CURRENT, 2, 0, "Idle Current", 14, 5},
-	{eADJUSTTIME, 3, 0, "Time Correct", 14, 4},
+	{-1, 0, 3, "Miscellaneous", 0, 0},
+	{eSHUNT, 1, 0, "Shunt", 6, 4},
+	{ePOLES, 1, 11, "Poles", 17, 2},
+	{eSELFDISCHARGE, 2, 0, "Leak", 6, 3},
+	{eIDLE_CURRENT, 2, 9, "Idle", 15, 5},
+	{eADJUSTTIME, 3, 0, "Time Correct", 15, 4},
 	{-2, 0, 0, "", 0, 0}
 };
 
@@ -353,6 +357,8 @@ load_eeprom_values(void)
 	eeprom_read_block ((void *) &gInverter, (const void *) &eeInverter, sizeof (gInverter));
 	eeprom_read_block ((void *) &gSelfDischarge, (const void *) &eeSelfDischarge, sizeof (gSelfDischarge));
 	eeprom_read_block ((void *) &gIdleCurrent, (const void *) &eeIdleCurrent, sizeof (gIdleCurrent));
+	eeprom_read_block ((void *) &gShunt, (const void *) &eeShunt, sizeof (gShunt));
+	eeprom_read_block ((void *) &gPoles, (const void *) &eePoles, sizeof (gPoles));
 
 }
 
@@ -713,6 +719,8 @@ run_ui (void)
 			case eDAY:
 			case eMONTH:
 			case eYEAR:
+			case eADJUSTTIME:
+				// set Unix time in seconds, save in eeprom
 				set_epoch_time ();
 				break;
 			case eMANUAL:
@@ -733,6 +741,8 @@ run_ui (void)
 			eeprom_write_block ((const void *) &gInverter, (void *) &eeInverter, sizeof (gInverter));
 			eeprom_write_block ((const void *) &gSelfDischarge, (void *) &eeSelfDischarge, sizeof (gSelfDischarge));
 			eeprom_write_block ((const void *) &gIdleCurrent, (void *) &eeIdleCurrent, sizeof (gIdleCurrent));
+			eeprom_write_block ((const void *) &gShunt, (void *) &eeShunt, sizeof (gShunt));
+			eeprom_write_block ((const void *) &gPoles, (void *) &eePoles, sizeof (gPoles));
 
 			mode = PAGEEDIT;
 			set_flash(field, false);

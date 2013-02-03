@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/eeprom.h>
 
 #include <cfg/macros.h>
 #include <drv/timer.h>
@@ -37,6 +38,9 @@
 
 uint16_t gPeriod;
 int16_t gRPM, gMaxRPM;
+int16_t gPoles;
+int16_t EEMEM eePoles;
+
 MEDIAN RpmMedian;
 MINMAX hourmax;
 
@@ -83,7 +87,7 @@ run_rpm (void)
 		// freq = 10e6/period(uS)
 		// rpm = 1000000/period * 16 * 60 / numpoles
 
-		value = (1000000L / 16) * (60 / ROTORMAGNETPAIRS) / gPeriod;      // note order to prevent overflow
+		value = (1000000L / 16) * (60 / gPoles) / gPeriod;      // note order to prevent overflow
 		if (value < 1000)
 			median_add (&RpmMedian, value);
 		median_getAverage (&RpmMedian, &gRPM);

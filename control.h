@@ -40,18 +40,18 @@ extern uint8_t charge_mode;
 extern int16_t gVupper;
 extern int16_t gVlower;
 extern int16_t gInverter;
-extern int16_t absorbVolts;
-extern int16_t floatVolts;
-extern int16_t bankSize;
-extern int16_t minCharge;
+extern int16_t gAbsorbVolts;
+extern int16_t gFloatVolts;
+extern int16_t gBankSize;
+extern int16_t gMinCharge;
 
 extern int16_t EEMEM eeVupper;
 extern int16_t EEMEM eeVlower;
 extern int16_t EEMEM eeInverter;
-extern int16_t EEMEM eeabsorbVolts;
-extern int16_t EEMEM eefloatVolts;
-extern int16_t EEMEM eebankSize;
-extern int16_t EEMEM eeminCharge;
+extern int16_t EEMEM eeAbsorbVolts;
+extern int16_t EEMEM eeFloatVolts;
+extern int16_t EEMEM eeBankSize;
+extern int16_t EEMEM eeMinCharge;
 
 
 

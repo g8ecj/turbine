@@ -204,35 +204,34 @@ Vars variables[eNUMVARS] = {
 
 	{&gTemp,    0,    0,   0, eDECIMAL, null_inc},      // temperature
 
-	{&gVlower, 2000, 2400, 2200, eDECIMAL, deca_inc},   // volt limit low
-	{&gVupper, 2600, 3200, 2900, eDECIMAL, deca_inc},   // volt limit high
-	{&floatVolts, 2600, 3200, 2700, eDECIMAL, deca_inc}, // shunt volt low
-	{&absorbVolts, 2600, 3200, 2800, eDECIMAL, deca_inc}, // shunt volt high
+	{&gVlower, 2000, 2400, ddVlower, eDECIMAL, deca_inc},   // volt limit low
+	{&gVupper, 2600, 3200, ddVupper, eDECIMAL, deca_inc},   // volt limit high
+	{&gFloatVolts, 2600, 3200, ddFloatVolts, eDECIMAL, deca_inc}, // shunt volt low
+	{&gAbsorbVolts, 2600, 3200, ddAbsorbVolts, eDECIMAL, deca_inc}, // shunt volt high
 
-	{&bankSize, 10, 9999, 1000, eNORMAL, var_inc},      // charge high
-	{&minCharge, 10, 9999, 500, eNORMAL, var_inc},      // charge low
-	{&gCharge, 0, 9999, 1000, eNORMAL, var_inc},        // sync
+	{&gBankSize, 10, 9999, ddBankSize, eNORMAL, var_inc},      // charge high
+	{&gMinCharge, 10, 9999, ddMinCharge, eNORMAL, var_inc},      // charge low
+	{&gCharge, 0, 9999, ddCharge, eNORMAL, var_inc},        // sync
 
-	{&gVoltage, 6, 48, 24, eNORMAL, six_inc},          // system voltage
-	{&gVolts, 500, 5000, 2400, eDECIMAL, cal_inc},     // calibrate
+	{&gVoltage, 6, 48, ddVoltage, eNORMAL, six_inc},          // system voltage
+	{&gVolts,   0,  0,  0, eDECIMAL, cal_inc},         // calibrate
 
-	{&gHOUR, 0, 23, 12, eDATE, int_inc},               // hour
-	{&gMINUTE, 0, 59, 0, eDATE, int_inc},              // minute
-	{&gSECOND, 0, 59, 0, eDATE, int_inc},              // second
-	{&gDAY, 1, 31, 15, eDATE, int_inc},                // day
-	{&gMONTH, 1, 12, 6, eDATE, int_inc},               // month
-	{&gYEAR, 12, 99, 13, eDATE, int_inc},              // year
+	{&gHOUR, 0, 23, ddHOUR, eDATE, int_inc},               // hour
+	{&gMINUTE, 0, 59, ddMINUTE, eDATE, int_inc},              // minute
+	{&gSECOND, 0, 59, ddSECOND, eDATE, int_inc},              // second
+	{&gDAY, 1, 31, ddDAY, eDATE, int_inc},                // day
+	{&gMONTH, 1, 12, ddMONTH, eDATE, int_inc},               // month
+	{&gYEAR, 12, 99, ddYEAR, eDATE, int_inc},              // year
 
-	{&gInverter, 0, 2, 1, eTRILEAN, int_inc},          // control active
-	{&gLoad, 0, 1, 0, eTRILEAN, int_inc},              // manual on/off
+	{&gInverter, 0, 2, ddInverter, eTRILEAN, int_inc},          // control active
+	{&gLoad, 0, 1, ddLoad, eTRILEAN, int_inc},              // manual on/off
 
-	{&gShunt, 0, 9999, 1000, eNORMAL, int_inc},        // shunt conductance in Siemens
-	{&gPoles, 0, 99, 6, eNORMAL, int_inc},             // magnetic poles in generator
-	{&gSelfDischarge, 1, 90, 7, eNORMAL, int_inc},     // battery leakage in days for 1% loss
-	{&gIdleCurrent, 0, 999, 0, eDECIMAL, int_inc},     // idle current of controller, router etc
-	{&gAdjustTime, -999, 999, 0, eNORMAL, int_inc},    // clock adjuster
+	{&gShunt, 0, 9999, ddShunt, eNORMAL, int_inc},        // shunt conductance in Siemens
+	{&gPoles, 0, 99, ddPoles, eNORMAL, int_inc},             // magnetic poles in generator
+	{&gSelfDischarge, 1, 90, ddSelfDischarge, eNORMAL, int_inc},     // battery leakage in days for 1% loss
+	{&gIdleCurrent, 0, 999, ddIdleCurrent, eDECIMAL, int_inc},     // idle current of controller, router etc
+	{&gAdjustTime, -999, 999, ddAdjustTime, eNORMAL, int_inc},    // clock adjuster
 };
-
 
 
 typedef struct screen
@@ -348,10 +347,10 @@ load_eeprom_values(void)
 
 	eeprom_read_block ((void *) &gVupper, (const void *) &eeVupper, sizeof (gVupper));
 	eeprom_read_block ((void *) &gVlower, (const void *) &eeVlower, sizeof (gVlower));
-	eeprom_read_block ((void *) &absorbVolts, (const void *) &eeabsorbVolts, sizeof (absorbVolts));
-	eeprom_read_block ((void *) &floatVolts, (const void *) &eefloatVolts, sizeof (floatVolts));
-	eeprom_read_block ((void *) &bankSize, (const void *) &eebankSize, sizeof (bankSize));
-	eeprom_read_block ((void *) &minCharge, (const void *) &eeminCharge, sizeof (minCharge));
+	eeprom_read_block ((void *) &gAbsorbVolts, (const void *) &eeAbsorbVolts, sizeof (gAbsorbVolts));
+	eeprom_read_block ((void *) &gFloatVolts, (const void *) &eeFloatVolts, sizeof (gFloatVolts));
+	eeprom_read_block ((void *) &gBankSize, (const void *) &eeBankSize, sizeof (gBankSize));
+	eeprom_read_block ((void *) &gMinCharge, (const void *) &eeMinCharge, sizeof (gMinCharge));
 	eeprom_read_block ((void *) &gVoffset, (const void *) &eeVoffset, sizeof (gVoffset));
 	eeprom_read_block ((void *) &gVoltage, (const void *) &eeVoltage, sizeof (gVoltage));
 	eeprom_read_block ((void *) &gInverter, (const void *) &eeInverter, sizeof (gInverter));
@@ -584,12 +583,12 @@ print_screen (int8_t screen)
 static void
 flag_warnings(void)
 {
-	if ((gVolts < gVlower) || (gVolts > absorbVolts))
+	if ((gVolts < gVlower) || (gVolts > gAbsorbVolts))
 		set_flash(eVOLTS, true);
 	else
 		set_flash(eVOLTS, false);
 
-	if (gCharge < minCharge)
+	if (gCharge < gMinCharge)
 		set_flash(eCHARGE, true);
 	else
 		set_flash(eCHARGE, false);
@@ -732,10 +731,10 @@ run_ui (void)
 			}
 			eeprom_write_block ((const void *) &gVupper, (void *) &eeVupper, sizeof (gVupper));
 			eeprom_write_block ((const void *) &gVlower, (void *) &eeVlower, sizeof (gVlower));
-			eeprom_write_block ((const void *) &absorbVolts, (void *) &eeabsorbVolts, sizeof (absorbVolts));
-			eeprom_write_block ((const void *) &floatVolts, (void *) &eefloatVolts, sizeof (floatVolts));
-			eeprom_write_block ((const void *) &bankSize, (void *) &eebankSize, sizeof (bankSize));
-			eeprom_write_block ((const void *) &minCharge, (void *) &eeminCharge, sizeof (minCharge));
+			eeprom_write_block ((const void *) &gAbsorbVolts, (void *) &eeAbsorbVolts, sizeof (gAbsorbVolts));
+			eeprom_write_block ((const void *) &gFloatVolts, (void *) &eeFloatVolts, sizeof (gFloatVolts));
+			eeprom_write_block ((const void *) &gBankSize, (void *) &eeBankSize, sizeof (gBankSize));
+			eeprom_write_block ((const void *) &gMinCharge, (void *) &eeMinCharge, sizeof (gMinCharge));
 			eeprom_write_block ((const void *) &gVoffset, (void *) &eeVoffset, sizeof (gVoffset));
 			eeprom_write_block ((const void *) &gVoltage, (void *) &eeVoltage, sizeof (gVoltage));
 			eeprom_write_block ((const void *) &gInverter, (void *) &eeInverter, sizeof (gInverter));

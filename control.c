@@ -49,22 +49,22 @@ extern Serial serial;
 // globals
 int16_t gVupper;
 int16_t gVlower;
-int16_t absorbVolts;
-int16_t floatVolts;
+int16_t gAbsorbVolts;
+int16_t gFloatVolts;
 int16_t gLoad;
 int16_t gDump;
 int16_t gInverter;
-int16_t bankSize;
-int16_t minCharge;
+int16_t gBankSize;
+int16_t gMinCharge;
 
 
 int16_t EEMEM eeVupper;
 int16_t EEMEM eeVlower;
-int16_t EEMEM eeabsorbVolts;
-int16_t EEMEM eefloatVolts;
+int16_t EEMEM eeAbsorbVolts;
+int16_t EEMEM eeFloatVolts;
 int16_t EEMEM eeInverter;
-int16_t EEMEM eebankSize;
-int16_t EEMEM eeminCharge;
+int16_t EEMEM eeBankSize;
+int16_t EEMEM eeMinCharge;
 
 
 int16_t TargetC;
@@ -103,7 +103,7 @@ control_init(void)
 	if (gpioid >= 0)
 		ToggleState(ids[gpioid], false);
 
-	TargetC = bankSize;
+	TargetC = gBankSize;
 
 }
 
@@ -163,26 +163,26 @@ run_control(void)
 	static bool log_reported = false;
 
 	// decide what charging mode we are in.
-	if (gCharge < (bankSize * 0.90))
+	if (gCharge < (gBankSize * 0.90))
 	{
 		charge_mode = BULK;
 		// only run shunt if volts gets stupidly high!
 		VoltsHI = gVupper;
 		VoltsLO = gVupper * 0.99;
 	}
-	else if (gCharge < bankSize)
+	else if (gCharge < gBankSize)
 	{
 		charge_mode = ABSORB;
 		// start throttling back once over float volts, never go above absorb volts
-		VoltsHI = absorbVolts;
-		VoltsLO = floatVolts;
+		VoltsHI = gAbsorbVolts;
+		VoltsLO = gFloatVolts;
 	}
 	else
 	{
 		charge_mode = FLOAT;
 		// never go above float volts
-		VoltsHI = floatVolts;
-		VoltsLO = floatVolts * 0.99;
+		VoltsHI = gFloatVolts;
+		VoltsLO = gFloatVolts * 0.99;
 	}
 
 	// compensate for temperature - assume set values are for 25C, adjust accordingly
@@ -237,7 +237,7 @@ run_control(void)
 			// turned off load OK, start charging
 			gLoad = LOADOFF;
 			log_event(LOG_MANUALOFF);
-			TargetC = bankSize;
+			TargetC = gBankSize;
 		}
 		else
 		{
@@ -275,7 +275,7 @@ run_control(void)
 			log_event(LOG_UNDERVOLT);
 			// turned off load OK, start charging
 			gLoad = LOADOFF;
-			TargetC = bankSize;
+			TargetC = gBankSize;
 		}
 		else
 		{
@@ -317,7 +317,7 @@ run_control(void)
 				// turn on load
 				gLoad = LOADAUTO;
 				log_event(LOG_CHARGED);
-				TargetC = minCharge;
+				TargetC = gMinCharge;
 			}
 			else
 			{
@@ -337,7 +337,7 @@ run_control(void)
 				// turned off load OK, start charging
 				gLoad = LOADOFF;
 				log_event(LOG_DISCHARGED);
-				TargetC = bankSize;
+				TargetC = gBankSize;
 			}
 			else
 			{

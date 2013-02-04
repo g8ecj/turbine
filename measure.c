@@ -219,7 +219,7 @@ run_measure(void)
 	{
 		// dummy values if no hardware to read from
 		gVolts = gVoltage * 105;
-		gCharge = bankSize * 0.90;
+		gCharge = gBankSize * 0.90;
 		return;
 	}
 

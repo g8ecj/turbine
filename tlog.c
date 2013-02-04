@@ -576,8 +576,8 @@ process_command (char *command, uint8_t count)
 
 		kfile_printf(&serial.fd, "System voltage %d, inverter control %s\r\n", gVoltage, tritext[gInverter]); 
 		kfile_printf(&serial.fd, "Voltage limits   %d.%02u - %d.%02u\r\n", gVlower / 100, gVlower % 100, gVupper / 100, gVupper % 100);
-		kfile_printf(&serial.fd, "Float Absorb     %d.%02u - %d.%02u\r\n", floatVolts / 100, floatVolts % 100, absorbVolts / 100, absorbVolts % 100);
-		kfile_printf(&serial.fd, "Charge limits    %d - %d\r\n", minCharge,  bankSize);
+		kfile_printf(&serial.fd, "Float Absorb     %d.%02u - %d.%02u\r\n", gFloatVolts / 100, gFloatVolts % 100, gAbsorbVolts / 100, gAbsorbVolts % 100);
+		kfile_printf(&serial.fd, "Charge limits    %d - %d\r\n", gMinCharge,  gBankSize);
 #if DEBUG > 0
 extern uint16_t StackCount(void);
 		kfile_printf(&serial.fd, "Stack free       %d\r\n", StackCount());

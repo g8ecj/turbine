@@ -27,6 +27,7 @@
 #include <cpu/irq.h>
 #include <cpu/power.h>
 #include <cpu/pgm.h>
+#include <avr/eeprom.h>
 
 #include <stdlib.h>
 
@@ -80,6 +81,8 @@ static int8_t flashing[MAXFLASH];
 extern Serial serial;
 static Term term;
 
+int16_t USdate;
+int16_t EEMEM eeUSdate;
 
 typedef int8_t (*IncFunc_t) (int8_t field, int8_t dirn);
 
@@ -100,6 +103,7 @@ typedef struct vars
 Vars variables[eNUMVARS];
 float gVoffset = 1.03;
 ticks_t carosel_timer;
+void set_month_day(uint8_t us);
 
 static int8_t
 null_inc (int8_t field, int8_t dirn)
@@ -182,7 +186,6 @@ enum STYLE
 };
 
 
-
 //   value,    min,      max, default, style,   increment function
 // Note: Its only worth having (real) limits for those values that can be changed.
 Vars variables[eNUMVARS] = {
@@ -231,7 +234,11 @@ Vars variables[eNUMVARS] = {
 	{&gSelfDischarge, 1, 90, ddSelfDischarge, eNORMAL, int_inc},     // battery leakage in days for 1% loss
 	{&gIdleCurrent, 0, 999, ddIdleCurrent, eDECIMAL, int_inc},     // idle current of controller, router etc
 	{&gAdjustTime, -999, 999, ddAdjustTime, eNORMAL, int_inc},    // clock adjuster
+	{&USdate, 0, 1, ddUsdate, eTRILEAN, int_inc},          // date format
 };
+
+
+
 
 
 typedef struct screen
@@ -321,7 +328,8 @@ Screen setup3[] = {
 	{ePOLES, 1, 11, "Poles", 17, 2},
 	{eSELFDISCHARGE, 2, 0, "Leak", 6, 3},
 	{eIDLE_CURRENT, 2, 9, "Idle", 15, 5},
-	{eADJUSTTIME, 3, 0, "Time Correct", 15, 4},
+	{eADJUSTTIME, 3, 0, "Time", 6, 4},
+	{eUSDATE, 3, 9, "US date", 17, 3},
 	{-2, 0, 0, "", 0, 0}
 };
 
@@ -340,6 +348,34 @@ Screen control[] = {
 
 static Screen *screen_list[] = { screen1, screen2, screen3, system, setup1, setup2, setup3, control };
 
+void
+set_month_day(uint8_t us)
+{
+	Vars tmpA, tmpB;
+
+	// get whatever is in the variables array now
+	tmpA = variables[eDAY];
+	tmpB = variables[eMONTH];
+
+	// if we are unchanged now but want US dates then change it
+	if (variables[eDAY].value == &gDAY)
+	{
+		if (us !=0)
+		{
+			variables[eDAY] = tmpB;
+			variables[eMONTH] = tmpA;
+		}
+	}
+	// if already in US Date mode but want EURO mode then swap back
+	else
+	{
+		if (us == 0)
+		{
+			variables[eDAY] = tmpB;
+			variables[eMONTH] = tmpA;
+		}
+	}
+}
 
 void
 load_eeprom_values(void)
@@ -358,7 +394,9 @@ load_eeprom_values(void)
 	eeprom_read_block ((void *) &gIdleCurrent, (const void *) &eeIdleCurrent, sizeof (gIdleCurrent));
 	eeprom_read_block ((void *) &gShunt, (const void *) &eeShunt, sizeof (gShunt));
 	eeprom_read_block ((void *) &gPoles, (const void *) &eePoles, sizeof (gPoles));
+	eeprom_read_block ((void *) &USdate, (const void *) &eeUSdate, sizeof (USdate));
 
+	set_month_day(USdate);
 }
 
 
@@ -722,6 +760,9 @@ run_ui (void)
 				// set Unix time in seconds, save in eeprom
 				set_epoch_time ();
 				break;
+			case eUSDATE:
+				set_month_day(USdate);
+				break;
 			case eMANUAL:
 				if (gLoad == LOADOFF)
 					do_command (MANUALON);
@@ -742,6 +783,7 @@ run_ui (void)
 			eeprom_write_block ((const void *) &gIdleCurrent, (void *) &eeIdleCurrent, sizeof (gIdleCurrent));
 			eeprom_write_block ((const void *) &gShunt, (void *) &eeShunt, sizeof (gShunt));
 			eeprom_write_block ((const void *) &gPoles, (void *) &eePoles, sizeof (gPoles));
+			eeprom_write_block ((const void *) &USdate, (void *) &eeUSdate, sizeof (USdate));
 
 			mode = PAGEEDIT;
 			set_flash(field, false);

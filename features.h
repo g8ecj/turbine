@@ -33,3 +33,5 @@
 #define ddIdleCurrent       2         // idle current of controller, router etc
 #define ddAdjustTime        0         // clock adjuster
 
+#define ddUsdate            0         // default to Euro date format
+

@@ -238,6 +238,10 @@ Vars variables[eNUMVARS] = {
 };
 
 
+Vars daymonth[2] = {
+	{&gDAY, 1, 31, ddDAY, eDATE, int_inc},                // day
+	{&gMONTH, 1, 12, ddMONTH, eDATE, int_inc},               // month
+};
 
 
 
@@ -348,32 +352,21 @@ Screen control[] = {
 
 static Screen *screen_list[] = { screen1, screen2, screen3, system, setup1, setup2, setup3, control };
 
+
 void
 set_month_day(uint8_t us)
 {
-	Vars tmpA, tmpB;
 
-	// get whatever is in the variables array now
-	tmpA = variables[eDAY];
-	tmpB = variables[eMONTH];
-
-	// if we are unchanged now but want US dates then change it
-	if (variables[eDAY].value == &gDAY)
+	if (us)
 	{
-		if (us !=0)
-		{
-			variables[eDAY] = tmpB;
-			variables[eMONTH] = tmpA;
-		}
+		variables[eDAY] = daymonth[1];
+		variables[eMONTH] = daymonth[0];
 	}
 	// if already in US Date mode but want EURO mode then swap back
 	else
 	{
-		if (us == 0)
-		{
-			variables[eDAY] = tmpB;
-			variables[eMONTH] = tmpA;
-		}
+		variables[eDAY] = daymonth[0];
+		variables[eMONTH] = daymonth[1];
 	}
 }
 

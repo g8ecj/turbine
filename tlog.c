@@ -93,14 +93,16 @@ static void
 format_record (uint8_t event, char *buffer)
 {
 	float power;
-	uint8_t flags = event;
+	uint8_t flags = event, month, day;
+
+	get_month_day(&month, &day);
 
 	if (gLoad != LOADOFF)
 		flags |= LOG_LOAD;
 	if (gDump > 0)
 		flags |= LOG_SHUNT;
 
-	sprintf (buffer, "%02d-%02d-%02d %02d:%02d:%02d ", gDAY, gMONTH, gYEAR, gHOUR, gMINUTE, gSECOND);
+	sprintf (buffer, "%02d-%02d-%02d %02d:%02d:%02d ", day, month, gYEAR, gHOUR, gMINUTE, gSECOND);
 	sprintf (buffer + strlen (buffer), "E:%c L:%c S:%c F:%d ", flags & LOG_ERROR ? '1' : '0', flags & LOG_LOAD ? '1' : '0', flags & LOG_SHUNT ? '1' : '0', flags & LOG_MASK_VALUE);
 
 	sprintf (buffer + strlen (buffer), "D:%d T:%.*s%d.%02u C:%u ", gDump, gTemp < 0 ? 1 : 0, "-", abs (gTemp / 100), abs (gTemp % 100), gCharge);
@@ -454,10 +456,14 @@ process_command (char *command, uint8_t count)
 	{
 		int16_t t;
 		bool res = false;
+		uint8_t month, day;
+
+		get_month_day(&month, &day);
+
 		command += 4;
 		if (command[0] == '\0')
 		{
-			kfile_printf (&serial.fd, "%02d-%02d-%02d\r\n", gDAY, gMONTH, gYEAR);
+			kfile_printf (&serial.fd, "%02d-%02d-%02d\r\n", day, month, gYEAR);
 		}
 		else
 		{

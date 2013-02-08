@@ -331,9 +331,9 @@ Screen setup3[] = {
 	{eSHUNT, 1, 0, "Shunt", 6, 4},
 	{ePOLES, 1, 11, "Poles", 17, 2},
 	{eSELFDISCHARGE, 2, 0, "Leak", 6, 3},
-	{eIDLE_CURRENT, 2, 9, "Idle", 15, 5},
+	{eIDLE_CURRENT, 2, 10, "Idle", 15, 5},
 	{eADJUSTTIME, 3, 0, "Time", 6, 4},
-	{eUSDATE, 3, 9, "US date", 17, 3},
+	{eUSDATE, 3, 10, "Date", 15, 3},
 	{-2, 0, 0, "", 0, 0}
 };
 
@@ -369,6 +369,16 @@ set_month_day(uint8_t us)
 		variables[eMONTH] = daymonth[1];
 	}
 }
+
+void
+get_month_day (uint8_t *month, uint8_t *day)
+{
+
+	*month = (uint8_t)*variables[eMONTH].value;
+	*day = (uint8_t)*variables[eDAY].value;
+
+}
+
 
 void
 load_eeprom_values(void)

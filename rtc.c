@@ -202,7 +202,6 @@ run_rtc (void)
 		{
 			gMINUTE = 0;
 			gHOUR++;
-			set_epoch_time ();           // used to save time to eeprom
 
 			// if time adjustment is greater than 2 minutes a day then do it every hour
 			if (abs(gAdjustTime) >= 120)
@@ -245,6 +244,7 @@ run_rtc (void)
 					}
 				}
 			}
+			set_epoch_time ();           // used to save time to eeprom
 		}
 	}
 }

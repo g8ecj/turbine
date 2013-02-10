@@ -103,7 +103,6 @@ typedef struct vars
 Vars variables[eNUMVARS];
 float gVoffset = 1.03;
 ticks_t carosel_timer;
-void set_month_day(uint8_t us);
 
 static int8_t
 null_inc (int8_t field, int8_t dirn)
@@ -353,8 +352,7 @@ Screen control[] = {
 static Screen *screen_list[] = { screen1, screen2, screen3, system, setup1, setup2, setup3, control };
 
 
-void
-set_month_day(uint8_t us)
+static void set_month_day(uint8_t us)
 {
 
 	if (us)
@@ -370,8 +368,7 @@ set_month_day(uint8_t us)
 	}
 }
 
-void
-get_month_day (uint8_t *month, uint8_t *day)
+void get_month_day (uint8_t *month, uint8_t *day)
 {
 
 	*month = (uint8_t)*variables[eMONTH].value;
@@ -380,8 +377,7 @@ get_month_day (uint8_t *month, uint8_t *day)
 }
 
 
-void
-load_eeprom_values(void)
+void load_eeprom_values(void)
 {
 
 	eeprom_read_block ((void *) &gVupper, (const void *) &eeVupper, sizeof (gVupper));
@@ -588,8 +584,7 @@ static int8_t find_next_line (int8_t field, int8_t screen, int8_t dirn)
 
 
 // display the text and optional field for all lines on a screen
-static void
-print_screen (int8_t screen)
+static void print_screen (int8_t screen)
 {
 	int8_t i = 0;
 	Screen *scrn = screen_list[screen];
@@ -621,8 +616,7 @@ print_screen (int8_t screen)
 
 
 // scan through a few variables and check their limits to see if they should be flashing
-static void
-flag_warnings(void)
+static void flag_warnings(void)
 {
 	if ((gVolts < gVlower) || (gVolts > gAbsorbVolts))
 		set_flash(eVOLTS, true);
@@ -637,8 +631,7 @@ flag_warnings(void)
 }
 
 // used externally to verify that a value is within the correct range and set it if so.
-bool
-check_value(enum VARS var, int16_t value)
+bool check_value(enum VARS var, int16_t value)
 {
 	if ((value >= variables[var].min) && (value <= variables[var].max))
 	{
@@ -651,8 +644,7 @@ check_value(enum VARS var, int16_t value)
 }
 
 // initialise the module!
-void
-ui_init (void)
+void ui_init (void)
 {
 
 	lcd_hw_init ();
@@ -680,8 +672,7 @@ ui_init (void)
 
 
 
-void
-run_ui (void)
+void run_ui (void)
 {
 	static int8_t screen_number = 0, field = 0, mode = MONITOR;
 	static ticks_t backlight_timer, refresh_timer;

@@ -133,9 +133,9 @@ var_inc (int8_t field, int8_t dirn)
 {
 	(void) dirn;
 	if (*variables[field].value > 999)
-		return 100;
+		return 20;
 	if (*variables[field].value > 99)
-		return 10;
+		return 5;
 
 	return 1;
 }

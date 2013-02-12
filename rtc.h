@@ -20,6 +20,9 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
+#ifndef __RTC_H__
+#define __RTC_H__
+
 extern int16_t gSECOND;
 extern int16_t gMINUTE;
 extern int16_t gHOUR;
@@ -27,7 +30,17 @@ extern int16_t gDAY;
 extern int16_t gMONTH;
 extern int16_t gYEAR;
 extern int16_t gAdjustTime;
-extern int16_t EEMEM eeAdjustTime;
+
+typedef struct datetime
+{
+   uint16_t d;
+   uint16_t m;
+   uint16_t y;
+   uint16_t S;
+   uint16_t M;
+   uint16_t H;
+} DT_t;
+
 
 
 //  Function declarations
@@ -38,3 +51,4 @@ uint32_t time(void);
 void set_epoch_time(void);
 void get_datetime(uint16_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint8_t* min, uint8_t* sec);
 
+#endif

@@ -28,6 +28,7 @@
 #include <drv/timer.h>
 #include <avr/eeprom.h>
 
+#include "eeprommap.h"
 #include "rtc.h"
 
 
@@ -42,18 +43,6 @@ int16_t gAdjustTime;
 static volatile uint32_t Epoch;
 static volatile ticks_t LastTicks;
 
-typedef struct datetime
-{
-   uint16_t d;
-   uint16_t m;
-   uint16_t y;
-   uint16_t S;
-   uint16_t M;
-   uint16_t H;
-} DT_t;
-
-DT_t EEMEM eeDateTime;
-int16_t EEMEM eeAdjustTime;
 
 #define HOUR       0
 #define MINUTE     1

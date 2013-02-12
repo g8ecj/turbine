@@ -45,16 +45,6 @@ extern int16_t gFloatVolts;
 extern int16_t gBankSize;
 extern int16_t gMinCharge;
 
-extern int16_t EEMEM eeVupper;
-extern int16_t EEMEM eeVlower;
-extern int16_t EEMEM eeInverter;
-extern int16_t EEMEM eeAbsorbVolts;
-extern int16_t EEMEM eeFloatVolts;
-extern int16_t EEMEM eeBankSize;
-extern int16_t EEMEM eeMinCharge;
-
-
-
 
 void control_init (void);
 void run_control (void);

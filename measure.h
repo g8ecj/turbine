@@ -44,12 +44,6 @@ extern int16_t gIdleCurrent;
 extern float gVoffset;
 extern int16_t gVoltage;
 
-extern float EEMEM eeVoffset;
-extern int16_t EEMEM eeVoltage;
-extern uint32_t EEMEM eeSelfLeakTime;
-extern uint16_t EEMEM eeSelfDischarge;
-extern int16_t EEMEM eeIdleCurrent;
-extern int16_t EEMEM eeShunt;
 
 void measure_init (void);
 void run_measure (void);

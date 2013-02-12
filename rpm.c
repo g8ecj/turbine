@@ -32,6 +32,7 @@
 #include "median.h"
 #include "minmax.h"
 #include "rtc.h"
+#include "eeprommap.h"
 #include "rpm.h"
 
 
@@ -39,7 +40,6 @@
 uint16_t gPeriod;
 int16_t gRPM, gMaxRPM;
 int16_t gPoles;
-int16_t EEMEM eePoles;
 
 MEDIAN RpmMedian;
 MINMAX hourmax;

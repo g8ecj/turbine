@@ -41,6 +41,7 @@
 #include "features.h"
 #include "rtc.h"
 #include "measure.h"
+#include "eeprommap.h"
 #include "control.h"
 
 extern Serial serial;
@@ -56,15 +57,6 @@ int16_t gDump;
 int16_t gInverter;
 int16_t gBankSize;
 int16_t gMinCharge;
-
-
-int16_t EEMEM eeVupper;
-int16_t EEMEM eeVlower;
-int16_t EEMEM eeAbsorbVolts;
-int16_t EEMEM eeFloatVolts;
-int16_t EEMEM eeInverter;
-int16_t EEMEM eeBankSize;
-int16_t EEMEM eeMinCharge;
 
 
 int16_t TargetC;

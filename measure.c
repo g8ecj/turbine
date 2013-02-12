@@ -44,6 +44,7 @@
 #include "control.h"
 #include "median.h"
 #include "minmax.h"
+#include "eeprommap.h"
 #include "measure.h"
 
 extern Serial serial;
@@ -81,16 +82,6 @@ CTX2438_t Result;
 
 uint8_t ids[4][OW_ROMCODE_SIZE];	// only expect to find up to 3 actually!!
 int8_t battid = -1, gpioid = -1, thermid = -1;
-
-
-int16_t EEMEM eecharge;
-int16_t EEMEM eeVoltage;
-float EEMEM eeVoffset;
-uint32_t EEMEM eeSelfLeakTime;
-uint16_t EEMEM eeSelfDischarge;
-int16_t EEMEM eeIdleCurrent;
-int16_t EEMEM eeidletotal;
-int16_t EEMEM eeShunt;
 
 
 char ToggleState(uint8_t * id, uint8_t state);
@@ -132,7 +123,7 @@ measure_init(void)
 	if (battid >= 0)                // see if a DS2438 chip is present
 	{
 		// load last saved charge value from eeprom
-		eeprom_read_block((void *) &gCharge, (const void *) &eecharge, sizeof(gCharge));
+		eeprom_read_block((void *) &gCharge, (const void *) &eeCharge, sizeof(gCharge));
 		// set mode and init expanded charge handler
 		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 	}
@@ -143,11 +134,17 @@ measure_init(void)
 int
 do_calibration(void)
 {
-	uint32_t discharge_time;
+	uint32_t discharge_time, t;
 
-	// reset leak adjustment time
-	discharge_time = time();
-	eeprom_write_block((const void *) &discharge_time, (void *) &eeSelfLeakTime, sizeof(discharge_time));
+	// see if stored value is in reasonable range
+	eeprom_read_block((void *) &discharge_time, (const void *) &eeSelfLeakTime, sizeof(discharge_time));
+	t = time();
+	if ((uint32_t)abs(discharge_time - t) > (uint32_t) 99 * 3600 * 24)
+	{
+		// reset leak adjustment time
+		discharge_time = time();
+		eeprom_write_block((const void *) &discharge_time, (void *) &eeSelfLeakTime, sizeof(discharge_time));
+	}
 	// add a known offset to account for the current the controller & other bits draws
 	return ow_ds2438_calibrate(ids[battid], &Result, 0);
 }
@@ -179,7 +176,7 @@ set_charge(uint16_t value)
 {
 	gCharge = value;
 	ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
-	eeprom_write_block((const void *) &gCharge, (void *) &eecharge, sizeof(gCharge));
+	eeprom_write_block((const void *) &gCharge, (void *) &eeCharge, sizeof(gCharge));
 }
 
 
@@ -270,7 +267,7 @@ run_measure(void)
 	if (abs(lastcharge - gCharge) > 20)
 	{
 		lastcharge = gCharge;
-		eeprom_write_block((const void *) &gCharge, (void *) &eecharge, sizeof(gCharge));
+		eeprom_write_block((const void *) &gCharge, (void *) &eeCharge, sizeof(gCharge));
 	}
 
 	// pessimistically assume 1% loss of battery charge per unit time - units in days
@@ -342,7 +339,7 @@ run_measure(void)
 
 		// once per hour save the charge level into eeprom
 		lastcharge = gCharge;
-		eeprom_write_block((const void *) &gCharge, (void *) &eecharge, sizeof(gCharge));
+		eeprom_write_block((const void *) &gCharge, (void *) &eeCharge, sizeof(gCharge));
 	}
 
 	gMaxday = minmax_get(&daymax, gMaxhour);
@@ -357,7 +354,7 @@ run_measure(void)
 		gCharge -= gIdleCurrent * 24 / 100;
 		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 		// keep a running total of idle current until its big enough to influence DCA register
-		eeprom_read_block((void *) &total_idle, (const void *) &eeidletotal, sizeof(total_idle));
+		eeprom_read_block((void *) &total_idle, (const void *) &eeIdleTotal, sizeof(total_idle));
 		total_idle += gIdleCurrent * 24 / 100;
 		if (total_idle > 64)
 		{
@@ -366,7 +363,7 @@ run_measure(void)
 			ow_ds2438_setCCADCA(ids[battid], &Result);
 			total_idle = 0;
 		}
-		eeprom_write_block((const void *) &total_idle, (void *) &eeidletotal, sizeof(total_idle));
+		eeprom_write_block((const void *) &total_idle, (void *) &eeIdleTotal, sizeof(total_idle));
 	}
 
 }

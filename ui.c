@@ -55,6 +55,7 @@
 #include "rpm.h"
 #include "tlog.h"
 #include "rtc.h"
+#include "eeprommap.h"
 #include "ui.h"
 
 
@@ -82,7 +83,6 @@ extern Serial serial;
 static Term term;
 
 int16_t USdate;
-int16_t EEMEM eeUSdate;
 
 typedef int8_t (*IncFunc_t) (int8_t field, int8_t dirn);
 

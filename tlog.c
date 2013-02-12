@@ -461,14 +461,15 @@ process_command (char *command, uint8_t count)
 		get_month_day(&month, &day);
 
 		command += 4;
+		while (*command == ' ')
+			command++;
+
 		if (command[0] == '\0')
 		{
 			kfile_printf (&serial.fd, "%02d-%02d-%02d\r\n", day, month, gYEAR);
 		}
 		else
 		{
-			while (*command == ' ')
-				command++;
 			// parse date
 			command = get_decimal (command, &t);
 			res |= check_value (eDAY, t);
@@ -487,15 +488,18 @@ process_command (char *command, uint8_t count)
 	{
 		int16_t t;
 		bool res = false;
+
+		// skip command string
 		command += 4;
+		// skip whitespace
+		while (*command == ' ')
+			command++;
 		if (command[0] == '\0')
 		{
 			kfile_printf (&serial.fd, "%02d:%02d:%02d\r\n", gHOUR, gMINUTE, gSECOND);
 		}
 		else
 		{
-			while (*command == ' ')
-				command++;
 			// parse time
 			command = get_decimal (command, &t);
 			res |= check_value (eHOUR, t);

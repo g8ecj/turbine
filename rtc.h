@@ -27,6 +27,7 @@ extern int16_t gDAY;
 extern int16_t gMONTH;
 extern int16_t gYEAR;
 extern int16_t gAdjustTime;
+extern int16_t EEMEM eeAdjustTime;
 
 
 //  Function declarations

@@ -751,8 +751,9 @@ void run_ui (void)
 			case eMONTH:
 			case eYEAR:
 			case eADJUSTTIME:
-				// set Unix time in seconds, save in eeprom
+				// set Unix time in seconds, save adjustment in eeprom
 				set_epoch_time ();
+				eeprom_write_block ((const void *) &gAdjustTime, (void *) &eeAdjustTime, sizeof (gAdjustTime));
 				break;
 			case eUSDATE:
 				set_month_day(USdate);

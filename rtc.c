@@ -107,7 +107,6 @@ set_epoch_time (void)
 	DateTime.m = gMONTH;
 	DateTime.y = gYEAR;
 	eeprom_write_block ((const void *) &DateTime, (void *) &eeDateTime, sizeof (DateTime));
-	eeprom_write_block ((const void *) &gAdjustTime, (void *) &eeAdjustTime, sizeof (gAdjustTime));
 
 }
 

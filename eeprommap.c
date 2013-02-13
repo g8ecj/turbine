@@ -21,46 +21,51 @@
 
 // include files
 
+#include "eeprommap.h"
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <avr/eeprom.h>
 
+#include "control.h"
+#include "measure.h"
+#include "rpm.h"
 #include "rtc.h"
+#include "ui.h"
 
 // these variables are all in one place so that if another is added, we don't 
 // loose the existing value provided new stuff is *ALWAYS* added to the end
 
 
-// configurated max voltage
+// configured max voltage
 int16_t EEMEM eeVupper;
-// configurated min voltage
+// configured min voltage
 int16_t EEMEM eeVlower;
-// configurated absorb voltage
+// configured absorb voltage
 int16_t EEMEM eeAbsorbVolts;
-// configurated float voltage
+// configured float voltage
 int16_t EEMEM eeFloatVolts;
-// configurated inverter control
+// configured inverter control
 int16_t EEMEM eeInverter;
-// configurated battery bank size
+// configured battery bank size
 int16_t EEMEM eeBankSize;
-// configurated min charge level to discharge to in auto mode
+// configured min charge level to discharge to in auto mode
 int16_t EEMEM eeMinCharge;
-// configurated system voltage to nearest 6 volts
+// configured system voltage to nearest 6 volts
 int16_t EEMEM eeVoltage;
 // multiplier used to calibrate voltage readings
 float EEMEM eeVoffset;
-// configurated shunt resistor value in Siemens
+// configured shunt resistor value in Siemens
 int16_t EEMEM eeShunt;
-// configurated number of poles in the generator (used for RPM measurement
+// configured number of poles in the generator (used for RPM measurement
 int16_t EEMEM eePoles;
-// configurated number of seconds per day to adjust clock for slow/fast 16MHz crystal
+// configured number of seconds per day to adjust clock for slow/fast 16MHz crystal
 int16_t EEMEM eeAdjustTime;
-// configurated value in amps of all the control circuitry (controller on its own is 3!)
+// configured value in amps of all the control circuitry (controller on its own is 3!)
 int16_t EEMEM eeIdleCurrent;
-// configurated day/month order for US or Euro display
+// configured day/month order for US or Euro display
 int16_t EEMEM eeUSdate;
-// configurated time in days for batteries to self discharge 1%
+// configured time in days for batteries to self discharge 1%
 uint16_t EEMEM eeSelfDischarge;
 
 
@@ -73,4 +78,43 @@ int16_t EEMEM eeIdleTotal;
 // date and time stored when set and every hour so clock isn't too far out after a reset
 DT_t EEMEM eeDateTime;
 
+void load_eeprom_values(void)
+{
 
+	eeprom_read_block ((void *) &gVupper, (const void *) &eeVupper, sizeof (gVupper));
+	eeprom_read_block ((void *) &gVlower, (const void *) &eeVlower, sizeof (gVlower));
+	eeprom_read_block ((void *) &gAbsorbVolts, (const void *) &eeAbsorbVolts, sizeof (gAbsorbVolts));
+	eeprom_read_block ((void *) &gFloatVolts, (const void *) &eeFloatVolts, sizeof (gFloatVolts));
+	eeprom_read_block ((void *) &gBankSize, (const void *) &eeBankSize, sizeof (gBankSize));
+	eeprom_read_block ((void *) &gMinCharge, (const void *) &eeMinCharge, sizeof (gMinCharge));
+	eeprom_read_block ((void *) &gVoffset, (const void *) &eeVoffset, sizeof (gVoffset));
+	eeprom_read_block ((void *) &gVoltage, (const void *) &eeVoltage, sizeof (gVoltage));
+	eeprom_read_block ((void *) &gInverter, (const void *) &eeInverter, sizeof (gInverter));
+	eeprom_read_block ((void *) &gSelfDischarge, (const void *) &eeSelfDischarge, sizeof (gSelfDischarge));
+	eeprom_read_block ((void *) &gIdleCurrent, (const void *) &eeIdleCurrent, sizeof (gIdleCurrent));
+	eeprom_read_block ((void *) &gShunt, (const void *) &eeShunt, sizeof (gShunt));
+	eeprom_read_block ((void *) &gPoles, (const void *) &eePoles, sizeof (gPoles));
+	eeprom_read_block ((void *) &gUSdate, (const void *) &eeUSdate, sizeof (gUSdate));
+	eeprom_read_block ((void *) &gAdjustTime, (const void *) &eeAdjustTime, sizeof (gAdjustTime));
+
+}
+
+void save_eeprom_values(void)
+{
+	eeprom_write_block ((const void *) &gVupper, (void *) &eeVupper, sizeof (gVupper));
+	eeprom_write_block ((const void *) &gVlower, (void *) &eeVlower, sizeof (gVlower));
+	eeprom_write_block ((const void *) &gAbsorbVolts, (void *) &eeAbsorbVolts, sizeof (gAbsorbVolts));
+	eeprom_write_block ((const void *) &gFloatVolts, (void *) &eeFloatVolts, sizeof (gFloatVolts));
+	eeprom_write_block ((const void *) &gBankSize, (void *) &eeBankSize, sizeof (gBankSize));
+	eeprom_write_block ((const void *) &gMinCharge, (void *) &eeMinCharge, sizeof (gMinCharge));
+	eeprom_write_block ((const void *) &gVoffset, (void *) &eeVoffset, sizeof (gVoffset));
+	eeprom_write_block ((const void *) &gVoltage, (void *) &eeVoltage, sizeof (gVoltage));
+	eeprom_write_block ((const void *) &gInverter, (void *) &eeInverter, sizeof (gInverter));
+	eeprom_write_block ((const void *) &gSelfDischarge, (void *) &eeSelfDischarge, sizeof (gSelfDischarge));
+	eeprom_write_block ((const void *) &gIdleCurrent, (void *) &eeIdleCurrent, sizeof (gIdleCurrent));
+	eeprom_write_block ((const void *) &gShunt, (void *) &eeShunt, sizeof (gShunt));
+	eeprom_write_block ((const void *) &gPoles, (void *) &eePoles, sizeof (gPoles));
+	eeprom_write_block ((const void *) &gUSdate, (void *) &eeUSdate, sizeof (gUSdate));
+	eeprom_write_block ((const void *) &gAdjustTime, (void *) &eeAdjustTime, sizeof (gAdjustTime));
+
+}

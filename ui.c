@@ -82,7 +82,7 @@ static int8_t flashing[MAXFLASH];
 extern Serial serial;
 static Term term;
 
-int16_t USdate;
+int16_t gUSdate;
 
 typedef int8_t (*IncFunc_t) (int8_t field, int8_t dirn);
 
@@ -233,7 +233,7 @@ Vars variables[eNUMVARS] = {
 	{&gSelfDischarge, 1, 90, ddSelfDischarge, eNORMAL, int_inc},     // battery leakage in days for 1% loss
 	{&gIdleCurrent, 0, 999, ddIdleCurrent, eDECIMAL, int_inc},     // idle current of controller, router etc
 	{&gAdjustTime, -999, 999, ddAdjustTime, eNORMAL, int_inc},    // clock adjuster
-	{&USdate, 0, 1, ddUsdate, eTRILEAN, int_inc},          // date format
+	{&gUSdate, 0, 1, ddUsdate, eTRILEAN, int_inc},          // date format
 };
 
 
@@ -377,26 +377,6 @@ void get_month_day (uint8_t *month, uint8_t *day)
 }
 
 
-void load_eeprom_values(void)
-{
-
-	eeprom_read_block ((void *) &gVupper, (const void *) &eeVupper, sizeof (gVupper));
-	eeprom_read_block ((void *) &gVlower, (const void *) &eeVlower, sizeof (gVlower));
-	eeprom_read_block ((void *) &gAbsorbVolts, (const void *) &eeAbsorbVolts, sizeof (gAbsorbVolts));
-	eeprom_read_block ((void *) &gFloatVolts, (const void *) &eeFloatVolts, sizeof (gFloatVolts));
-	eeprom_read_block ((void *) &gBankSize, (const void *) &eeBankSize, sizeof (gBankSize));
-	eeprom_read_block ((void *) &gMinCharge, (const void *) &eeMinCharge, sizeof (gMinCharge));
-	eeprom_read_block ((void *) &gVoffset, (const void *) &eeVoffset, sizeof (gVoffset));
-	eeprom_read_block ((void *) &gVoltage, (const void *) &eeVoltage, sizeof (gVoltage));
-	eeprom_read_block ((void *) &gInverter, (const void *) &eeInverter, sizeof (gInverter));
-	eeprom_read_block ((void *) &gSelfDischarge, (const void *) &eeSelfDischarge, sizeof (gSelfDischarge));
-	eeprom_read_block ((void *) &gIdleCurrent, (const void *) &eeIdleCurrent, sizeof (gIdleCurrent));
-	eeprom_read_block ((void *) &gShunt, (const void *) &eeShunt, sizeof (gShunt));
-	eeprom_read_block ((void *) &gPoles, (const void *) &eePoles, sizeof (gPoles));
-	eeprom_read_block ((void *) &USdate, (const void *) &eeUSdate, sizeof (USdate));
-
-	set_month_day(USdate);
-}
 
 
 void set_flash(int8_t field, int8_t set)
@@ -657,6 +637,7 @@ void ui_init (void)
 	kbd_setRepeatMask(K_UP | K_DOWN);
 #endif
 	carosel_timer = timer_clock ();
+	set_month_day(gUSdate);
 
 }
 
@@ -753,10 +734,9 @@ void run_ui (void)
 			case eADJUSTTIME:
 				// set Unix time in seconds, save adjustment in eeprom
 				set_epoch_time ();
-				eeprom_write_block ((const void *) &gAdjustTime, (void *) &eeAdjustTime, sizeof (gAdjustTime));
 				break;
 			case eUSDATE:
-				set_month_day(USdate);
+				set_month_day(gUSdate);
 				break;
 			case eMANUAL:
 				if (gLoad == LOADOFF)
@@ -765,20 +745,7 @@ void run_ui (void)
 					do_command (MANUALOFF);
 				break;
 			}
-			eeprom_write_block ((const void *) &gVupper, (void *) &eeVupper, sizeof (gVupper));
-			eeprom_write_block ((const void *) &gVlower, (void *) &eeVlower, sizeof (gVlower));
-			eeprom_write_block ((const void *) &gAbsorbVolts, (void *) &eeAbsorbVolts, sizeof (gAbsorbVolts));
-			eeprom_write_block ((const void *) &gFloatVolts, (void *) &eeFloatVolts, sizeof (gFloatVolts));
-			eeprom_write_block ((const void *) &gBankSize, (void *) &eeBankSize, sizeof (gBankSize));
-			eeprom_write_block ((const void *) &gMinCharge, (void *) &eeMinCharge, sizeof (gMinCharge));
-			eeprom_write_block ((const void *) &gVoffset, (void *) &eeVoffset, sizeof (gVoffset));
-			eeprom_write_block ((const void *) &gVoltage, (void *) &eeVoltage, sizeof (gVoltage));
-			eeprom_write_block ((const void *) &gInverter, (void *) &eeInverter, sizeof (gInverter));
-			eeprom_write_block ((const void *) &gSelfDischarge, (void *) &eeSelfDischarge, sizeof (gSelfDischarge));
-			eeprom_write_block ((const void *) &gIdleCurrent, (void *) &eeIdleCurrent, sizeof (gIdleCurrent));
-			eeprom_write_block ((const void *) &gShunt, (void *) &eeShunt, sizeof (gShunt));
-			eeprom_write_block ((const void *) &gPoles, (void *) &eePoles, sizeof (gPoles));
-			eeprom_write_block ((const void *) &USdate, (void *) &eeUSdate, sizeof (USdate));
+			save_eeprom_values();
 
 			mode = PAGEEDIT;
 			set_flash(field, false);

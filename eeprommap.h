@@ -21,6 +21,8 @@
 
 // include files
 
+#ifndef _EEPROMMAP_H_
+#define _EEPROMMAP_H_
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -69,5 +71,10 @@ extern uint32_t EEMEM eeSelfLeakTime;
 extern int16_t EEMEM eeIdleTotal;
 // date and time stored when set and every hour so clock isn't too far out after a reset
 extern DT_t EEMEM eeDateTime;
+
+void load_eeprom_values(void);
+void save_eeprom_values(void);
+
+#endif
 
 

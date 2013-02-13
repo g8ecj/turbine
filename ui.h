@@ -72,13 +72,13 @@ enum VARS
 	eNUMVARS
 };
 
+extern int16_t gUSdate;
 
 
 void ui_init(void);
 void run_ui(void);
 void set_flash(int8_t field, int8_t set);
 bool check_value(enum VARS var, int16_t value);
-void load_eeprom_values(void);
 void get_month_day (uint8_t *month, uint8_t *day);
 
 #endif

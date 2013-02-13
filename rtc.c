@@ -130,7 +130,6 @@ rtc_init (void)
 
 	// initial time and date setting
 	eeprom_read_block ((void *) &DateTime, (const void *) &eeDateTime, sizeof (DateTime));
-	eeprom_read_block ((void *) &gAdjustTime, (const void *) &eeAdjustTime, sizeof (gAdjustTime));
 	gSECOND = DateTime.S;
 	gMINUTE = DateTime.M;
 	gHOUR = DateTime.H;

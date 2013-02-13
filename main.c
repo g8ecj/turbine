@@ -34,6 +34,7 @@
 
 #include "features.h"
 
+#include "eeprommap.h"
 #include "measure.h"
 #include "control.h"
 #include "tlog.h"

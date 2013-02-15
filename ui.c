@@ -188,52 +188,52 @@ enum STYLE
 //   value,    min,      max, default, style,   increment function
 // Note: Its only worth having (real) limits for those values that can be changed.
 Vars variables[eNUMVARS] = {
-	{NULL,     0,    0,    0,  eNORMAL, null_inc},      // dummy 1st entry
-	{&gVolts , 0,    0,    0, eDECIMAL, null_inc},      // volts
-	{&gCharge, 0,    0,    0,  eNORMAL, null_inc},      // charge
-	{&gPower,  0,    0,    0,  eNORMAL, null_inc},      // power
+	{NULL,     0,    0,    0,  eNORMAL, null_inc},       // dummy 1st entry
+	{&gVolts , 0,    0,    0, eDECIMAL, null_inc},       // volts
+	{&gCharge, 0,    0,    0,  eNORMAL, null_inc},       // charge
+	{&gPower,  0,    0,    0,  eNORMAL, null_inc},       // power
 
-	{&gAmps,   0,    0,    0, eDECIMAL, null_inc},      // amps
-	{&gDump,   0,    0,    0,  eNORMAL, null_inc},      // shunt regulator (dump load)
-	{&gRPM,    0,    0,    0,  eNORMAL, null_inc},      // rpm
+	{&gAmps,   0,    0,    0, eDECIMAL, null_inc},       // amps
+	{&gDump,   0,    0,    0,  eNORMAL, null_inc},       // shunt regulator (dump load)
+	{&gRPM,    0,    0,    0,  eNORMAL, null_inc},       // rpm
 
-	{&gMaxhour, 0, 0, 0, eNORMAL, null_inc},            // max hours
-	{&gMaxday,  0, 0, 0, eNORMAL, null_inc},            // max day
-	{&gMinhour, 0, 0, 0, eNORMAL, null_inc},            // min hours
-	{&gMinday,  0, 0, 0, eNORMAL, null_inc},            // min day
+	{&gMaxhour, 0, 0, 0, eNORMAL, null_inc},             // max hours
+	{&gMaxday,  0, 0, 0, eNORMAL, null_inc},             // max day
+	{&gMinhour, 0, 0, 0, eNORMAL, null_inc},             // min hours
+	{&gMinday,  0, 0, 0, eNORMAL, null_inc},             // min day
 	{(int16_t *) & gCCA, 0, 65535, 0, eLARGE, null_inc}, // total
 	{(int16_t *) & gDCA, 0, 65535, 0, eLARGE, null_inc}, // used
 
-	{&gTemp,    0,    0,   0, eDECIMAL, null_inc},      // temperature
+	{&gTemp,    0,    0,   0, eDECIMAL, null_inc},       // temperature
 
-	{&gVlower, 2000, 2400, ddVlower, eDECIMAL, deca_inc},   // volt limit low
-	{&gVupper, 2600, 3200, ddVupper, eDECIMAL, deca_inc},   // volt limit high
-	{&gFloatVolts, 2600, 3200, ddFloatVolts, eDECIMAL, deca_inc}, // shunt volt low
+	{&gVlower, 2000, 2400, ddVlower, eDECIMAL, deca_inc},           // volt limit low
+	{&gVupper, 2600, 3200, ddVupper, eDECIMAL, deca_inc},           // volt limit high
+	{&gFloatVolts, 2600, 3200, ddFloatVolts, eDECIMAL, deca_inc},   // shunt volt low
 	{&gAbsorbVolts, 2600, 3200, ddAbsorbVolts, eDECIMAL, deca_inc}, // shunt volt high
 
-	{&gBankSize, 10, 9999, ddBankSize, eNORMAL, var_inc},      // charge high
-	{&gMinCharge, 10, 9999, ddMinCharge, eNORMAL, var_inc},      // charge low
-	{&gCharge, 0, 9999, ddCharge, eNORMAL, var_inc},        // sync
+	{&gBankSize, 10, 9999, ddBankSize, eNORMAL, var_inc},           // charge high
+	{&gMinCharge, 10, 9999, ddMinCharge, eNORMAL, var_inc},         // charge low
+	{&gCharge, 0, 9999, ddCharge, eNORMAL, var_inc},                // sync
 
-	{&gVoltage, 6, 48, ddVoltage, eNORMAL, six_inc},          // system voltage
-	{&gVolts,   0,  0,  0, eDECIMAL, cal_inc},         // calibrate
+	{&gVoltage, 6, 48, ddVoltage, eNORMAL, six_inc},                // system voltage
+	{&gVolts,   0,  0,  0, eDECIMAL, cal_inc},                      // calibrate
 
-	{&gHOUR, 0, 23, ddHOUR, eDATE, int_inc},               // hour
-	{&gMINUTE, 0, 59, ddMINUTE, eDATE, int_inc},              // minute
-	{&gSECOND, 0, 59, ddSECOND, eDATE, int_inc},              // second
-	{&gDAY, 1, 31, ddDAY, eDATE, int_inc},                // day
-	{&gMONTH, 1, 12, ddMONTH, eDATE, int_inc},               // month
-	{&gYEAR, 12, 99, ddYEAR, eDATE, int_inc},              // year
+	{&gHOUR, 0, 23, ddHOUR, eDATE, int_inc},                        // hour
+	{&gMINUTE, 0, 59, ddMINUTE, eDATE, int_inc},                    // minute
+	{&gSECOND, 0, 59, ddSECOND, eDATE, int_inc},                    // second
+	{&gDAY, 1, 31, ddDAY, eDATE, int_inc},                          // day
+	{&gMONTH, 1, 12, ddMONTH, eDATE, int_inc},                      // month
+	{&gYEAR, 12, 99, ddYEAR, eDATE, int_inc},                       // year
 
-	{&gInverter, 0, 2, ddInverter, eTRILEAN, int_inc},          // control active
-	{&gLoad, 0, 1, ddLoad, eTRILEAN, int_inc},              // manual on/off
+	{&gInverter, 0, 2, ddInverter, eTRILEAN, int_inc},              // control active
+	{&gLoad, 0, 1, ddLoad, eTRILEAN, int_inc},                      // manual on/off
 
-	{&gShunt, 0, 9999, ddShunt, eNORMAL, int_inc},        // shunt conductance in Siemens
-	{&gPoles, 0, 99, ddPoles, eNORMAL, int_inc},             // magnetic poles in generator
-	{&gSelfDischarge, 1, 90, ddSelfDischarge, eNORMAL, int_inc},     // battery leakage in days for 1% loss
-	{&gIdleCurrent, 0, 999, ddIdleCurrent, eDECIMAL, int_inc},     // idle current of controller, router etc
-	{&gAdjustTime, -999, 999, ddAdjustTime, eNORMAL, int_inc},    // clock adjuster
-	{&gUSdate, 0, 1, ddUsdate, eTRILEAN, int_inc},          // date format
+	{&gShunt, 0, 9999, ddShunt, eNORMAL, int_inc},                  // shunt conductance in Siemens
+	{&gPoles, 0, 99, ddPoles, eNORMAL, int_inc},                    // magnetic poles in generator
+	{&gSelfDischarge, 1, 90, ddSelfDischarge, eNORMAL, int_inc},    // battery leakage in days for 1% loss
+	{&gIdleCurrent, 0, 999, ddIdleCurrent, eDECIMAL, int_inc},      // idle current of controller, router etc
+	{&gAdjustTime, -719, 719, ddAdjustTime, eNORMAL, int_inc},      // clock adjuster
+	{&gUSdate, 0, 1, ddUsdate, eTRILEAN, int_inc},                  // date format
 };
 
 

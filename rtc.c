@@ -167,6 +167,7 @@ run_rtc (void)
 {
 	int8_t LeapMonth;
 	int32_t diff;
+	static int16_t lastHour = 0;
 
 	// find out how far off the exact number of ticks we are
 	diff = timer_clock () - LastTicks - ms_to_ticks (1000);
@@ -190,24 +191,10 @@ run_rtc (void)
 			gMINUTE = 0;
 			gHOUR++;
 
-			// if time adjustment is greater than 2 minutes a day then do it every hour
-			if (abs(gAdjustTime) >= 120)
-			{
-				gSECOND += (gAdjustTime / 24) % 60;
-				gMINUTE += (gAdjustTime / 24) / 60;
-			}
-
 			if (gHOUR > 23)
 			{
 				gHOUR = 0;
 				gDAY++;
-
-				// if time adjustment is less than 2 minutes a day then do it every day
-				if (abs(gAdjustTime) < 120)
-				{
-					gSECOND += gAdjustTime % 60;
-					gMINUTE += gAdjustTime / 60;
-				}
 
 				// Check for leap year if month == February
 				if (gMONTH == 2)
@@ -230,6 +217,18 @@ run_rtc (void)
 						gYEAR++;
 					}
 				}
+			}
+			// still looking at the top of the hour but everything has been updated by now
+			// adjust time for slow/fast crystal every hour when minutes are zero and seconds are half way
+			// this allows 30 * 24 seconds adjustment per day (i.e. +/- 720) without messing with minute under/overruns
+			// remember at what hour we did any change so we only do it once!
+			if ((gMINUTE == 0) && (gSECOND == 30) && (lastHour != gHOUR))
+			{
+				gSECOND += (gAdjustTime / 24) % 60;
+				lastHour = gHOUR;
+				// once a day adjust time for any remaining seconds where hourly changes loose resolution
+				if (gHOUR == 0)
+					gSECOND += gAdjustTime % 24;
 			}
 			set_epoch_time ();           // used to save time to eeprom
 		}

@@ -218,19 +218,26 @@ run_rtc (void)
 					}
 				}
 			}
-			// still looking at the top of the hour but everything has been updated by now
-			// adjust time for slow/fast crystal every hour when minutes are zero and seconds are half way
-			// this allows 30 * 24 seconds adjustment per day (i.e. +/- 720) without messing with minute under/overruns
-			// remember at what hour we did any change so we only do it once!
-			if ((gMINUTE == 0) && (gSECOND == 30) && (lastHour != gHOUR))
-			{
-				gSECOND += (gAdjustTime / 24) % 60;
-				lastHour = gHOUR;
-				// once a day adjust time for any remaining seconds where hourly changes loose resolution
-				if (gHOUR == 0)
-					gSECOND += gAdjustTime % 24;
-			}
-			set_epoch_time ();           // used to save time to eeprom
+			// save time to eeprom on the hour
+			set_epoch_time ();
+		}
+	}
+
+	// still looking at the top of the hour but everything has been updated by now
+	// adjust time for slow/fast crystal every hour when minutes are zero and seconds are half way
+	// this allows 30 * 24 seconds adjustment per day (i.e. +/- 720) without messing with minute under/overruns
+	// remember at what hour we did any change so we only do it once!
+	if ((gMINUTE == 0) && (gSECOND == 30) && (lastHour != gHOUR))
+	{
+		int16_t a;
+		a = gAdjustTime / 24;
+		gSECOND += a;
+		lastHour = gHOUR;
+		// once a day adjust time for any remaining seconds where hourly changes loose resolution
+		if (gHOUR == 0)
+		{
+			a = gAdjustTime % 24;
+			gSECOND += a;
 		}
 	}
 }

@@ -229,15 +229,12 @@ run_rtc (void)
 	// remember at what hour we did any change so we only do it once!
 	if ((gMINUTE == 0) && (gSECOND == 30) && (lastHour != gHOUR))
 	{
-		int16_t a;
-		a = gAdjustTime / 24;
-		gSECOND += a;
+		gSECOND += gAdjustTime / 24;
 		lastHour = gHOUR;
 		// once a day adjust time for any remaining seconds where hourly changes loose resolution
 		if (gHOUR == 0)
 		{
-			a = gAdjustTime % 24;
-			gSECOND += a;
+			gSECOND += gAdjustTime % 24;
 		}
 	}
 }

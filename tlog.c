@@ -415,6 +415,11 @@ process_command (char *command, uint8_t count)
 		log_print (LOG_NULL);
 	}
 
+	else if (strncmp (command, "init", 4) == 0)	// first time init
+	{
+		do_first_init();
+	}
+
 	else if (strncmp (command, "dcs", 3) == 0)	// set the ratio of the DCS and CCS registers as a % value (0-99)
 	{
 		int16_t p = 0, b = 0;
@@ -588,6 +593,8 @@ process_command (char *command, uint8_t count)
 		kfile_printf(&serial.fd, "Voltage limits   %d.%02u - %d.%02u\r\n", gVlower / 100, gVlower % 100, gVupper / 100, gVupper % 100);
 		kfile_printf(&serial.fd, "Float Absorb     %d.%02u - %d.%02u\r\n", gFloatVolts / 100, gFloatVolts % 100, gAbsorbVolts / 100, gAbsorbVolts % 100);
 		kfile_printf(&serial.fd, "Charge limits    %d - %d\r\n", gMinCharge,  gBankSize);
+		kfile_printf(&serial.fd, "Self Discharge   %d - %lu/%lu(%lu)\r\n", gSelfDischarge, self_discharge_time, self_discharge_time + (uint32_t) ((float)gSelfDischarge * 3600.0 * 24.0), time());
+
 #if DEBUG > 0
 extern uint16_t StackCount(void);
 		kfile_printf(&serial.fd, "Stack free       %d\r\n", StackCount());

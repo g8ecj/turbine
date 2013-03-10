@@ -78,7 +78,7 @@ int16_t gIdleCurrent;
 
 CTX2438_t Result;
 
-
+uint32_t self_discharge_time;
 
 uint8_t ids[4][OW_ROMCODE_SIZE];	// only expect to find up to 3 actually!!
 int8_t battid = -1, gpioid = -1, thermid = -1;
@@ -127,6 +127,8 @@ measure_init(void)
 		// set mode and init expanded charge handler
 		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 	}
+	// load last saved discharge time from eeprom
+	eeprom_read_block((void *) &self_discharge_time, (const void *) &eeSelfLeakTime, sizeof(self_discharge_time));
 
 }
 
@@ -134,20 +136,11 @@ measure_init(void)
 int
 do_calibration(void)
 {
-	uint32_t discharge_time, t;
 
-	// see if stored value is in reasonable range
-	eeprom_read_block((void *) &discharge_time, (const void *) &eeSelfLeakTime, sizeof(discharge_time));
-	t = time();
-	if ((uint32_t)abs(discharge_time - t) > (uint32_t) 99 * 3600 * 24)
-	{
-		// reset leak adjustment time
-		discharge_time = time();
-		eeprom_write_block((const void *) &discharge_time, (void *) &eeSelfLeakTime, sizeof(discharge_time));
-	}
-	// add a known offset to account for the current the controller & other bits draws
+	// zero the current offset register
 	return ow_ds2438_calibrate(ids[battid], &Result, 0);
 }
+
 
 int
 do_CCADCA(int16_t percent, int16_t base)
@@ -170,6 +163,17 @@ do_CCADCA(int16_t percent, int16_t base)
 	return ow_ds2438_setCCADCA(ids[battid], &Result);
 }
 
+
+void
+do_first_init(void)
+{
+
+	// initialise a totally fresh box by reseting the self-discharge timer
+	self_discharge_time = time();
+	eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
+
+}
+
 // used to sync the value we have for battery charge state to the real battery (SG reading etc)
 void
 set_charge(uint16_t value)
@@ -189,7 +193,7 @@ run_measure(void)
 	static uint16_t lastcharge;
 	static MINMAX hourmax, daymax;
 	static MINMAX hourmin, daymin;
-	static uint32_t lastmin = 0, lasthour = 0, lastday = 0, self_discharge_time;
+	static uint32_t lastmin = 0, lasthour = 0, lastday = 0;
 	int16_t power;
 
 	if (firstrun)
@@ -200,16 +204,6 @@ run_measure(void)
 		minmax_init(&hourmin, 60, false);
 		minmax_init(&daymax, 24, true);
 		minmax_init(&daymin, 24, false);
-
-		// load last saved discharge time from eeprom
-		eeprom_read_block((void *) &self_discharge_time, (const void *) &eeSelfLeakTime, sizeof(self_discharge_time));
-		LOG_INFO ("Self discharge timer %lu time now %lu expected %lu\n", self_discharge_time, time(), (self_discharge_time + (uint32_t) ((float)gSelfDischarge * 3600.0 * 24.0)));
-		if ((self_discharge_time == 0) || (self_discharge_time == 0xffffffff))
-		{
-			// initialise a totally fresh box
-			self_discharge_time = time();
-			eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
-		}
 	}
 
 	if (battid == -1)				  // see if a DS2438 chip is present
@@ -268,16 +262,6 @@ run_measure(void)
 	{
 		lastcharge = gCharge;
 		eeprom_write_block((const void *) &gCharge, (void *) &eeCharge, sizeof(gCharge));
-	}
-
-	// pessimistically assume 1% loss of battery charge per unit time - units in days
-	if (time() >= (self_discharge_time + (uint32_t) ((float)gSelfDischarge * 3600.0 * 24.0)))
-	{
-		self_discharge_time = time();
-		gCharge *= 0.99;
-		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
-		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
-		log_event(LOG_LEAKADJUST);
 	}
 
 	/* keep max power for last hour and day */
@@ -344,6 +328,16 @@ run_measure(void)
 
 	gMaxday = minmax_get(&daymax, gMaxhour);
 	gMinday = minmax_get(&daymin, gMinhour);
+
+	// pessimistically assume 1% loss of battery charge per unit time - units in days
+	if (time() >= (self_discharge_time + (uint32_t) ((float)gSelfDischarge * 3600.0 * 24.0)))
+	{
+		self_discharge_time = time();
+		gCharge *= 0.99;
+		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
+		eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
+		log_event(LOG_LEAKADJUST);
+	}
 
 	// see if we have finished a day, if so then total up the idle current
 	if (time() >= lastday + 86400)

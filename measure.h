@@ -44,11 +44,13 @@ extern int16_t gIdleCurrent;
 extern float gVoffset;
 extern int16_t gVoltage;
 
+extern uint32_t self_discharge_time;
 
 void measure_init (void);
 void run_measure (void);
 char do_dump (char input);
 char do_sync (char input);
+void do_first_init(void);
 void set_charge (uint16_t value);
 int do_calibration (void);
 int do_CCADCA(int16_t percent, int16_t base);

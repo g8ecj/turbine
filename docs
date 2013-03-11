@@ -73,7 +73,7 @@ All these values are averaged over 10 readings (about 2 seconds)
 
 Second info screen
 	+--------------------+
-	|Shunt   ss %        |
+	|Dump    ss %        |
 	|Speed   rrr   RPM   |
 	|Temp tt.tt   deg    |
 	|HH:MM:SS DD-MM-YY   |
@@ -144,14 +144,18 @@ ssss  - charge level adjustable to match the actual battery bank
 
 Forth setup screen 
 	+--------------------+
-	|    Battery 2       |
-	|Self Discharge  dd  |
-	|Idle Current  ii.ii |
+	|   Miscellaneous    |
+	|Shunt ssss Poles pp |
+	|Leak ll Idle ii.ii  |
+	|Time  ttt  Date ddd |
 	+--------------------+
 
-dd     - number of days for self discharge to reduce charge by 1%
+ssss   - shunt conductance in Siemens (mhos)
+pp     - number of magnetic poles on generator (for rpm calcs)
+ll     - number of days for self discharge to reduce charge by 1%
 ii.ii  - current (in amps) of all the control systems
-
+ttt    - time adjustment in seconds per day to correct bad crystal oscillator
+ddd    - US date format on/off
 
 
 Fifth screen 
@@ -162,7 +166,7 @@ Fifth screen
 	+--------------------+
 
 iii  - one of off/on/auto to determine what control of an inverter is required (if any)
-ooo  - if Inverter is Yes or Auto then manually turn on
+ooo  - if Inverter is Yes or Auto then manually turn on/off
 
 
 

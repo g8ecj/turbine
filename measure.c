@@ -347,6 +347,7 @@ run_measure(void)
 		lastday = time();
 		gCharge -= gIdleCurrent * 24 / 100;
 		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
+		log_event(LOG_IDLEADJUST);
 		// keep a running total of idle current until its big enough to influence DCA register
 		eeprom_read_block((void *) &total_idle, (const void *) &eeIdleTotal, sizeof(total_idle));
 		total_idle += gIdleCurrent * 24 / 100;

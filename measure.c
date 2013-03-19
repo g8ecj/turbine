@@ -200,6 +200,9 @@ run_measure(void)
 	{
 		firstrun = false;
 
+		lastmin = time();
+		lasthour = time();
+		lastday = time();
 		minmax_init(&hourmax, 60, true);
 		minmax_init(&hourmin, 60, false);
 		minmax_init(&daymax, 24, true);
@@ -235,16 +238,6 @@ run_measure(void)
 	median_add(&VoltsMedian, (Result.Volts * gVoltage / NOMINALVOLTS) * gVoffset);
 	median_getMedian(&VoltsMedian, &volts);
 	median_getAverage(&VoltsMedian, &gVolts);
-
-#if 0
-	{
-		int16_t hi, lo;
-		median_getHighest(&AmpsMedian, &hi);
-		median_getLowest(&AmpsMedian, &lo);
-		if ((hi > 3000) || (lo < -3000))
-			kprintf("Glitch hi %d lo %d median %d av %d\n", hi, lo, amps, gAmps);
-	}
-#endif
 
 	tmp = (float)gAmps * (float)gVolts;
 	// volts & amps are scaled by 100 each so loose 10,000

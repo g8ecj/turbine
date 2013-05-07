@@ -431,13 +431,15 @@ process_command (char *command, uint8_t count)
 				command++;
 			command = get_decimal (command, &c);
 		}
-		if ((c > (gBankSize << 3)) && (c < (gBankSize >> 2)))       // between 1/8th and double bank size
+		if ((c > (gBankSize / 10)) && (c < (gBankSize * 2)))       // between 1/10th and double bank size
 		{
-			kfile_printf (&serial.fd, "Charge sync\r\n");
 			set_charge (c);
+			kfile_printf (&serial.fd, "Charge synced to %d\r\n", c);
 		}
 		else
-			kfile_printf (&serial.fd, "Bad sync value\r\n");
+		{
+			kfile_printf (&serial.fd, "Bad sync value %d\r\n", c);
+		}
 	}
 
 	else if (strncmp (command, "dcs", 3) == 0)	// set the ratio of the DCS and CCS registers as a % value (0-99)

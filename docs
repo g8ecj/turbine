@@ -36,6 +36,7 @@ The record generated looks like this:
          NEWHOURMIN  12        - new hour minimum recorded
          NEWDAYMIN   13        - new day minimum recorded
          LEAKADJUST  14        - charge level adjusted by 1% to allow for leakage
+         LOG_IDLEADJUST  15    - charge level adjusted to allow for the idle current of the controller, inverter etc
 
    D:         - dump % load
    T:         - temperature

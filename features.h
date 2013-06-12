@@ -7,6 +7,7 @@
 // debugging uses the serial port rather than a pushbutton array
 #define PUSHBUTTONS 1
 
+// defaults defined by the code used when <right> is pressed during field edit
 
 #define ddVlower         2200         // volt limit low
 #define ddVupper         2900         // volt limit high

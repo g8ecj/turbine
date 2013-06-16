@@ -420,6 +420,26 @@ process_command (char *command, uint8_t count)
 		do_first_init();
 	}
 
+	else if (strncmp (command, "sync", 4) == 0)	// set the chanrge value now
+	{
+		int16_t c = gCharge;
+
+		command += 4;
+		if (command[0] != '\0')
+		{
+			while (*command == ' ')          // skip spaces
+				command++;
+			command = get_decimal (command, &c);
+		}
+		if ((c > (gBankSize << 3)) && (c < (gBankSize >> 2)))       // between 1/8th and double bank size
+		{
+			kfile_printf (&serial.fd, "Charge sync\r\n");
+			set_charge (c);
+		}
+		else
+			kfile_printf (&serial.fd, "Bad sync value\r\n");
+	}
+
 	else if (strncmp (command, "dcs", 3) == 0)	// set the ratio of the DCS and CCS registers as a % value (0-99)
 	{
 		int16_t p = 0, b = 0;

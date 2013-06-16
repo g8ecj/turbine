@@ -27,7 +27,7 @@ The record generated looks like this:
          MANUALON    3         - inverter turned on manually
          MANUALOFF   4         - inverter turned off manually
          CHARGED     5         - inverter turned on in auto mode when at 100%
-         DISCHARGED  6         - inverter turned on in auto mode when at Min Charge
+         DISCHARGED  6         - inverter turned off in auto mode when at Min Charge
          SHUNTON     7         - shunt load threshold exceeded
          SHUNTOFF    8         - dropped below shunt load threshold 
          MARKTIME    9         - regular 1 minute interval report
@@ -208,7 +208,7 @@ The SD card operations all try and minimise the chance of data corruption. Gener
 out then hopefully its not in the middle of a data write!! When its put back in then the sense line is used to re-open the current log file (or a 
 new one is created if there isn't one).
 
-The next instalment is the serial interface. I run this via a wireless router (a TPLink 1043ND) that runs OpenWRT software and has the ACM driver 
+Next comes the serial interface. I run this via a wireless router (a TPLink 1043ND) that runs OpenWRT software and has the ACM driver 
 loaded. I can ssh into the router and run picocom to get log info back from the controller or I can even reprogram it using the following command 
 line on the router:
   socat tcp-l:54321,reuseaddr,fork file:/dev/ttyACM0,raw,echo=0,nonblock,waitlock=/var/run/tty0.lock,b115200

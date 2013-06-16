@@ -160,7 +160,7 @@ run_control(void)
 		charge_mode = BULK;
 		// only run shunt if volts gets stupidly high!
 		VoltsHI = gVupper;
-		VoltsLO = gVupper * 0.99;
+		VoltsLO = gVupper * 0.98;
 	}
 	else if (gCharge < gBankSize)
 	{
@@ -172,9 +172,9 @@ run_control(void)
 	else
 	{
 		charge_mode = FLOAT;
-		// never go above float volts
+		// never go above float volts, but allow a bit of slack
 		VoltsHI = gFloatVolts;
-		VoltsLO = gFloatVolts * 0.99;
+		VoltsLO = gFloatVolts * 0.98;
 	}
 
 	// compensate for temperature - assume set values are for 25C, adjust accordingly

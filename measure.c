@@ -61,6 +61,9 @@ MEDIAN AmpsMedian;
 MEDIAN VoltsMedian;
 MEDIAN TempMedian;
 
+MINMAX hourmax, daymax;
+MINMAX hourmin, daymin;
+
 int16_t gVolts;
 int16_t gAmps;
 int16_t gPower;
@@ -191,8 +194,6 @@ run_measure(void)
 	int16_t volts, amps;
 	static int8_t firstrun = true;
 	static uint16_t lastcharge;
-	static MINMAX hourmax, daymax;
-	static MINMAX hourmin, daymin;
 	static uint32_t lastmin = 0, lasthour = 0, lastday = 0;
 	int16_t power;
 

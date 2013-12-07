@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 #include <avr/io.h>
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
@@ -189,12 +190,19 @@ run_control(void)
 	{
 		// see what range we're operating the PWM over
 		range = VoltsHI - VoltsLO;
+// decide linear or log application of dump load
+#if 0
+		regval = 1010 / range * diff;
+#else
+#define SHAPE 63
+		float dval = (float)diff / range;
+		float fig = log(SHAPE);
+		regval = 1010 * (exp(fig * dval) - 1) / (SHAPE - 1);
+#endif
 		// if above the top value then set near max on time but make sure its still pulsing
 		// in case we are using AC coupling!!
-		if (diff > (int16_t) range)
-			regval = 1000;
-		else
-			regval = 1000 / range * diff;
+		if (regval > 1010)
+			regval = 1010;
 
 		OCR1A = regval;
 		tmp = gDump;

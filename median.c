@@ -63,7 +63,7 @@ void median_init(MEDIAN *M,  uint8_t size)
 	M->size = constrain(size, MIN_MEDIAN, MAX_MEDIAN);
 	M->cnt = 0;
 	M->idx = 0;
-	memset(M->ar, 0, M->size);
+	memset(M->ar, 0, M->size * sizeof(M->ar[0]));
 }
 
 //< Clears the variables used to build the median array

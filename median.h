@@ -18,7 +18,7 @@
 
 
 #define MIN_MEDIAN 1
-#define MAX_MEDIAN 20
+#define MAX_MEDIAN 61
 
 #define OK true
 #define NOK false

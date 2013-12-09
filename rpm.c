@@ -42,7 +42,7 @@ int16_t gRPM, gMaxRPM;
 int16_t gPoles;
 
 MEDIAN RpmMedian;
-MINMAX RpmHourMax;
+MEDIAN RpmHourMax;
 
 void
 rpm_init (void)
@@ -61,7 +61,7 @@ rpm_init (void)
 	EIMSK |= BV (INT5);          // enable int 5
 
 	median_init (&RpmMedian, 10);
-	minmax_init(&RpmHourMax, 60, true);
+	median_init(&RpmHourMax, 60);
 
 }
 
@@ -100,10 +100,11 @@ run_rpm (void)
 	if (time () >= lastmin + 60)
 	{
 		lastmin = time ();
-		minmax_add(&RpmHourMax);
+		median_tik(&RpmHourMax);
 	}
 
-	gMaxRPM = minmax_get(&RpmHourMax, gRPM);
+	median_addmax(&RpmHourMax, gRPM);
+	median_getHighest(&RpmHourMax, &gMaxRPM);
 
 }
 

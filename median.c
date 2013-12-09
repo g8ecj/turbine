@@ -35,21 +35,23 @@
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
+int16_t sorted[MAX_MEDIAN];
+
 static void sort(MEDIAN *M) 
 {
 	// copy
-	for (uint8_t i=0; i< M->cnt; i++) M->as[i] = M->ar[i];
+	for (uint8_t i=0; i< M->cnt; i++) sorted[i] = M->ar[i];
 
 	// sort all
 	for (uint8_t i=0; i< M->cnt-1; i++) {
 		uint8_t m = i;
 		for (uint8_t j=i+1; j< M->cnt; j++) {
-			if (M->as[j] < M->as[m]) m = j;
+			if (sorted[j] < sorted[m]) m = j;
 		}
 		if (m != i) {
-			int16_t t = M->as[m];
-			M->as[m] = M->as[i];
-			M->as[i] = t;
+			int16_t t = sorted[m];
+			sorted[m] = sorted[i];
+			sorted[i] = t;
 		}
 	}
 }
@@ -92,7 +94,7 @@ bool median_getMedian(MEDIAN *M, int16_t *value)
 {
 	if (M->cnt > 0) {
 		sort(M);
-		*value = M->as[M->cnt/2];
+		*value = sorted[M->cnt/2];
 		return OK;
 	}
 	return NOK;
@@ -119,7 +121,7 @@ bool median_getHighest(MEDIAN *M, int16_t *value)
 {
 	if (M->cnt > 0) {
 		sort(M);
-		*value = M->as[M->cnt-1];
+		*value = sorted[M->cnt-1];
 		return OK;
 	}
 	return NOK;
@@ -133,7 +135,7 @@ bool median_getLowest(MEDIAN *M, int16_t *value)
 {
 	if (M->cnt > 0) {
 		sort(M);
-		*value =  M->as[0];
+		*value =  sorted[0];
 		return OK;
 	}
 	return NOK;
@@ -161,4 +163,35 @@ bool median_getStatus(MEDIAN *M)
 	return (M->cnt > 0 ? OK : NOK);
 }
 
+//< Increments pointers to the median array, wraps indices discarding expired data.
+//< Used as a time tick to advance with array wrt time
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+void median_inc(MEDIAN *M)
+{
+	if (M->idx >= M->size) M->idx = 0; // wrap around
+	if (M->cnt < M->size) M->cnt++;
+	M->ar[M->idx] = 0x8000;
+}
+
+//< Overwrite the current value in the median array, if a new entry or less than current value
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param value 16 bit signed value to add to median array
+void median_addmin(MEDIAN *M, int16_t value)
+{
+	if (M->ar[M->idx] == 0x8000)
+		M->ar[M->idx] = value;
+	if (value < M->ar[M->idx])
+		M->ar[M->idx] = value;
+}
+
+//< Overwrite the current value in the median array, if a new entry or greater than current value
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param value 16 bit signed value to add to median array
+void median_addmax(MEDIAN *M, int16_t value)
+{
+	if (M->ar[M->idx] == 0x8000)
+		M->ar[M->idx] = value;
+	if (value > M->ar[M->idx])
+		M->ar[M->idx] = value;
+}
 

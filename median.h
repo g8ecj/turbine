@@ -25,7 +25,6 @@
 
 typedef struct running_median {
    int16_t ar[MAX_MEDIAN];
-   int16_t as[MAX_MEDIAN];
    uint8_t idx;
    uint8_t cnt;
    uint8_t size;
@@ -42,6 +41,10 @@ bool median_getLowest(MEDIAN *M, int16_t *value);
 uint8_t median_getSize(MEDIAN *M);
 uint8_t median_getCount(MEDIAN *M);
 bool median_getStatus(MEDIAN *M);
+void median_tik(MEDIAN *M);
+void median_addmin(MEDIAN *M, int16_t value);
+void median_addmax(MEDIAN *M, int16_t value);
+
 
 
 #endif

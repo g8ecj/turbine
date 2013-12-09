@@ -166,7 +166,7 @@ bool median_getStatus(MEDIAN *M)
 //< Increments pointers to the median array, wraps indices discarding expired data.
 //< Used as a time tick to advance with array wrt time
 //< \param M pointer to a struct that holds the variables for this instance of median calculator
-void median_inc(MEDIAN *M)
+void median_tik(MEDIAN *M)
 {
 	if (M->idx >= M->size) M->idx = 0; // wrap around
 	if (M->cnt < M->size) M->cnt++;

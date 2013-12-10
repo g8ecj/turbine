@@ -43,7 +43,6 @@
 #include "rtc.h"
 #include "control.h"
 #include "median.h"
-#include "minmax.h"
 #include "eeprommap.h"
 #include "measure.h"
 
@@ -61,8 +60,8 @@ MEDIAN AmpsMedian;
 MEDIAN VoltsMedian;
 MEDIAN TempMedian;
 
-MINMAX hourmax, daymax;
-MINMAX hourmin, daymin;
+MEDIAN hourmax, daymax;
+MEDIAN hourmin, daymin;
 
 int16_t gVolts;
 int16_t gAmps;
@@ -204,10 +203,10 @@ run_measure(void)
 		lastmin = time();
 		lasthour = time();
 		lastday = time();
-		minmax_init(&hourmax, 60, true);
-		minmax_init(&hourmin, 60, false);
-		minmax_init(&daymax, 24, true);
-		minmax_init(&daymin, 24, false);
+		median_init(&hourmax, 60);
+		median_init(&hourmin, 60);
+		median_init(&daymax, 24);
+		median_init(&daymin, 24);
 	}
 
 	if (battid == -1)				  // see if a DS2438 chip is present
@@ -287,8 +286,8 @@ run_measure(void)
 	if (time() >= lastmin + 60)
 	{
 		lastmin = time();
-		minmax_add(&hourmax);
-		minmax_add(&hourmin);
+		median_tik(&hourmax);
+		median_tik(&hourmin);
 
 		// once per minute, try for an update from the external temperature sensor (if we have one)
 		if (thermid >=0)
@@ -305,23 +304,27 @@ run_measure(void)
 	}
 
 	// save the present power level if greater than already there
-	gMaxhour = minmax_get(&hourmax, power);
-	gMinhour = minmax_get(&hourmin, power);
+	median_addmax(&hourmax, power);
+	median_getHighest(&hourmax, &gMaxhour);
+	median_addmin(&hourmin, power);
+	median_getLowest(&hourmin, &gMinhour);
 
 	// see if we have finished an hour, if so then move to a new hour
 	if (time() >= lasthour + 3600)
 	{
 		lasthour = time();
-		minmax_add(&daymax);
-		minmax_add(&daymin);
+		median_tik(&daymax);
+		median_tik(&daymin);
 
 		// once per hour save the charge level into eeprom
 		lastcharge = gCharge;
 		eeprom_write_block((const void *) &gCharge, (void *) &eeCharge, sizeof(gCharge));
 	}
 
-	gMaxday = minmax_get(&daymax, gMaxhour);
-	gMinday = minmax_get(&daymin, gMinhour);
+	median_addmax(&daymax, gMaxhour);
+	median_getHighest(&daymax, &gMaxday);
+	median_addmin(&daymin, gMinhour);
+	median_getLowest(&daymin, &gMinday);
 
 	// pessimistically assume 1% loss of battery charge per unit time - units in days
 	if (time() >= (self_discharge_time + (uint32_t) ((float)gSelfDischarge * 3600.0 * 24.0)))

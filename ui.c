@@ -213,6 +213,8 @@ Vars variables[eNUMVARS] = {
 
 	{&gBankSize, 10, 9999, ddBankSize, eNORMAL, var_inc},           // charge high
 	{&gMinCharge, 10, 9999, ddMinCharge, eNORMAL, var_inc},         // charge low
+	{&gMaxCharge, 10, 9999, ddMaxCharge, eNORMAL, var_inc},         // charge high
+	{&gMaxDischarge, 0, 99, 0, eNORMAL, var_inc},                   // number of discharge cycles
 	{&gCharge, 0, 9999, ddCharge, eNORMAL, var_inc},                // sync
 
 	{&gVoltage, 6, 48, ddVoltage, eNORMAL, six_inc},                // system voltage
@@ -320,8 +322,10 @@ Screen setup1[] = {
 Screen setup2[] = {
 	{-1, 0, 3, "Battery", 0, 0},
 	{eBANK_SIZE, 1, 0, "Bank Size", 12, 4},
-	{eMIN_CHARGE, 2, 0, "Min Charge", 12, 4},
-	{eSYNC, 3, 0, "Synchronize", 12, 4},
+	{eMIN_CHARGE, 2, 0, "Min", 4, 4},
+	{eMAX_CHARGE, 2, 10, "Max", 15, 4},
+	{eDISCHARGE, 3, 0, "Cycle", 6, 2},
+	{eSYNC, 3, 10, "Sync", 15, 4},
 	{-2, 0, 0, "", 0, 0}
 };
 

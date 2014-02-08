@@ -44,6 +44,9 @@ extern int16_t gAbsorbVolts;
 extern int16_t gFloatVolts;
 extern int16_t gBankSize;
 extern int16_t gMinCharge;
+extern int16_t gMaxCharge;
+extern int16_t gDischarge;
+extern int16_t gMaxDischarge;
 
 
 void control_init (void);

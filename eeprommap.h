@@ -72,6 +72,15 @@ extern int16_t EEMEM eeIdleTotal;
 // date and time stored when set and every hour so clock isn't too far out after a reset
 extern DT_t EEMEM eeDateTime;
 
+// configured max charge level to discharge to in auto mode
+extern int16_t EEMEM eeMaxCharge;
+// charge level updated every time we finish a discharge cycle
+extern int16_t EEMEM eeDischarge;
+// how many times to run discharge cycle before do float charge
+extern int16_t EEMEM eeMaxDischarge;
+
+
+
 void load_eeprom_values(void);
 void save_eeprom_values(void);
 

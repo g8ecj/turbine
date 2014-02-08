@@ -15,6 +15,7 @@
 #define ddAbsorbVolts    2800         // shunt volt high
 #define ddBankSize       1000         // charge high
 #define ddMinCharge       500         // charge low
+#define ddMaxCharge       900         // charge low
 #define ddCharge         1000         // sync
 #define ddVoltage          24         // system voltage
 

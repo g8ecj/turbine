@@ -78,6 +78,14 @@ int16_t EEMEM eeIdleTotal;
 // date and time stored when set and every hour so clock isn't too far out after a reset
 DT_t EEMEM eeDateTime;
 
+// configured max charge level to discharge to in auto mode
+int16_t EEMEM eeMaxCharge;
+// charge level updated every time we finish a discharge cycle
+int16_t EEMEM eeDischarge;
+// how many times to run discharge cycle before do float charge
+int16_t EEMEM eeMaxDischarge;
+
+
 void load_eeprom_values(void)
 {
 
@@ -87,6 +95,8 @@ void load_eeprom_values(void)
 	eeprom_read_block ((void *) &gFloatVolts, (const void *) &eeFloatVolts, sizeof (gFloatVolts));
 	eeprom_read_block ((void *) &gBankSize, (const void *) &eeBankSize, sizeof (gBankSize));
 	eeprom_read_block ((void *) &gMinCharge, (const void *) &eeMinCharge, sizeof (gMinCharge));
+	eeprom_read_block ((void *) &gMaxCharge, (const void *) &eeMaxCharge, sizeof (gMaxCharge));
+	eeprom_read_block ((void *) &gMaxDischarge, (const void *) &eeMaxDischarge, sizeof (gMaxDischarge));
 	eeprom_read_block ((void *) &gVoffset, (const void *) &eeVoffset, sizeof (gVoffset));
 	eeprom_read_block ((void *) &gVoltage, (const void *) &eeVoltage, sizeof (gVoltage));
 	eeprom_read_block ((void *) &gInverter, (const void *) &eeInverter, sizeof (gInverter));
@@ -107,6 +117,8 @@ void save_eeprom_values(void)
 	eeprom_write_block ((const void *) &gFloatVolts, (void *) &eeFloatVolts, sizeof (gFloatVolts));
 	eeprom_write_block ((const void *) &gBankSize, (void *) &eeBankSize, sizeof (gBankSize));
 	eeprom_write_block ((const void *) &gMinCharge, (void *) &eeMinCharge, sizeof (gMinCharge));
+	eeprom_write_block ((const void *) &gMaxCharge, (void *) &eeMaxCharge, sizeof (gMaxCharge));
+	eeprom_write_block ((const void *) &gMaxDischarge, (void *) &eeMaxDischarge, sizeof (gMaxDischarge));
 	eeprom_write_block ((const void *) &gVoffset, (void *) &eeVoffset, sizeof (gVoffset));
 	eeprom_write_block ((const void *) &gVoltage, (void *) &eeVoltage, sizeof (gVoltage));
 	eeprom_write_block ((const void *) &gInverter, (void *) &eeInverter, sizeof (gInverter));

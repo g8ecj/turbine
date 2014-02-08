@@ -58,6 +58,9 @@ int16_t gDump;
 int16_t gInverter;
 int16_t gBankSize;
 int16_t gMinCharge;
+int16_t gMaxCharge;
+int16_t gDischarge;
+int16_t gMaxDischarge;
 
 
 int16_t TargetC;
@@ -97,6 +100,7 @@ control_init(void)
 		ToggleState(ids[gpioid], false);
 
 	TargetC = gBankSize;
+	eeprom_read_block ((void *) &gDischarge, (const void *) &eeDischarge, sizeof(gDischarge));
 
 }
 
@@ -337,7 +341,18 @@ run_control(void)
 				// turned off load OK, start charging
 				gLoad = LOADOFF;
 				log_event(LOG_DISCHARGED);
-				TargetC = gBankSize;
+				// decide whether we are doing a normal charge or we are taking up to full float level
+				if ((gDischarge > gMaxDischarge) || (gDischarge < 0))
+				{
+					gDischarge = 0;
+					TargetC = gBankSize;
+				}
+				else
+				{
+					TargetC = gMaxCharge;
+					gDischarge++;
+				}
+				eeprom_write_block ((const void *) &gDischarge, (void *) &eeDischarge, sizeof(gDischarge));
 			}
 			else
 			{

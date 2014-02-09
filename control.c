@@ -99,8 +99,11 @@ control_init(void)
 	if (gpioid >= 0)
 		ToggleState(ids[gpioid], false);
 
-	TargetC = gBankSize;
 	eeprom_read_block ((void *) &gDischarge, (const void *) &eeDischarge, sizeof(gDischarge));
+	if (gDischarge == 0)
+		TargetC = gBankSize;
+	else
+		TargetC = gMaxCharge;
 
 }
 

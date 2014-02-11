@@ -123,6 +123,11 @@ measure_init(void)
 	median_init(&VoltsMedian, 10);
 	median_init(&TempMedian, 10);
 
+	minmax_init(&hourmax, 60, true);
+	minmax_init(&hourmin, 60, false);
+	minmax_init(&daymax, 24, true);
+	minmax_init(&daymin, 24, false);
+
 	if (battid >= 0)                // see if a DS2438 chip is present
 	{
 		// load last saved charge value from eeprom
@@ -204,10 +209,6 @@ run_measure(void)
 		lastmin = time();
 		lasthour = time();
 		lastday = time();
-		minmax_init(&hourmax, 60, true);
-		minmax_init(&hourmin, 60, false);
-		minmax_init(&daymax, 24, true);
-		minmax_init(&daymin, 24, false);
 	}
 
 	if (battid == -1)				  // see if a DS2438 chip is present

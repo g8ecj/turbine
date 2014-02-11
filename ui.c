@@ -322,9 +322,9 @@ Screen setup1[] = {
 Screen setup2[] = {
 	{-1, 0, 3, "Battery", 0, 0},
 	{eBANK_SIZE, 1, 0, "Bank Size", 12, 4},
-	{eMIN_CHARGE, 2, 0, "Min", 4, 4},
+	{eMIN_CHARGE, 2, 0, "Min", 5, 4},
 	{eMAX_CHARGE, 2, 10, "Max", 15, 4},
-	{eDISCHARGE, 3, 0, "Cycle", 6, 2},
+	{eDISCHARGE, 3, 0, "Cycle", 7, 2},
 	{eSYNC, 3, 10, "Sync", 15, 4},
 	{-2, 0, 0, "", 0, 0}
 };

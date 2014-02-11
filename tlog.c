@@ -614,8 +614,8 @@ process_command (char *command, uint8_t count)
 		kfile_printf(&serial.fd, "System %dV, inverter %s\r\n", gVoltage, tritext[gInverter]); 
 		kfile_printf(&serial.fd, "Low - High limits   %d.%02u - %d.%02u\r\n", gVlower / 100, gVlower % 100, gVupper / 100, gVupper % 100);
 		kfile_printf(&serial.fd, "Float - Absorb      %d.%02u - %d.%02u\r\n", gFloatVolts / 100, gFloatVolts % 100, gAbsorbVolts / 100, gAbsorbVolts % 100);
-		kfile_printf(&serial.fd, "Charge - Bank       %d - %d\r\n", gMinCharge,  gBankSize);
-		kfile_printf(&serial.fd, "Discharge - Leak    %d - %d.%02u\r\n", gSelfDischarge, gIdleCurrent / 100, gIdleCurrent % 100);
+		kfile_printf(&serial.fd, "Min/Max Charge - Bank       %d/%d - %d\r\n", gMinCharge, gMaxCharge,  gBankSize);
+		kfile_printf(&serial.fd, "Cycles/Discharge - Leak    %d/%d - %d.%02u\r\n", gMaxDischarge, gSelfDischarge, gIdleCurrent / 100, gIdleCurrent % 100);
 
 #if DEBUG > 0
 extern uint16_t StackCount(void);

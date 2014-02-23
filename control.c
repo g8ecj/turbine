@@ -100,7 +100,7 @@ control_init(void)
 		ToggleState(ids[gpioid], false);
 
 	eeprom_read_block ((void *) &gDischarge, (const void *) &eeDischarge, sizeof(gDischarge));
-	if (gDischarge == 0)
+	if (gDischarge <= 1)
 		TargetC = gBankSize;
 	else
 		TargetC = gMaxCharge;
@@ -343,7 +343,7 @@ run_control(void)
 				// decide whether we are doing a normal charge or we are taking up to full float level
 				if ((gDischarge > gMaxDischarge) || (gDischarge < 0))
 				{
-					gDischarge = 0;
+					gDischarge = 1;
 					TargetC = gBankSize;
 				}
 				else

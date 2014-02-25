@@ -36,6 +36,7 @@
 extern int16_t gDump;
 extern int16_t gLoad;
 extern uint8_t charge_mode;
+extern int16_t TargetC;
 
 extern int16_t gVupper;
 extern int16_t gVlower;

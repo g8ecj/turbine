@@ -182,7 +182,7 @@ run_control(void)
 		charge_mode = FLOAT;
 		// never go above float volts, but allow a bit of slack
 		VoltsHI = gFloatVolts;
-		VoltsLO = gFloatVolts * 0.98;
+		VoltsLO = (int16_t)((float)gFloatVolts * 0.98);
 	}
 
 	// compensate for temperature - assume set values are for 25C, adjust accordingly
@@ -304,7 +304,7 @@ run_control(void)
 				gLoad = LOADON;
 				log_event(LOG_OVERVOLT);
 				// set the target level to discharge to a small amount below the current value so we don't keep the load on for too long
-				TargetC = gCharge * 0.99;
+				TargetC = (int16_t)((float)gCharge * 0.99);
 			}
 			else
 			{

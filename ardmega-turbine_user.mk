@@ -2,6 +2,7 @@
 # User makefile.
 # Edit this file to change compiler options and related stuff.
 #
+GIT_VERSION := $(shell cd $(ardmega-turbine_SRC_PATH); git describe --abbrev=4 --dirty --always; cd ..)
 
 # Programmer interface configuration, see http://dev.bertos.org/wiki/ProgrammerInterface for help
 ardmega-turbine_PROGRAMMER_TYPE = none
@@ -53,4 +54,5 @@ ardmega-turbine_USER_CPPAFLAGS = \
 ardmega-turbine_USER_CPPFLAGS = \
 	-fno-strict-aliasing \
 	-fwrapv \
+	-DVERSION=\"$(GIT_VERSION)\" \
 	#

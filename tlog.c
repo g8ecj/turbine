@@ -625,7 +625,10 @@ extern uint16_t StackCount(void);
 	}
 
 	else
-		kfile_printf (&serial.fd, ">>del dir type disk dcs inv log date time find config sync<<\r\n");
+	{
+		kfile_printf (&serial.fd, "Version " VERSION "\r\nCommands: ");
+		kfile_printf (&serial.fd, "del dir type disk dcs inv log date time find config sync\r\n");
+	}
 
 //	kfile_printf(&serial.fd, ">> ");
 

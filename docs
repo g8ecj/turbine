@@ -103,12 +103,15 @@ ooooo  - total amp-hrs out over lifetime of system
 
 First config screen 
 	+--------------------+
-	|     System         |
+	|  System vx.x-ngabcd|
 	|Voltage     VV      |
 	|Calibrate   vv.vv   |
 	|HH:MM:SS DD-MM-YY   |
 	+--------------------+
 
+x.x   - version number
+n     - commit beyond version
+abcd  - git commit hash preamble
 VV    - system voltage in 6v steps
 vv.vv - measured voltage for calibration
 HH:MM:SS DD-MM-YY - time and date that can be adjusted!
@@ -133,12 +136,14 @@ Third setup screen Battery
 	+--------------------+
 	|    Battery         |
 	|Bank Size   bbbb    |
-	|Min Charge  mmmm    |
-	|Synchronize ssss    |
+	|Min mmmm Max xxxx   |
+	|Cycle cc Sync ssss  |
 	+--------------------+
 
 bbbb  - battery bank size in amp-hrs
 mmmm  - value to discharge bank to if Control/Inverter is set to Auto
+xxxx  - value to charge to when not going to do a float charge
+cc    - number of times for a normal charge cycle before doing a float charge
 ssss  - charge level adjustable to match the actual battery bank
 
 

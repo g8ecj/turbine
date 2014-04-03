@@ -211,10 +211,10 @@ Vars variables[eNUMVARS] = {
 	{&gFloatVolts, 2600, 3200, ddFloatVolts, eDECIMAL, deca_inc},   // shunt volt low
 	{&gAbsorbVolts, 2600, 3200, ddAbsorbVolts, eDECIMAL, deca_inc}, // shunt volt high
 
-	{&gBankSize, 10, 9999, ddBankSize, eNORMAL, var_inc},           // charge high
-	{&gMinCharge, 10, 9999, ddMinCharge, eNORMAL, var_inc},         // charge low
-	{&gMaxCharge, 10, 9999, ddMaxCharge, eNORMAL, var_inc},         // charge high
-	{&gMaxDischarge, 0, 99, 0, eNORMAL, var_inc},                   // number of discharge cycles
+	{&gBankSize, 1, 9999, ddBankSize, eNORMAL, var_inc},            // charge high
+	{&gMinCharge, 0, 9999, ddMinCharge, eNORMAL, var_inc},          // charge low
+	{&gMaxCharge, 1, 9999, ddMaxCharge, eNORMAL, var_inc},          // charge high
+	{&gMaxDischarge, 1, 99, 0, eNORMAL, var_inc},                   // number of discharge cycles
 	{&gCharge, 0, 9999, ddCharge, eNORMAL, var_inc},                // sync
 
 	{&gVoltage, 6, 48, ddVoltage, eNORMAL, six_inc},                // system voltage

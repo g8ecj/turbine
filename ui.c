@@ -296,7 +296,7 @@ Screen screen3[] = {
 
 
 Screen system[] = {
-	{-1, 0, 3, "System " VERSION, 0, 0},
+	{-1, 0, 0, "System " VERSION, 0, 0},
 	{eSYSTEM_VOLTS, 1, 0, "Voltage     ", 10, 5},
 	{eCAL_VOLTS, 2, 0, "Calibrate   ", 10, 6},
 	{eHOUR, 3, 0, "  :", 0, 2},

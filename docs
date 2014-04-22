@@ -103,13 +103,13 @@ ooooo  - total amp-hrs out over lifetime of system
 
 First config screen 
 	+--------------------+
-	|  System vx.x-ngabcd|
+	|   System vx.x-y    |
 	|Voltage     VV      |
 	|Calibrate   vv.vv   |
 	|HH:MM:SS DD-MM-YY   |
 	+--------------------+
 
-x.x   - version number
+x.x-y - git tag version number + number of commits beyond tag
 n     - commit beyond version
 abcd  - git commit hash preamble
 VV    - system voltage in 6v steps
@@ -119,7 +119,7 @@ HH:MM:SS DD-MM-YY - time and date that can be adjusted!
 
 Second setup screen Voltage
 	+--------------------+
-	|     Voltage        |
+	|   Voltage          |
 	|Min nn.nn Max xx.xx |
 	|Float   ff.ff       |
 	|Absorb  aa.aa       |
@@ -134,7 +134,7 @@ aa.aa - max voltage when battery bank is 90-100% charged
 
 Third setup screen Battery
 	+--------------------+
-	|    Battery         |
+	|   Battery          |
 	|Bank Size   bbbb    |
 	|Min mmmm Max xxxx   |
 	|Cycle cc Sync ssss  |
@@ -166,7 +166,7 @@ ddd    - US date format on/off
 
 Fifth screen 
 	+--------------------+
-	|     Control        |
+	|   Control          |
 	|Inverter  iii       |
 	|Override  ooo       |
 	+--------------------+

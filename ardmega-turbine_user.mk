@@ -2,7 +2,8 @@
 # User makefile.
 # Edit this file to change compiler options and related stuff.
 #
-GIT_VERSION := $(shell cd $(ardmega-turbine_SRC_PATH); git describe --abbrev=4 --dirty --always; cd ..)
+# trim the commit hash from the version but keep the subversion beyond the tag
+GIT_VERSION := $(shell cd $(ardmega-turbine_SRC_PATH); git describe --dirty --always | sed 's/-g.*//'; cd ..)
 
 # Programmer interface configuration, see http://dev.bertos.org/wiki/ProgrammerInterface for help
 ardmega-turbine_PROGRAMMER_TYPE = none

@@ -34,6 +34,7 @@
 #include <drv/ser.h>
 #include <drv/timer.h>
 #include <cfg/log.h>
+#include <drv/lcd_hd44.h>
 
 #include "sd_raw.h"
 #include "partition.h"
@@ -420,6 +421,12 @@ process_command (char *command, uint8_t count)
 		do_first_init();
 	}
 
+	else if (strncmp (command, "cal", 3) == 0)	// calibrate (especially current)
+	{
+		lcd_bl_off();
+		do_calibration ();
+	}
+
 	else if (strncmp (command, "sync", 4) == 0)	// set the charge value now
 	{
 		int16_t c = gCharge;
@@ -458,7 +465,7 @@ process_command (char *command, uint8_t count)
 		do_CCADCA (p, b);
 	}
 
-	else if (strcmp (command, "inv") == 0)
+	else if (strncmp (command, "inv", 3) == 0)
 	{
 		kfile_printf (&serial.fd, "Inverter ");
 		if (gLoad == LOADOFF)
@@ -473,7 +480,7 @@ process_command (char *command, uint8_t count)
 		}
 	}
 
-	else if (strcmp (command, "log") == 0)
+	else if (strncmp (command, "log", 3) == 0)
 	{
 		gLive = !gLive;
 		kfile_printf (&serial.fd, "Logging %s\r\n", gLive ? "ON" : "OFF");
@@ -541,12 +548,12 @@ process_command (char *command, uint8_t count)
 		}
 	}
 
-	else if (strcmp (command, "dir") == 0)
+	else if (strncmp (command, "dir", 3) == 0)
 	{
 		file_action (NULL, FA_LS, NULL);
 	}
 
-	else if (strcmp (command, "disk") == 0)
+	else if (strncmp (command, "disk", 4) == 0)
 	{
 		file_action (NULL, FA_DISK, NULL);
 	}
@@ -607,7 +614,7 @@ process_command (char *command, uint8_t count)
 		}
 	}
 
-	else if (strcmp (command, "config") == 0)
+	else if (strncmp (command, "config", 6) == 0)
 	{
 		char tritext[4][5] = {"off", "on", "auto", "" };
 
@@ -627,7 +634,7 @@ extern uint16_t StackCount(void);
 	else
 	{
 		kfile_printf (&serial.fd, "Version " VERSION "\r\nCommands: ");
-		kfile_printf (&serial.fd, "del dir type disk dcs inv log date time find config sync\r\n");
+		kfile_printf (&serial.fd, "cal del dir type disk dcs init inv log date time find config sync\r\n");
 	}
 
 //	kfile_printf(&serial.fd, ">> ");

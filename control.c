@@ -86,43 +86,13 @@ enum CHARGE
 };
 
 
-char ToggleState(uint8_t * id, uint8_t state);
-
-
 
 #define PRESCALE ((1 << CS11))
-
-void
-control_init(void)
-{
-	//set Timer1 in fast pwm mode (7), TOP=0x3ff (1023)
-	//clear output on compare match, set at top (COM1A1=1)
-	TCCR1A = (1 << COM1A1) | (1 << WGM11) | (1 << WGM10);
-	TCCR1B = (1 << WGM12) | PRESCALE;
-	//output on OCP1A pin (portb.5)
-	DDRB |= BV(5);
-
-	// Set a initial value in the OCR1A-register
-	OCR1A = 0;
-
-	// see if a DS2413 chip is present so we can ensure we start at a known state
-	if (gpioid >= 0)
-		ToggleState(ids[gpioid], false);
-
-	eeprom_read_block ((void *) &gDischarge, (const void *) &eeDischarge, sizeof(gDischarge));
-	if (gDischarge <= 0)
-		TargetC = gBankSize;
-	else
-		TargetC = gMaxCharge;
-
-}
-
-
 
 
 // press the start/stop button on the inverter remote control and wait for the indicator
 // LED to go ON or OFF to show success (done by relay and opto coupler)
-char
+static char
 ToggleState(uint8_t * id, uint8_t state)
 {
 
@@ -164,6 +134,35 @@ apply_brake(void)
 
 
 }
+
+
+void
+control_init(void)
+{
+	//set Timer1 in fast pwm mode (7), TOP=0x3ff (1023)
+	//clear output on compare match, set at top (COM1A1=1)
+	TCCR1A = (1 << COM1A1) | (1 << WGM11) | (1 << WGM10);
+	TCCR1B = (1 << WGM12) | PRESCALE;
+	//output on OCP1A pin (portb.5)
+	DDRB |= BV(5);
+
+	// Set a initial value in the OCR1A-register
+	OCR1A = 0;
+
+	// see if a DS2413 chip is present so we can ensure we start at a known state
+	if (gpioid >= 0)
+		ToggleState(ids[gpioid], false);
+
+	eeprom_read_block ((void *) &gDischarge, (const void *) &eeDischarge, sizeof(gDischarge));
+	if (gDischarge <= 0)
+		TargetC = gBankSize;
+	else
+		TargetC = gMaxCharge;
+
+}
+
+
+
 
 
 

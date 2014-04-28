@@ -229,6 +229,8 @@ Vars variables[eNUMVARS] = {
 
 	{&gInverter, 0, 2, ddInverter, eTRILEAN, int_inc},              // control active
 	{&gLoad, 0, 1, ddLoad, eTRILEAN, int_inc},                      // manual on/off
+	{&gRPMMax, 1, 999, ddRPMMax, eNORMAL, int_inc},                       // year
+	{&gRPMSafe, 1, 999, ddRPMSafe, eNORMAL, int_inc},                       // year
 
 	{&gShunt, 0, 9999, ddShunt, eNORMAL, int_inc},                  // shunt conductance in Siemens
 	{&gPoles, 0, 99, ddPoles, eNORMAL, int_inc},                    // magnetic poles in generator
@@ -345,6 +347,8 @@ Screen control[] = {
 	{-1, 0, 3, "Control", 0, 0},
 	{eINVERTER, 1, 0, "Inverter", 14, 4},
 	{eMANUAL, 2, 0, "Override", 14, 4},
+	{eRPMMAX, 3, 0, "RPMMax", 8, 3},
+	{eRPMSAFE, 3, 12, "Safe", 16, 3},
 	{-2, 0, 0, "", 0, 0}
 };
 

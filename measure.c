@@ -87,9 +87,6 @@ uint8_t ids[4][OW_ROMCODE_SIZE];	// only expect to find up to 3 actually!!
 int8_t battid = -1, gpioid = -1, thermid = -1;
 
 
-char ToggleState(uint8_t * id, uint8_t state);
-
-
 
 
 

@@ -169,10 +169,13 @@ Fifth screen
 	|   Control          |
 	|Inverter  iii       |
 	|Override  ooo       |
+	|RPMsafe sss Max mmm |
 	+--------------------+
 
 iii  - one of off/on/auto to determine what control of an inverter is required (if any)
 ooo  - if Inverter is Yes or Auto then manually turn on/off
+sss  - safe value of RPMs to stop turnbibne without burning it out!
+mmm  - max RPM before shutdown
 
 
 

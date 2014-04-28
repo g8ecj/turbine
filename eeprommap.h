@@ -78,6 +78,10 @@ extern int16_t EEMEM eeMaxCharge;
 extern int16_t EEMEM eeDischarge;
 // how many times to run discharge cycle before do float charge
 extern int16_t EEMEM eeMaxDischarge;
+// max RPM before shutdown
+extern int16_t EEMEM eeRPMMax;
+// max RPM at which the big switch can be thrown
+extern int16_t EEMEM eeRPMSafe;
 
 
 

@@ -48,6 +48,8 @@ extern int16_t gMinCharge;
 extern int16_t gMaxCharge;
 extern int16_t gDischarge;
 extern int16_t gMaxDischarge;
+extern int16_t gRPMMax;
+extern int16_t gRPMSafe;
 
 
 void control_init (void);

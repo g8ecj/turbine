@@ -64,6 +64,8 @@ enum VARS
 
 	eINVERTER,
 	eMANUAL,
+	eRPMMAX,
+	eRPMSAFE,
 
 	eSHUNT,
 	ePOLES,

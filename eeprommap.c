@@ -84,7 +84,10 @@ int16_t EEMEM eeMaxCharge;
 int16_t EEMEM eeDischarge;
 // how many times to run discharge cycle before do float charge
 int16_t EEMEM eeMaxDischarge;
-
+// max RPM before shutdown
+int16_t EEMEM eeRPMMax;
+// max RPM at which the big switch can be thrown
+int16_t EEMEM eeRPMSafe;
 
 void load_eeprom_values(void)
 {
@@ -100,6 +103,8 @@ void load_eeprom_values(void)
 	eeprom_read_block ((void *) &gVoffset, (const void *) &eeVoffset, sizeof (gVoffset));
 	eeprom_read_block ((void *) &gVoltage, (const void *) &eeVoltage, sizeof (gVoltage));
 	eeprom_read_block ((void *) &gInverter, (const void *) &eeInverter, sizeof (gInverter));
+	eeprom_read_block ((void *) &gRPMMax, (const void *) &eeRPMMax, sizeof (gRPMMax));
+	eeprom_read_block ((void *) &gRPMSafe, (const void *) &eeRPMSafe, sizeof (gRPMSafe));
 	eeprom_read_block ((void *) &gSelfDischarge, (const void *) &eeSelfDischarge, sizeof (gSelfDischarge));
 	eeprom_read_block ((void *) &gIdleCurrent, (const void *) &eeIdleCurrent, sizeof (gIdleCurrent));
 	eeprom_read_block ((void *) &gShunt, (const void *) &eeShunt, sizeof (gShunt));
@@ -122,6 +127,8 @@ void save_eeprom_values(void)
 	eeprom_write_block ((const void *) &gVoffset, (void *) &eeVoffset, sizeof (gVoffset));
 	eeprom_write_block ((const void *) &gVoltage, (void *) &eeVoltage, sizeof (gVoltage));
 	eeprom_write_block ((const void *) &gInverter, (void *) &eeInverter, sizeof (gInverter));
+	eeprom_write_block ((const void *) &gRPMMax, (void *) &eeRPMMax, sizeof (gRPMMax));
+	eeprom_write_block ((const void *) &gRPMSafe, (void *) &eeRPMSafe, sizeof (gRPMSafe));
 	eeprom_write_block ((const void *) &gSelfDischarge, (void *) &eeSelfDischarge, sizeof (gSelfDischarge));
 	eeprom_write_block ((const void *) &gIdleCurrent, (void *) &eeIdleCurrent, sizeof (gIdleCurrent));
 	eeprom_write_block ((const void *) &gShunt, (void *) &eeShunt, sizeof (gShunt));

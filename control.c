@@ -41,11 +41,20 @@
 #include "tlog.h"
 #include "features.h"
 #include "rtc.h"
+#include "rpm.h"
 #include "measure.h"
 #include "eeprommap.h"
 #include "control.h"
 
 extern Serial serial;
+
+
+enum StopStates
+{
+	RUNNING = 1,
+	STOPPING,
+	STOPPED
+};
 
 
 // globals
@@ -61,7 +70,8 @@ int16_t gMinCharge;
 int16_t gMaxCharge;
 int16_t gDischarge;
 int16_t gMaxDischarge;
-
+int16_t gRPMMax;
+int16_t gRPMSafe;
 
 int16_t TargetC;
 uint8_t command = 0;
@@ -148,9 +158,18 @@ ToggleState(uint8_t * id, uint8_t state)
 }
 
 
+static void
+apply_brake(void)
+{
 
 
-// control a load that is used when the battery bank is full
+}
+
+
+
+// control a dump load that is used when the battery bank is full
+// Do a total turbine shutdown if RPMs exceed max value
+//   make sure that RPMs drop to a safe value before applying brake!
 // Also used for last resort overvolt protection
 void
 run_control(void)
@@ -161,6 +180,7 @@ run_control(void)
 	int16_t diff;
 	uint16_t regval, range = 0;
 	static bool log_reported = false;
+	static bool stop_state = RUNNING;
 
 	// decide what charging mode we are in.
 	if (gCharge < (gBankSize * 0.90))
@@ -225,6 +245,16 @@ run_control(void)
 			log_event(LOG_SHUNTOFF);
 			log_reported = false;
 		}
+	}
+
+	if ((stop_state == STOPPING) && (gRPM < gRPMSafe))
+	{
+		apply_brake();
+		stop_state = STOPPED;
+	}
+	else if (gRPM > gRPMMax)
+	{
+		stop_state = STOPPING;
 	}
 
 	// see if we have an inverter we can control

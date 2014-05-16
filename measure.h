@@ -26,6 +26,7 @@
 #include <drv/ow_1wire.h>
 
 extern int16_t gVolts;
+extern int16_t iVolts;
 extern int16_t gAmps;
 extern int16_t gPower;
 extern int16_t gShunt;

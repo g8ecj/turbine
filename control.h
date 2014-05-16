@@ -32,6 +32,8 @@
 #define MANUALOFF  3
 #define MANUALON   4
 
+#define MANUALSTOP  5
+#define MANUALSTART 6
 
 extern int16_t gDump;
 extern int16_t gLoad;

@@ -28,8 +28,8 @@
 
 #define ddInverter          1         // control active
 #define ddLoad              0         // manual on/off
-#define ddRPMMax          350         // max RPM before shutdown
-#define ddRPMSafe         200         // max RPM at which the big switch can be thrown
+#define ddRPMMax          300         // max RPM before shutdown
+#define ddRPMSafe         180         // max RPM at which the big switch can be thrown
 
 #define ddShunt          1000         // shunt conductance in Siemens
 #define ddPoles             6         // magnetic poles in generator

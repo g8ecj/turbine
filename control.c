@@ -210,8 +210,8 @@ run_control(void)
 	VoltsHI -= 0.005 * (gTemp - 2500);
 	VoltsLO -= 0.005 * (gTemp - 2500);
 
-	// see if we are above shunt load threshold
-	diff = gVolts - VoltsLO;
+	// see if we are above shunt load threshold - use instantanious volts, not the average
+	diff = iVolts - VoltsLO;
 	if (diff > 0)
 	{
 		// see what range we're operating the PWM over
@@ -245,6 +245,13 @@ run_control(void)
 			log_reported = false;
 		}
 	}
+
+	if (command == MANUALSTOP)
+	{
+		stop_state = STOPPING;
+		command = 0;
+	}
+
 
 	if ((stop_state == STOPPING) && (gRPM < gRPMSafe))
 	{

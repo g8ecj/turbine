@@ -65,6 +65,7 @@ MINMAX hourmax, daymax;
 MINMAX hourmin, daymin;
 
 int16_t gVolts;
+int16_t iVolts;
 int16_t gAmps;
 int16_t gPower;
 int16_t gShunt;
@@ -193,7 +194,7 @@ void
 run_measure(void)
 {
 	float tmp;
-	int16_t volts, amps;
+	int16_t amps;
 	static int8_t firstrun = true;
 	static uint16_t lastcharge;
 	static uint32_t lastmin = 0, lasthour = 0, lastday = 0;
@@ -235,7 +236,9 @@ run_measure(void)
 
 	// volts = as returned scaled by external divider; already scaled by 100, adjusted by calibration offset
 	median_add(&VoltsMedian, (Result.Volts * gVoltage / NOMINALVOLTS) * gVoffset);
-	median_getMedian(&VoltsMedian, &volts);
+	// instantanious volts
+	median_getMedian(&VoltsMedian, &iVolts);
+	// smoothed (average) volts
 	median_getAverage(&VoltsMedian, &gVolts);
 
 	tmp = (float)gAmps * (float)gVolts;
@@ -266,7 +269,7 @@ run_measure(void)
 	// we scan the array of 24 hours and keep the maximum value for the UI to display
 	// same goes for minimum values.
 
-	tmp = (float)amps * (float)volts;
+	tmp = (float)amps * (float)iVolts;
 	// volts & amps are scaled by 100 each so loose 10,000
 	power = (int16_t) (tmp / 10000.0);
 

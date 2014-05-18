@@ -117,9 +117,9 @@ measure_init(void)
 			thermid = cnt;
 
 	}
-	median_init(&AmpsMedian, 10);
-	median_init(&VoltsMedian, 10);
-	median_init(&TempMedian, 10);
+	median_init(&AmpsMedian, 5);
+	median_init(&VoltsMedian, 5);
+	median_init(&TempMedian, 5);
 
 	minmax_init(&hourmax, 60, true);
 	minmax_init(&hourmin, 60, false);

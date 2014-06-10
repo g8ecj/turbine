@@ -49,8 +49,6 @@ Serial serial;
 
 static void init(void)
 {
-	/* Enable all the interrupts */
-	IRQ_ENABLE;
 
 	/* Initialize debugging module (allow kprintf(), etc.) */
 //	kdbg_init();
@@ -67,6 +65,10 @@ static void init(void)
 	ser_init(&serial, SER_UART0);
 	/* Configure UART0 to work at 115.200 bps */
 	ser_setbaudrate(&serial, 115200);
+
+	/* Enable all the interrupts now the basic stuff is initialised */
+	IRQ_ENABLE;
+
 	// set clock up using last values from eeprom
 	rtc_init();
 	// read a few more values out of eeprom and init the display etc

@@ -110,8 +110,6 @@ First config screen
 	+--------------------+
 
 x.x-y - git tag version number + number of commits beyond tag
-n     - commit beyond version
-abcd  - git commit hash preamble
 VV    - system voltage in 6v steps
 vv.vv - measured voltage for calibration
 HH:MM:SS DD-MM-YY - time and date that can be adjusted!
@@ -211,7 +209,7 @@ The charging control is based on a 3 stage charge such that
 
 
 The shunt load is a PWM output at about 900Hz with opto isolators which in my case drives 4 automotive 160amp MOSFETS in parallel, although the load 
-itself is only 40amps so far!!
+itself is only 80amps so far!!
 
 The SD card operations all try and minimise the chance of data corruption. Generally the card is written to once a minute so if the card is popped 
 out then hopefully its not in the middle of a data write!! When its put back in then the sense line is used to re-open the current log file (or a 
@@ -228,12 +226,13 @@ Here is the (very basic) help output
 
 >> ?
 
->>del dir type disk dcs inv log date time find config<<
+>>cal del dir type disk dcs inv log date time find config<<
 
 
 The first few commands are associated with the storage of data on the SD card. I've used command name familiar with DOS/Windows users rather than 
 my preferred Linux (Unix) names!!
 
+cal - run the calibration routine - make sure no charge or discharge is occuring first!
 del - delete a file
 dir - directory listing
 type - display a file (end early with ESC)

@@ -548,6 +548,13 @@ process_command (char *command, uint8_t count)
 		}
 	}
 
+	else if (strncmp (command, "uptime", 6) == 0)
+	{
+		uint32_t t = uptime();
+		// convert start of day to something readable
+		kfile_printf (&serial.fd, "%02d:%02d:%02d\r\n", t / 3600, t % 3600, t % 60);
+	}
+
 	else if (strncmp (command, "dir", 3) == 0)
 	{
 		file_action (NULL, FA_LS, NULL);

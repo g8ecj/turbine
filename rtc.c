@@ -42,6 +42,7 @@ int16_t gAdjustTime;
 
 static volatile uint32_t Epoch;
 static volatile ticks_t LastTicks;
+static volatile uint32_t start_of_day;
 
 
 #define HOUR       0
@@ -75,11 +76,6 @@ set_epoch_time (void)
 	if ((gMONTH > 2) && ((gYEAR & 3) == 0))
 		t += 1;						  // add leap day for this leap year
 
-	for (i = 0; i < gMONTH; i++)
-		t += MonthLength[i];		  // days in month (not including this month!!)
-
-	t += gDAY - 1;					  // don't include today!!
-	t *= 24;							  // days -> hours
 	t += gHOUR;
 	t *= 60;
 	t += gMINUTE;
@@ -87,6 +83,8 @@ set_epoch_time (void)
 	t += gSECOND;
 	t += 946638000;				  // correction to base to 1970 (Unix time)
 
+// use the difference between the new value and the old to adjust start of day
+	start_of_day -= Epoch - t;
 	Epoch = t;
 
 	DateTime.S = gSECOND;
@@ -110,6 +108,11 @@ void get_datetime(uint16_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, u
 
 }
 
+uint32_t
+uptime(void)
+{
+	return Epoch - start_of_day;
+}
 
 /******************************************************************************
 *
@@ -139,6 +142,7 @@ rtc_init (void)
 
 	LastTicks = timer_clock ();
 	set_epoch_time ();
+	start_of_day = Epoch;
 }
 
 

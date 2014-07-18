@@ -162,8 +162,20 @@ control_init(void)
 }
 
 
-
-
+static void
+set_charge_target(void)
+{
+	if ((gDischarge >= gMaxDischarge) || (gDischarge < 0))
+	{
+		TargetC = gBankSize;
+		gDischarge = 0;
+	}
+	else
+	{
+		TargetC = gMaxCharge;
+		gDischarge++;
+	}
+}
 
 
 // control a dump load that is used when the battery bank is full
@@ -276,7 +288,7 @@ run_control(void)
 			// turned off load OK, start charging
 			gLoad = LOADOFF;
 			log_event(LOG_MANUALOFF);
-			TargetC = gBankSize;
+			set_charge_target();
 		}
 		else
 		{
@@ -377,16 +389,7 @@ run_control(void)
 				gLoad = LOADOFF;
 				log_event(LOG_DISCHARGED);
 				// decide whether we are doing a normal charge or we are taking up to full float level
-				if ((gDischarge >= gMaxDischarge) || (gDischarge < 0))
-				{
-					gDischarge = 0;
-					TargetC = gBankSize;
-				}
-				else
-				{
-					TargetC = gMaxCharge;
-					gDischarge++;
-				}
+				set_charge_target();
 				eeprom_write_block ((const void *) &gDischarge, (void *) &eeDischarge, sizeof(gDischarge));
 			}
 			else

@@ -76,6 +76,11 @@ set_epoch_time (void)
 	if ((gMONTH > 2) && ((gYEAR & 3) == 0))
 		t += 1;						  // add leap day for this leap year
 
+	for (i = 0; i < gMONTH; i++)
+		t += MonthLength[i];     // days in month (not including this month!!)
+
+	t += gDAY -1;               // don't include today!!
+	t *= 24;                    // days -> hours
 	t += gHOUR;
 	t *= 60;
 	t += gMINUTE;

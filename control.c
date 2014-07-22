@@ -189,7 +189,7 @@ run_control(void)
 	int16_t VoltsHI = 0;
 	int16_t VoltsLO = 0;
 	int16_t diff;
-	uint16_t regval, range = 0;
+	uint16_t range = 0;
 	static bool log_reported = false;
 	static bool stop_state = RUNNING;
 
@@ -232,14 +232,14 @@ run_control(void)
 #define SHAPE 63
 		float dval = (float)diff / range;
 		float fig = log(SHAPE);
-		regval = 1010 * (exp(fig * dval) - 1) / (SHAPE - 1);
+		float regval = 1010 * (exp(fig * dval) - 1) / (SHAPE - 1);
 
 		// if above the top value then set near max on time but make sure its still pulsing
 		// in case we are using AC coupling!!
 		if (regval > 1010)
 			regval = 1010;
 
-		OCR1A = regval;
+		OCR1A = (uint16_t) regval;
 		gDump = regval / 10;	  // shunt load is activated - show initial value
 		if (!log_reported && gDump >= 50)				  // if going from OFF to ON then log the event
 		{

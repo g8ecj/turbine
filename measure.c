@@ -318,7 +318,7 @@ run_measure(void)
 	if (time() >= lasthour + 3600)
 	{
 		int32_t tmp0; //calcs must be done in 32-bit math to avoid overflow
-		tmp0 = (int32_t)loopcount * (6553) + (int64_t)gLoops * (65536 - 6553);
+		tmp0 = (int32_t)loopcount * (6553) + (int32_t)gLoops * (65536 - 6553);
 		gLoops = (int16_t)((tmp0 + 32768) / 65536); //scale back to 16-bit (with rounding)
 		loopcount = 0;
 

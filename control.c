@@ -274,6 +274,11 @@ run_control(void)
 	{
 		stop_state = STOPPING;
 	}
+	else if ((stop_state == STOPPED) && (gRPM == 0))
+	{
+		stop_state = RUNNING;
+	}
+
 
 	// see if we have an inverter we can control
 	if (gInverter == 0)

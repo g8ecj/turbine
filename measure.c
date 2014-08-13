@@ -70,6 +70,7 @@ int16_t gAmps;
 int16_t gPower;
 int16_t gShunt;
 int16_t gTemp;
+int16_t gLoops = 0;
 float gVoffset;
 int16_t gVoltage;
 uint16_t gDCA;
@@ -199,6 +200,7 @@ run_measure(void)
 	static uint16_t lastcharge;
 	static uint32_t lastmin = 0, lasthour = 0, lastday = 0;
 	int16_t power;
+	static uint16_t loopcount = 0;
 
 	if (firstrun)
 	{
@@ -309,9 +311,17 @@ run_measure(void)
 	gMaxhour = minmax_get(&hourmax, power);
 	gMinhour = minmax_get(&hourmin, power);
 
+	// come through here every iteration so count how often
+	loopcount++;
+
 	// see if we have finished an hour, if so then move to a new hour
 	if (time() >= lasthour + 3600)
 	{
+		int32_t tmp0; //calcs must be done in 32-bit math to avoid overflow
+		tmp0 = (int32_t)loopcount * (6553) + (int64_t)gLoops * (65536 - 6553);
+		gLoops = (int16_t)((tmp0 + 32768) / 65536); //scale back to 16-bit (with rounding)
+		loopcount = 0;
+
 		lasthour = time();
 		minmax_add(&daymax);
 		minmax_add(&daymin);

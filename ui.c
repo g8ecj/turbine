@@ -347,8 +347,8 @@ Screen control[] = {
 	{-1, 0, 3, "Control", 0, 0},
 	{eINVERTER, 1, 0, "Inverter", 14, 4},
 	{eMANUAL, 2, 0, "Override", 14, 4},
-	{eRPMMAX, 3, 0, "RPMMax", 8, 3},
-	{eRPMSAFE, 3, 12, "Safe", 16, 3},
+	{eRPMMAX, 3, 0, "RPMMax", 6, 3},
+	{eRPMSAFE, 3, 10, "Safe", 15, 3},
 	{-2, 0, 0, "", 0, 0}
 };
 

@@ -97,9 +97,9 @@ run_rpm (void)
 		gRPM = 0;
 
 	// see if a minute has passed, if so advance the pointer to track the last hour
-	if (time () >= lastmin + 60)
+	if (time() >= lastmin + 60)
 	{
-		lastmin = time ();
+		lastmin = time();
 		minmax_add(&RpmHourMax);
 	}
 

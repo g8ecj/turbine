@@ -30,6 +30,7 @@ extern int16_t iVolts;
 extern int16_t gAmps;
 extern int16_t gPower;
 extern int16_t gShunt;
+extern int16_t gLoops;
 
 extern int16_t gTemp;
 extern uint16_t gDCA;

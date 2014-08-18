@@ -286,9 +286,17 @@ run_measure(void)
 	if (power < gMinday)
 		log_event(LOG_NEWDAYMIN);
 
+	// come through here every iteration so count how often
+	loopcount++;
+
 	// see if a minute has passed, if so advance the pointer to track the last hour
 	if (time() >= lastmin + 60)
 	{
+		int32_t tmp0; //calcs must be done in 32-bit math to avoid overflow
+		tmp0 = gLoops * 59 + loopcount;
+		gLoops = tmp0 / 60;
+		loopcount = 0;
+
 		lastmin = time();
 		minmax_add(&hourmax);
 		minmax_add(&hourmin);
@@ -311,17 +319,9 @@ run_measure(void)
 	gMaxhour = minmax_get(&hourmax, power);
 	gMinhour = minmax_get(&hourmin, power);
 
-	// come through here every iteration so count how often
-	loopcount++;
-
 	// see if we have finished an hour, if so then move to a new hour
 	if (time() >= lasthour + 3600)
 	{
-		int32_t tmp0; //calcs must be done in 32-bit math to avoid overflow
-		tmp0 = (int32_t)loopcount * (6553) + (int32_t)gLoops * (65536 - 6553);
-		gLoops = (int16_t)((tmp0 + 32768) / 65536); //scale back to 16-bit (with rounding)
-		loopcount = 0;
-
 		lasthour = time();
 		minmax_add(&daymax);
 		minmax_add(&daymin);

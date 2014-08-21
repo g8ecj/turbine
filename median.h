@@ -18,7 +18,7 @@
 
 
 #define MIN_MEDIAN 1
-#define MAX_MEDIAN 60
+#define MAX_MEDIAN 20
 
 #define OK true
 #define NOK false
@@ -42,7 +42,8 @@ bool median_getLowest(MEDIAN *M, int16_t *value);
 uint8_t median_getSize(MEDIAN *M);
 uint8_t median_getCount(MEDIAN *M);
 bool median_getStatus(MEDIAN *M);
-bool median_getbyindex(MEDIAN *M, int8_t index, int16_t *value);
+bool median_getNext(MEDIAN *M, int8_t *index, int16_t *value);
+uint8_t median_getIndex(MEDIAN *M);
 
 
 #endif

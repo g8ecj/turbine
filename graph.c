@@ -28,6 +28,8 @@
 
 #include <drv/timer.h>
 #include <drv/ser.h>
+#include <drv/lcd_hd44.h>
+#include <drv/term.h>
 #include <drv/ow_ds2438.h>
 #include <drv/ow_ds2413.h>
 #include <drv/ow_ds18x20.h>
@@ -46,14 +48,38 @@ MEDIAN PowerMins;
 MEDIAN PowerHours;
 MEDIAN PowerDays;
 
+#define DEGREE 1
+#define SDCARD 2
+#define BOTQUAR 3
+#define BOTHALF 4
+#define BOTTHRE 5
+#define TOPTHRE 6
+#define TOPHALF 7
+#define TOPQUAR 8
+
+static const char lcd_botquar[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x1f };
+static const char lcd_bothalf[8] = {0x00, 0x00, 0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f };
+static const char lcd_botthre[8] = {0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f };
+static const char lcd_topthre[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00 };
+static const char lcd_tophalf[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00 };
+static const char lcd_topquar[8] = {0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+char graphmap[] = {' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR };
 
 
 void
 graph_init (void)
 {
-	median_init(&PowerMins, 60);
-	median_init(&PowerHours, 60);
-	median_init(&PowerDays, 24);
+	median_init(&PowerMins, 20);
+	median_init(&PowerHours, 20);
+	median_init(&PowerDays, 20);
+
+	lcd_remapChar (lcd_botquar, BOTQUAR);
+	lcd_remapChar (lcd_bothalf, BOTHALF);
+	lcd_remapChar (lcd_botthre, BOTTHRE);
+	lcd_remapChar (lcd_topthre, TOPTHRE);
+	lcd_remapChar (lcd_tophalf, TOPHALF);
+	lcd_remapChar (lcd_topquar, TOPQUAR);
 }
 
 void
@@ -73,6 +99,7 @@ run_graph (void)
 	// see if a minute has passed, if so advance the pointer to track the last hour
 	if (uptime() >= lastmin + 60)
 	{
+		pLastHour += pLastMin / 60;
 		median_add(&PowerMins, (int16_t)pLastMin / 60);
 		pLastMin = 0;
 		lastmin = uptime();
@@ -81,9 +108,7 @@ run_graph (void)
 	// see if a minute has passed, if so advance the pointer to track the last hour
 	if (uptime() >= lasthour + 3600)
 	{
-		int16_t tmp;
-		median_getbyindex(&PowerMins, 1, &tmp);
-		pLastHour += tmp;
+		pLastDay += pLastHour / 60;
 		median_add(&PowerHours, (int16_t)pLastHour / 60);
 		pLastHour = 0;
 		lasthour = uptime();
@@ -92,13 +117,12 @@ run_graph (void)
 	// see if a minute has passed, if so advance the pointer to track the last hour
 	if (uptime() >= lastday + 86400)
 	{
-		int16_t tmp;
-		median_getbyindex(&PowerHours, 1, &tmp);
-		pLastDay += tmp;
 		median_add(&PowerDays, (int16_t)pLastDay / 24);
-		pLastMin = 0;
+		pLastDay = 0;
 		lastday = uptime();
 	}
 
-
 }
+
+
+

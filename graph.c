@@ -65,15 +65,40 @@ run_graph (void)
 
 	// see if a second has passed, if so add power into minute accumulator
 	if (uptime() >= lastsec + 1)
+	{
 		pLastMin += gPower;
+		lastsec = uptime();
+	}
 
 	// see if a minute has passed, if so advance the pointer to track the last hour
 	if (uptime() >= lastmin + 60)
 	{
 		median_add(&PowerMins, (int16_t)pLastMin / 60);
 		pLastMin = 0;
+		lastmin = uptime();
 	}
 
+	// see if a minute has passed, if so advance the pointer to track the last hour
+	if (uptime() >= lasthour + 3600)
+	{
+		int16_t tmp;
+		median_getbyindex(&PowerMins, 1, &tmp);
+		pLastHour += tmp;
+		median_add(&PowerHours, (int16_t)pLastHour / 60);
+		pLastHour = 0;
+		lasthour = uptime();
+	}
+
+	// see if a minute has passed, if so advance the pointer to track the last hour
+	if (uptime() >= lastday + 86400)
+	{
+		int16_t tmp;
+		median_getbyindex(&PowerHours, 1, &tmp);
+		pLastDay += tmp;
+		median_add(&PowerDays, (int16_t)pLastDay / 24);
+		pLastMin = 0;
+		lastday = uptime();
+	}
 
 
 }

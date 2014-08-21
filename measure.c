@@ -206,9 +206,9 @@ run_measure(void)
 	{
 		firstrun = false;
 
-		lastmin = time();
-		lasthour = time();
-		lastday = time();
+		lastmin = uptime();
+		lasthour = uptime();
+		lastday = uptime();
 	}
 
 	if (battid == -1)				  // see if a DS2438 chip is present
@@ -290,14 +290,14 @@ run_measure(void)
 	loopcount++;
 
 	// see if a minute has passed, if so advance the pointer to track the last hour
-	if (time() >= lastmin + 60)
+	if (uptime() >= lastmin + 60)
 	{
 		int32_t tmp0; //calcs must be done in 32-bit math to avoid overflow
 		tmp0 = gLoops * 59 + loopcount;
 		gLoops = tmp0 / 60;
 		loopcount = 0;
 
-		lastmin = time();
+		lastmin = uptime();
 		minmax_add(&hourmax);
 		minmax_add(&hourmin);
 
@@ -320,9 +320,9 @@ run_measure(void)
 	gMinhour = minmax_get(&hourmin, power);
 
 	// see if we have finished an hour, if so then move to a new hour
-	if (time() >= lasthour + 3600)
+	if (uptime() >= lasthour + 3600)
 	{
-		lasthour = time();
+		lasthour = uptime();
 		minmax_add(&daymax);
 		minmax_add(&daymin);
 
@@ -345,11 +345,11 @@ run_measure(void)
 	}
 
 	// see if we have finished a day, if so then total up the idle current
-	if (time() >= lastday + 86400)
+	if (uptime() >= lastday + 86400)
 	{
 		uint16_t total_idle;
 
-		lastday = time();
+		lastday = uptime();
 		gCharge -= gIdleCurrent * 24 / 100;
 		ow_ds2438_init(ids[battid], &Result, 1.0 / gShunt, gCharge);
 		log_event(LOG_IDLEADJUST);

@@ -480,6 +480,18 @@ process_command (char *command, uint8_t count)
 		}
 	}
 
+	else if (strncmp (command, "start", 5) == 0)
+	{
+		kfile_printf (&serial.fd, "Starting\r\n");
+		do_command (MANUALSTART);
+	}
+
+	else if (strncmp (command, "stop", 4) == 0)
+	{
+		kfile_printf (&serial.fd, "Stopping\r\n");
+		do_command (MANUALSTOP);
+	}
+
 	else if (strncmp (command, "log", 3) == 0)
 	{
 		gLive = !gLive;

@@ -52,6 +52,7 @@ extern Serial serial;
 enum StopStates
 {
 	RUNNING = 1,
+	BREAKING,
 	STOPPING,
 	STOPPED
 };
@@ -129,10 +130,16 @@ ToggleState(uint8_t * id, uint8_t state)
 
 
 static void
-apply_brake(void)
+apply_brake(bool state)
 {
-
-
+	if (state)
+	{
+	// turn on brake
+	}
+	else
+	{
+	// turn off break
+	}
 }
 
 
@@ -191,7 +198,7 @@ run_control(void)
 	int16_t diff;
 	uint16_t range = 0;
 	static bool log_reported = false;
-	static bool stop_state = RUNNING;
+	static uint8_t stop_state = RUNNING;
 
 	// decide what charging mode we are in.
 	if (gCharge < (gBankSize * 0.90))
@@ -263,20 +270,26 @@ run_control(void)
 		stop_state = STOPPING;
 		command = 0;
 	}
+	if (command == MANUALSTART)
+	{
+		apply_brake(false);
+		stop_state = RUNNING;
+		command = 0;
+	}
 
 
 	if ((stop_state == STOPPING) && (gRPM < gRPMSafe))
 	{
-		apply_brake();
-		stop_state = STOPPED;
+		apply_brake(true);
+		stop_state = BREAKING;
 	}
 	else if (gRPM > gRPMMax)
 	{
 		stop_state = STOPPING;
 	}
-	else if ((stop_state == STOPPED) && (gRPM == 0))
+	else if ((stop_state == BREAKING) && (gRPM == 0))
 	{
-		stop_state = RUNNING;
+		stop_state = STOPPED;
 	}
 
 

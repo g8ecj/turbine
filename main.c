@@ -40,6 +40,7 @@
 #include "tlog.h"
 #include "rpm.h"
 #include "rtc.h"
+#include "graph.h"
 #include "ui.h"
 
 Serial serial;
@@ -77,6 +78,7 @@ static void init(void)
 	measure_init();
 	control_init();
 	rpm_init();
+	graph_init();
 	log_init();
 
 }
@@ -99,6 +101,8 @@ int main(void)
       run_log();
       // calculate turbine RPM from period of raw AC
       run_rpm();
+      // save values for graphic display of power in/out
+      run_graph();
       // display stuff on the LCD
       run_ui();
 

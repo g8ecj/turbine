@@ -85,6 +85,19 @@ void median_add(MEDIAN *M, int16_t value)
 	if (M->cnt < M->size) M->cnt++;
 }
 
+//< Gets the value from the supplied index in the array
+//< \param M pointer to a struct that holds the variables for this instance of median calculator
+//< \param index 8 bit unsigned index into median array
+//< \param value pointer to indexed value returned
+bool median_getbyindex(MEDIAN *M, int8_t index, int16_t *value)
+{
+	if ((M->cnt > 0) && (index <= M->cnt)) {
+		*value = M->ar[index];
+		return OK;
+	}
+	return NOK;
+}
+
 //< Sort the median array and return the centre of the sorted array
 //< \param M pointer to a struct that holds the variables for this instance of median calculator
 //< \param value pointer to value returned from the centre of the sorted median array

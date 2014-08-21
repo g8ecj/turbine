@@ -15,6 +15,7 @@ ardmega-turbine_USER_CSRC = \
 	$(ardmega-turbine_SRC_PATH)/control.c \
 	$(ardmega-turbine_SRC_PATH)/measure.c \
 	$(ardmega-turbine_SRC_PATH)/rpm.c \
+	$(ardmega-turbine_SRC_PATH)/graph.c \
 	$(ardmega-turbine_SRC_PATH)/tlog.c \
 	$(ardmega-turbine_SRC_PATH)/rtc.c \
 	$(ardmega-turbine_SRC_PATH)/ui.c \

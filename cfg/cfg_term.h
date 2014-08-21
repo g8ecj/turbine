@@ -43,7 +43,7 @@
  * Enable scroll buffer
  * $WIZ$ type = "boolean"
  */
-#define CONFIG_TERM_SCROLL 1
+#define CONFIG_TERM_SCROLL 0
 
 
 /**

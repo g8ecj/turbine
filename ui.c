@@ -61,11 +61,24 @@
 
 #define DEGREE 1
 #define SDCARD 2
+#define BOTQUAR 3
+#define BOTHALF 4
+#define BOTTHRE 5
+#define TOPTHRE 6
+#define TOPHALF 7
+#define TOPQUAR 8
+
 static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
 static const char lcd_sdcard[8] = { 0x1f, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12, 0x1c };	/* sd card - bent rectangle! */
+static const char lcd_botquar[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x1f };
+static const char lcd_bothalf[8] = {0x00, 0x00, 0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f };
+static const char lcd_botthre[8] = {0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f };
+static const char lcd_topthre[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00 };
+static const char lcd_tophalf[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00 };
+static const char lcd_topquar[8] = {0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 char degreestr[] = { DEGREE, 'C', 0 };
-
+char graphmap[] = {' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR };
 
 // a table of fields that are flashing
 #define MAXFLASH    10
@@ -639,6 +652,13 @@ void ui_init (void)
 	lcd_display (1, 0, 0);
 	lcd_remapChar (lcd_degree, DEGREE);        // put the degree symbol on character 0x01
 	lcd_remapChar (lcd_sdcard, SDCARD);        // put the sd card symbol on character 0x02
+	lcd_remapChar (lcd_botquar, BOTQUAR);
+	lcd_remapChar (lcd_bothalf, BOTHALF);
+	lcd_remapChar (lcd_botthre, BOTTHRE);
+	lcd_remapChar (lcd_topthre, TOPTHRE);
+	lcd_remapChar (lcd_tophalf, TOPHALF);
+	lcd_remapChar (lcd_topquar, TOPQUAR);
+
 	term_init (&term);
 #if PUSHBUTTONS == 1
 	kbd_init();

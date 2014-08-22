@@ -22,10 +22,14 @@
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
-#include <avr/eeprom.h>
-#include <drv/ow_1wire.h>
+
+#define MINGRAPH 1
+#define HOURGRAPH 2
+#define DAYGRAPH 3
+
 
 void graph_init (void);
 void run_graph (void);
+void display_graph (KFile *stream, uint8_t type);
 
 #endif

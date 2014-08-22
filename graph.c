@@ -33,6 +33,7 @@
 #include <drv/ow_ds2438.h>
 #include <drv/ow_ds2413.h>
 #include <drv/ow_ds18x20.h>
+#include "io/kfile.h"
 
 #include "tlog.h"
 #include <cfg/log.h>
@@ -42,7 +43,6 @@
 #include "graph.h"
 #include "rtc.h"
 #include "measure.h"
-
 
 MEDIAN PowerMins;
 MEDIAN PowerHours;
@@ -64,7 +64,11 @@ static const char lcd_topthre[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x
 static const char lcd_tophalf[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00 };
 static const char lcd_topquar[8] = {0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-char graphmap[] = {' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR };
+char graphmap[4][8] = {
+{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR },
+{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR },
+{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR },
+{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR }};
 
 
 void
@@ -96,7 +100,7 @@ run_graph (void)
 		lastsec = uptime();
 	}
 
-	// see if a minute has passed, if so advance the pointer to track the last hour
+	// see if a minute has passed, if so advance the pointer to track the last 20 minutes
 	if (uptime() >= lastmin + 60)
 	{
 		pLastHour += pLastMin / 60;
@@ -105,7 +109,7 @@ run_graph (void)
 		lastmin = uptime();
 	}
 
-	// see if a minute has passed, if so advance the pointer to track the last hour
+	// see if an hour has passed, if so advance the pointer to track the last 20 of them
 	if (uptime() >= lasthour + 3600)
 	{
 		pLastDay += pLastHour / 60;
@@ -114,15 +118,60 @@ run_graph (void)
 		lasthour = uptime();
 	}
 
-	// see if a minute has passed, if so advance the pointer to track the last hour
+	// see if a minute has passed, if so advance the pointer to track the last 20 days
 	if (uptime() >= lastday + 86400)
 	{
 		median_add(&PowerDays, (int16_t)pLastDay / 24);
 		pLastDay = 0;
 		lastday = uptime();
 	}
-
 }
 
+void
+display_graph (KFile *stream, uint8_t type)
+{
+	MEDIAN *mArray;
+	uint8_t i, j;
+	int8_t index;
+	int16_t highest, lowest, scale, value;
+	char buf[21];
+
+	switch(type)
+	{
+	case MINGRAPH:
+		mArray = &PowerMins;
+		break;
+	case HOURGRAPH:
+		mArray = &PowerHours;
+		break;
+	case DAYGRAPH:
+		mArray = &PowerDays;
+		break;
+	default:
+		mArray = &PowerMins;
+		break;
+	}
+
+	median_getHighest(mArray, &highest);
+	median_getLowest(mArray, &lowest);
+
+	scale = MAX(abs(highest), abs(lowest));
+	for (i = 0; i < 4; i++)          // for each line to be displayed
+	{
+		index = median_getStart(mArray);
+		for (j = 0; j < 20; j++)
+		{
+			median_getNext(mArray, &index, &value);
+			buf[j] = graphmap[i][value / scale * 4];
+		}
+		buf[20] = 0;
+		kfile_printf(stream, "%s", buf);
+	}
+
+
+
+
+
+}
 
 

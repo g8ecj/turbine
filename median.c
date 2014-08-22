@@ -157,10 +157,14 @@ bool median_getLowest(MEDIAN *M, int16_t *value)
 
 
 //< \param M pointer to a struct that holds the variables for this instance of median calculator
-//< \return index into median array
-uint8_t median_getIndex(MEDIAN *M) 
+//< \return index into median array wheer data starts (opposite end to where we write!!)
+int8_t median_getStart(MEDIAN *M) 
 {
-	return M->idx;
+	int8_t index = M->idx - 1;
+	
+	if (index < 0)
+		index = M->cnt;
+	return index;
 }
 
 //< \param M pointer to a struct that holds the variables for this instance of median calculator

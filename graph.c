@@ -48,15 +48,6 @@ MEDIAN PowerMins;
 MEDIAN PowerHours;
 MEDIAN PowerDays;
 
-#define DEGREE 1
-#define SDCARD 2
-#define BOTQUAR 3
-#define BOTHALF 4
-#define BOTTHRE 5
-#define TOPTHRE 6
-#define TOPHALF 7
-#define TOPQUAR 8
-
 static const char lcd_botquar[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x1f };
 static const char lcd_bothalf[8] = {0x00, 0x00, 0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f };
 static const char lcd_botthre[8] = {0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f };
@@ -64,11 +55,11 @@ static const char lcd_topthre[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x
 static const char lcd_tophalf[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00 };
 static const char lcd_topquar[8] = {0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-char graphmap[4][8] = {
-{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR },
-{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR },
-{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR },
-{' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, TOPTHRE, TOPHALF, TOPQUAR }};
+char graphmap[4][16] = {
+{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff },
+{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', BOTQUAR, BOTHALF, BOTTHRE, 0xff, 0xff, 0xff, 0xff },
+{0xff, 0xff, 0xff, 0xff, 0xff, TOPTHRE, TOPHALF, TOPQUAR, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+{0xff, TOPTHRE, TOPHALF, TOPQUAR, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}};
 
 
 void
@@ -91,6 +82,7 @@ run_graph (void)
 {
 	static uint32_t lastsec = 0, lastmin = 0, lasthour = 0, lastday = 0;
 	static int32_t pLastMin = 0, pLastHour = 0, pLastDay = 0;
+	static uint8_t mincount = 0;
 
 
 	// see if a second has passed, if so add power into minute accumulator
@@ -100,11 +92,15 @@ run_graph (void)
 		lastsec = uptime();
 	}
 
-	// see if a minute has passed, if so advance the pointer to track the last 20 minutes
+	// see if a minute has passed, if so advance the pointer to track the last 60 minutes
 	if (uptime() >= lastmin + 60)
 	{
 		pLastHour += pLastMin / 60;
-		median_add(&PowerMins, (int16_t)pLastMin / 60);
+		if (mincount++ >= 3)
+		{
+			median_add(&PowerMins, (int16_t)pLastMin / 60);
+			mincount = 0;
+		}
 		pLastMin = 0;
 		lastmin = uptime();
 	}
@@ -118,7 +114,7 @@ run_graph (void)
 		lasthour = uptime();
 	}
 
-	// see if a minute has passed, if so advance the pointer to track the last 20 days
+	// see if a day has passed, if so advance the pointer to track the last 20 days
 	if (uptime() >= lastday + 86400)
 	{
 		median_add(&PowerDays, (int16_t)pLastDay / 24);
@@ -156,15 +152,17 @@ display_graph (KFile *stream, uint8_t type)
 	median_getLowest(mArray, &lowest);
 
 	scale = MAX(abs(highest), abs(lowest));
+	kfile_putc(TERM_CLR, stream);
 	for (i = 0; i < 4; i++)          // for each line to be displayed
 	{
 		index = median_getStart(mArray);
-		for (j = 0; j < 20; j++)
+		for (j = 0; j < median_getCount(mArray); j++)
 		{
 			median_getNext(mArray, &index, &value);
-			buf[j] = graphmap[i][value / scale * 4];
+			buf[j] = graphmap[i][(int32_t)(value + scale) * 8 / scale];
+			
 		}
-		buf[20] = 0;
+		buf[j] = 0;
 		kfile_printf(stream, "%s", buf);
 	}
 

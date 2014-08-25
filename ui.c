@@ -56,11 +56,9 @@
 #include "tlog.h"
 #include "rtc.h"
 #include "eeprommap.h"
+#include "graph.h"
 #include "ui.h"
 
-
-#define DEGREE 1
-#define SDCARD 2
 
 static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
 static const char lcd_sdcard[8] = { 0x1f, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12, 0x1c };	/* sd card - bent rectangle! */
@@ -706,6 +704,7 @@ void run_ui (void)
 		print_screen (screen_number);
 	}
 
+	display_graph (&term.fd, MINGRAPH);
 
 	switch (mode)
 	{

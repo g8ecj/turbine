@@ -27,6 +27,15 @@
 #define HOURGRAPH 2
 #define DAYGRAPH 3
 
+#define DEGREE  1
+#define SDCARD  2
+#define BOTQUAR 3
+#define BOTHALF 4
+#define BOTTHRE 5
+#define TOPTHRE 6
+#define TOPHALF 7
+#define TOPQUAR 8
+
 
 void graph_init (void);
 void run_graph (void);

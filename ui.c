@@ -75,6 +75,7 @@ static int8_t flashing[MAXFLASH];
 
 // Timings (in mS) for various activities
 #define CAROSEL 5000L
+#define HEADINGS 1000L
 #define BACKLIGHT 5000L
 #define REFRESH 300L
 #define FLASHON 700L
@@ -920,14 +921,14 @@ void run_ui (void)
 		{
 			carosel_timer = timer_clock ();
 			refresh_timer = timer_clock ();
-			print_screen (screen_number);
 			if (++screen_number >= (int8_t) NUM_INFO)
 				screen_number = 0;
+			print_screen (screen_number);
 		}
 		break;
 
 // up/down moves round graph screens
-// left right displays the scale and time
+// left right displays the scale and time, resets the refresh timer so the graph is displayed after a short delay
 // centre toggles carosel mode
 	case GRAPH:
 		switch (key)
@@ -951,11 +952,11 @@ void run_ui (void)
 			print_graph (&term.fd, graph_number, GRAPHSTYLE);
 			break;
 		case K_LEFT:
-			graph_number = MINGRAPH;
+			refresh_timer = timer_clock () + ms_to_ticks (REFRESH - HEADINGS);
 			print_graph (&term.fd, graph_number, TEXTSTYLE);
 			break;
 		case K_RIGHT:
-			graph_number = DAYGRAPH;
+			refresh_timer = timer_clock () + ms_to_ticks (REFRESH - HEADINGS);
 			print_graph (&term.fd, graph_number, TEXTSTYLE);
 			break;
 		case K_LEFT | K_RIGHT:
@@ -966,10 +967,10 @@ void run_ui (void)
 		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))
 		{
 			carosel_timer = timer_clock ();
-			refresh_timer = timer_clock ();
-			print_graph (&term.fd, graph_number, GRAPHSTYLE);
+			refresh_timer = timer_clock () + ms_to_ticks (REFRESH - HEADINGS);
 			if (++graph_number >= (int8_t) NUMGRAPH)
 				graph_number = MINGRAPH;
+			print_graph (&term.fd, graph_number, TEXTSTYLE);
 		}
 		break;
 

@@ -42,7 +42,6 @@
 
 
 void graph_init (void);
-void graph_first_init(void);
 void run_graph (void);
 void print_graph (KFile *stream, uint8_t type, uint8_t style);
 

@@ -68,9 +68,13 @@ graph_init (void)
 {
 	median_init(&PowerMins, 20);
 	median_init(&PowerHours, 20);
-	median_init(&PowerDays, 20);
 
 	eeprom_read_block ((void *) &PowerDays, (const void *) &eePowerDays, sizeof (PowerDays));
+	if (median_getSize(&PowerDays) != 20)
+	{
+		median_init(&PowerDays, 20);
+		eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
+	}
 
 	lcd_remapChar (lcd_botquar, BOTQUAR);
 	lcd_remapChar (lcd_bothalf, BOTHALF);
@@ -78,14 +82,6 @@ graph_init (void)
 	lcd_remapChar (lcd_topthre, TOPTHRE);
 	lcd_remapChar (lcd_tophalf, TOPHALF);
 	lcd_remapChar (lcd_topquar, TOPQUAR);
-}
-
-
-void
-graph_first_init(void)
-{
-	median_init(&PowerDays, 20);
-	eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
 }
 
 

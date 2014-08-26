@@ -124,7 +124,7 @@ run_graph (void)
 }
 
 void
-display_graph (KFile *stream, uint8_t type)
+print_graph (KFile *stream, uint8_t type, uint8_t style)
 {
 	MEDIAN *mArray;
 	uint8_t i, j;
@@ -150,25 +150,29 @@ display_graph (KFile *stream, uint8_t type)
 
 	median_getHighest(mArray, &highest);
 	median_getLowest(mArray, &lowest);
-
 	scale = MAX(abs(highest), abs(lowest));
 	kfile_putc(TERM_CLR, stream);
-	for (i = 0; i < 4; i++)          // for each line to be displayed
+
+	if (style == GRAPHSTYLE)
 	{
-		index = median_getStart(mArray);
-		for (j = 0; j < median_getCount(mArray); j++)
+		for (i = 0; i < 4; i++)          // for each line to be displayed
 		{
-			median_getNext(mArray, &index, &value);
-			buf[j] = graphmap[i][(int32_t)(value + scale) * 8 / scale];
-			
+			index = median_getStart(mArray);
+			for (j = 0; j < median_getCount(mArray); j++)
+			{
+				median_getNext(mArray, &index, &value);
+				buf[j] = graphmap[i][(int32_t)(value + scale) * 8 / scale];
+				
+			}
+			buf[j] = 0;
+			kfile_printf(stream, "%s", buf);
 		}
-		buf[j] = 0;
-		kfile_printf(stream, "%s", buf);
 	}
-
-
-
-
+	else
+	{
+	
+	
+	}
 
 }
 

@@ -23,9 +23,13 @@
 #define _GRAPH_H
 
 
-#define MINGRAPH 1
-#define HOURGRAPH 2
-#define DAYGRAPH 3
+#define MINGRAPH  0
+#define HOURGRAPH 1
+#define DAYGRAPH  2
+#define NUMGRAPH  3
+
+#define GRAPHSTYLE 1
+#define TEXTSTYLE  2
 
 #define DEGREE  1
 #define SDCARD  2
@@ -39,6 +43,6 @@
 
 void graph_init (void);
 void run_graph (void);
-void display_graph (KFile *stream, uint8_t type);
+void print_graph (KFile *stream, uint8_t type, uint8_t style);
 
 #endif

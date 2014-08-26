@@ -60,6 +60,9 @@
 #include "ui.h"
 
 
+#define DEGREE 1
+#define SDCARD 2
+
 static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
 static const char lcd_sdcard[8] = { 0x1f, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12, 0x1c };	/* sd card - bent rectangle! */
 
@@ -656,13 +659,14 @@ void ui_init (void)
 #define MONITOR     2
 #define PAGEEDIT    3
 #define FIELDEDIT   4
+#define GRAPH       5
 
 
 
 
 void run_ui (void)
 {
-	static int8_t screen_number = 0, field = 0, mode = MONITOR;
+	static int8_t screen_number = 0, field = 0, mode = MONITOR, graph_number = MINGRAPH;
 	static ticks_t backlight_timer, refresh_timer;
 	static int16_t working_value;
 
@@ -701,10 +705,12 @@ void run_ui (void)
 	if (timer_clock () - refresh_timer > ms_to_ticks (REFRESH))
 	{
 		refresh_timer = timer_clock ();
-		print_screen (screen_number);
+		if (mode == GRAPH)
+			print_graph(&term.fd, graph_number, GRAPHSTYLE);
+		else
+			print_screen (screen_number);
 	}
 
-	display_graph (&term.fd, MINGRAPH);
 
 	switch (mode)
 	{
@@ -905,6 +911,10 @@ void run_ui (void)
 			screen_number = NUM_INFO;
 			print_screen (screen_number);
 			break;
+		case K_LEFT | K_RIGHT:
+			// enter graph mode
+			mode = GRAPH;
+			break;
 		}
 		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))
 		{
@@ -913,6 +923,53 @@ void run_ui (void)
 			print_screen (screen_number);
 			if (++screen_number >= (int8_t) NUM_INFO)
 				screen_number = 0;
+		}
+		break;
+
+// up/down moves round graph screens
+// left right displays the scale and time
+// centre toggles carosel mode
+	case GRAPH:
+		switch (key)
+		{
+		case K_CENTRE:
+			if (carosel_timer == 0)
+			{
+				carosel_timer = timer_clock ();
+				graph_number = MINGRAPH;
+				print_graph(&term.fd, graph_number, GRAPHSTYLE);
+			}
+			else
+				carosel_timer = 0;
+			break;
+		case K_UP:
+			graph_number = (graph_number + 1) % NUMGRAPH;
+			print_graph (&term.fd, graph_number, GRAPHSTYLE);
+			break;
+		case K_DOWN:
+			graph_number = (graph_number - 1 + NUMGRAPH) % NUMGRAPH;
+			print_graph (&term.fd, graph_number, GRAPHSTYLE);
+			break;
+		case K_LEFT:
+			graph_number = MINGRAPH;
+			print_graph (&term.fd, graph_number, TEXTSTYLE);
+			break;
+		case K_RIGHT:
+			graph_number = DAYGRAPH;
+			print_graph (&term.fd, graph_number, TEXTSTYLE);
+			break;
+		case K_LEFT | K_RIGHT:
+			// enter text monitor mode
+			mode = MONITOR;
+			break;
+		}
+		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))
+		{
+			carosel_timer = timer_clock ();
+			refresh_timer = timer_clock ();
+			print_graph (&term.fd, graph_number, GRAPHSTYLE);
+			if (++graph_number >= (int8_t) NUMGRAPH)
+				graph_number = MINGRAPH;
 		}
 		break;
 

@@ -136,12 +136,15 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	{
 	case MINGRAPH:
 		mArray = &PowerMins;
+		strncpy(buf, "hour", 5);
 		break;
 	case HOURGRAPH:
 		mArray = &PowerHours;
+		strncpy(buf, "day", 4);
 		break;
 	case DAYGRAPH:
 		mArray = &PowerDays;
+		strncpy(buf, "month", 6);
 		break;
 	default:
 		mArray = &PowerMins;
@@ -170,8 +173,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	}
 	else
 	{
-	
-	
+		kfile_printf(stream, "\r\nLast %s, Scale %d", buf, scale);
 	}
 
 }

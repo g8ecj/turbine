@@ -88,6 +88,8 @@ int16_t EEMEM eeMaxDischarge;
 int16_t EEMEM eeRPMMax;
 // max RPM at which the big switch can be thrown
 int16_t EEMEM eeRPMSafe;
+// copy of daily power use
+MEDIAN EEMEM eePowerDays;
 
 void load_eeprom_values(void)
 {

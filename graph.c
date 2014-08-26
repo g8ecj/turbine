@@ -42,6 +42,7 @@
 #include "median.h"
 #include "graph.h"
 #include "rtc.h"
+#include "eeprommap.h"
 #include "measure.h"
 
 MEDIAN PowerMins;
@@ -69,6 +70,8 @@ graph_init (void)
 	median_init(&PowerHours, 20);
 	median_init(&PowerDays, 20);
 
+	eeprom_read_block ((void *) &PowerDays, (const void *) &eePowerDays, sizeof (PowerDays));
+
 	lcd_remapChar (lcd_botquar, BOTQUAR);
 	lcd_remapChar (lcd_bothalf, BOTHALF);
 	lcd_remapChar (lcd_botthre, BOTTHRE);
@@ -76,6 +79,15 @@ graph_init (void)
 	lcd_remapChar (lcd_tophalf, TOPHALF);
 	lcd_remapChar (lcd_topquar, TOPQUAR);
 }
+
+
+void
+graph_first_init(void)
+{
+	median_init(&PowerDays, 20);
+	eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
+}
+
 
 void
 run_graph (void)
@@ -118,6 +130,7 @@ run_graph (void)
 	if (uptime() >= lastday + 86400)
 	{
 		median_add(&PowerDays, (int16_t)pLastDay / 24);
+		eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
 		pLastDay = 0;
 		lastday = uptime();
 	}

@@ -45,6 +45,7 @@
 #include "median.h"
 #include "minmax.h"
 #include "eeprommap.h"
+#include "graph.h"
 #include "measure.h"
 
 extern Serial serial;
@@ -178,6 +179,7 @@ do_first_init(void)
 	// initialise a totally fresh box by reseting the self-discharge timer
 	self_discharge_time = time();
 	eeprom_write_block((const void *) &self_discharge_time, (void *) &eeSelfLeakTime, sizeof(self_discharge_time));
+	graph_first_init();
 
 }
 

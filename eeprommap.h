@@ -28,6 +28,7 @@
 #include <stdbool.h>
 #include <avr/eeprom.h>
 
+#include "median.h"
 #include "rtc.h"
 
 
@@ -83,6 +84,8 @@ extern int16_t EEMEM eeRPMMax;
 // max RPM at which the big switch can be thrown
 extern int16_t EEMEM eeRPMSafe;
 
+// copy of daily power use
+extern MEDIAN EEMEM eePowerDays;
 
 
 void load_eeprom_values(void);

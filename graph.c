@@ -190,9 +190,11 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 			index = median_getStart(mArray);
 			for (j = 0; j < median_getCount(mArray); j++)
 			{
+				uint8_t shape;
 				median_getNext(mArray, &index, &value);
-//				kfile_printf(&serial.fd, "%4d:%d ", value, (int32_t)(value + scale) * 8 / scale);
-				buf[j] = graphmap[i][(int32_t)(value + scale) * 8 / scale];
+				shape = (uint8_t)((value + scale - 1) * 8 / scale);
+//				kfile_printf(&serial.fd, "%4d:%d ", value, shape);
+				buf[j] = graphmap[i][shape];
 				
 			}
 			buf[j] = 0;

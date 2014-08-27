@@ -60,10 +60,8 @@
 #include "ui.h"
 
 
-#define DEGREE 1
-#define SDCARD 2
 
-static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
+//static const char lcd_degree[8] = { 0x1c, 0x14, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00 };	/* degree - char set B doesn't have it!! */
 static const char lcd_sdcard[8] = { 0x1f, 0x11, 0x11, 0x11, 0x11, 0x11, 0x12, 0x1c };	/* sd card - bent rectangle! */
 
 char degreestr[] = { DEGREE, 'C', 0 };
@@ -75,7 +73,7 @@ static int8_t flashing[MAXFLASH];
 
 // Timings (in mS) for various activities
 #define CAROSEL 5000L
-#define HEADINGS 1000L
+#define HEADINGS 2000L
 #define BACKLIGHT 5000L
 #define REFRESH 300L
 #define FLASHON 700L
@@ -349,8 +347,8 @@ Screen control[] = {
 	{-1, 0, 3, "Control", 0, 0},
 	{eINVERTER, 1, 0, "Inverter", 14, 4},
 	{eMANUAL, 2, 0, "Override", 14, 4},
-	{eRPMMAX, 3, 0, "RPMMax", 6, 3},
-	{eRPMSAFE, 3, 10, "Safe", 15, 3},
+	{eRPMMAX, 3, 0, "RPMMax", 7, 3},
+	{eRPMSAFE, 3, 11, "Safe", 16, 3},
 	{-2, 0, 0, "", 0, 0}
 };
 
@@ -639,7 +637,7 @@ void ui_init (void)
 
 	lcd_hw_init ();
 	lcd_display (1, 0, 0);
-	lcd_remapChar (lcd_degree, DEGREE);        // put the degree symbol on character 0x01
+//	lcd_remapChar (lcd_degree, DEGREE);        // put the degree symbol on character 0x01
 	lcd_remapChar (lcd_sdcard, SDCARD);        // put the sd card symbol on character 0x02
 
 	term_init (&term);
@@ -886,13 +884,12 @@ void run_ui (void)
 		{
 		case K_CENTRE:
 			if (carosel_timer == 0)
-			{
 				carosel_timer = timer_clock ();
-				screen_number = 0;
-				print_screen (screen_number);
-			}
 			else
 				carosel_timer = 0;
+
+			screen_number = 0;
+			print_screen (screen_number);
 			break;
 		case K_UP:
 			screen_number = (screen_number + 1) % NUM_INFO;
@@ -935,13 +932,13 @@ void run_ui (void)
 		{
 		case K_CENTRE:
 			if (carosel_timer == 0)
-			{
 				carosel_timer = timer_clock ();
-				graph_number = MINGRAPH;
-				print_graph(&term.fd, graph_number, GRAPHSTYLE);
-			}
 			else
 				carosel_timer = 0;
+
+			graph_number = MINGRAPH;
+			print_graph(&term.fd, graph_number, TEXTSTYLE);
+			refresh_timer = timer_clock () - ms_to_ticks (HEADINGS);
 			break;
 		case K_UP:
 			graph_number = (graph_number + 1) % NUMGRAPH;
@@ -952,11 +949,11 @@ void run_ui (void)
 			print_graph (&term.fd, graph_number, GRAPHSTYLE);
 			break;
 		case K_LEFT:
-			refresh_timer = timer_clock () + ms_to_ticks (REFRESH - HEADINGS);
+			refresh_timer = timer_clock () + ms_to_ticks (HEADINGS);
 			print_graph (&term.fd, graph_number, TEXTSTYLE);
 			break;
 		case K_RIGHT:
-			refresh_timer = timer_clock () + ms_to_ticks (REFRESH - HEADINGS);
+			refresh_timer = timer_clock () + ms_to_ticks (HEADINGS);
 			print_graph (&term.fd, graph_number, TEXTSTYLE);
 			break;
 		case K_LEFT | K_RIGHT:
@@ -967,7 +964,7 @@ void run_ui (void)
 		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))
 		{
 			carosel_timer = timer_clock ();
-			refresh_timer = timer_clock () + ms_to_ticks (REFRESH - HEADINGS);
+			refresh_timer = timer_clock () - ms_to_ticks (HEADINGS);
 			if (++graph_number >= (int8_t) NUMGRAPH)
 				graph_number = MINGRAPH;
 			print_graph (&term.fd, graph_number, TEXTSTYLE);

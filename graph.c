@@ -45,6 +45,10 @@
 #include "eeprommap.h"
 #include "measure.h"
 
+
+//extern Serial serial;
+
+
 MEDIAN PowerMins;
 MEDIAN PowerHours;
 MEDIAN PowerDays;
@@ -55,17 +59,20 @@ static const char lcd_botthre[8] = {0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x
 static const char lcd_topthre[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00 };
 static const char lcd_tophalf[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00 };
 static const char lcd_topquar[8] = {0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+static const char lcd_block[8]   = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f };
 
 char graphmap[4][16] = {
-{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, 0xff },
-{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, 0xff, 0xff, 0xff, 0xff },
-{0xff, 0xff, 0xff, 0xff, 0xff, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 },
-{0xff, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }};
+{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, BLOCK },
+{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, BLOCK, BLOCK, BLOCK, BLOCK },
+{BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 },
+{BLOCK, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }};
 
 
 void
 graph_init (void)
 {
+	uint8_t i;
+
 	median_init(&PowerMins, 20);
 	median_init(&PowerHours, 20);
 
@@ -73,15 +80,24 @@ graph_init (void)
 	if (median_getSize(&PowerDays) != 20)
 	{
 		median_init(&PowerDays, 20);
+		for (i = 0; i < 20; i++)
+			median_add(&PowerDays, 0);
+
 		eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
 	}
 
+	for (i = 0; i < 20; i++)
+	{
+		median_add(&PowerMins, 0);
+		median_add(&PowerHours, 0);
+	}
 	lcd_remapChar (lcd_botquar, BOTQUAR);
 	lcd_remapChar (lcd_bothalf, BOTHALF);
 	lcd_remapChar (lcd_botthre, BOTTHRE);
 	lcd_remapChar (lcd_topthre, TOPTHRE);
 	lcd_remapChar (lcd_tophalf, TOPHALF);
 	lcd_remapChar (lcd_topquar, TOPQUAR);
+	lcd_remapChar (lcd_block,   BLOCK);
 }
 
 
@@ -163,9 +179,11 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	median_getHighest(mArray, &highest);
 	median_getLowest(mArray, &lowest);
 	scale = MAX(abs(highest), abs(lowest));
-	kfile_putc(TERM_CLR, stream);
 
-	if (style == GRAPHSTYLE)
+	kfile_putc(TERM_CLR, stream);
+//	kfile_printf(&serial.fd, "style %d, type %d,scale %d, count = %d\r\n", style, type, scale, median_getCount(mArray));
+
+	if ((style == GRAPHSTYLE) && scale)
 	{
 		for (i = 0; i < 4; i++)          // for each line to be displayed
 		{
@@ -173,16 +191,18 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 			for (j = 0; j < median_getCount(mArray); j++)
 			{
 				median_getNext(mArray, &index, &value);
+//				kfile_printf(&serial.fd, "%4d:%d ", value, (int32_t)(value + scale) * 8 / scale);
 				buf[j] = graphmap[i][(int32_t)(value + scale) * 8 / scale];
 				
 			}
 			buf[j] = 0;
-			kfile_printf(stream, "%s", buf);
+			kfile_printf(stream, "%c%c%c%s", TERM_CPC, TERM_ROW + i, TERM_COL, buf);
+//			kfile_printf(&serial.fd, "\r\n");
 		}
 	}
 	else
 	{
-		kfile_printf(stream, "\r\nLast %s, Scale %d", buf, scale);
+		kfile_printf(stream, "\r\nLast %s  +/- %d", buf, scale);
 	}
 
 }

@@ -73,9 +73,7 @@ graph_init (void)
 {
 	uint8_t i;
 
-	median_init(&PowerMins, 20);
-	median_init(&PowerHours, 20);
-
+	// read old days info from eeprom and if it look wrong, initialise it to zero
 	eeprom_read_block ((void *) &PowerDays, (const void *) &eePowerDays, sizeof (PowerDays));
 	if (median_getSize(&PowerDays) != 20)
 	{
@@ -86,11 +84,23 @@ graph_init (void)
 		eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
 	}
 
+	// do the same with hours
+	eeprom_read_block ((void *) &PowerHours, (const void *) &eePowerHours, sizeof (PowerHours));
+	if (median_getSize(&PowerHours) != 20)
+	{
+		median_init(&PowerHours, 20);
+		for (i = 0; i < 20; i++)
+			median_add(&PowerHours, 0);
+
+		eeprom_write_block ((const void *) &PowerHours, (void *) &eePowerHours, sizeof (PowerHours));
+	}
+
+	median_init(&PowerMins, 20);
 	for (i = 0; i < 20; i++)
 	{
 		median_add(&PowerMins, 0);
-		median_add(&PowerHours, 0);
 	}
+
 	lcd_remapChar (lcd_botquar, BOTQUAR);
 	lcd_remapChar (lcd_bothalf, BOTHALF);
 	lcd_remapChar (lcd_botthre, BOTTHRE);
@@ -134,6 +144,7 @@ run_graph (void)
 	{
 		pLastDay += pLastHour / 60;
 		median_add(&PowerHours, (int16_t)pLastHour / 60);
+		eeprom_write_block ((const void *) &PowerHours, (void *) &eePowerHours, sizeof (PowerHours));
 		pLastHour = 0;
 		lasthour = uptime();
 	}

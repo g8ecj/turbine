@@ -86,6 +86,8 @@ extern int16_t EEMEM eeRPMSafe;
 
 // copy of daily power use
 extern MEDIAN EEMEM eePowerDays;
+// copy of hourly power use
+extern MEDIAN EEMEM eePowerHours;
 
 
 void load_eeprom_values(void);

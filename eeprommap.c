@@ -90,6 +90,8 @@ int16_t EEMEM eeRPMMax;
 int16_t EEMEM eeRPMSafe;
 // copy of daily power use
 MEDIAN EEMEM eePowerDays;
+// copy of hourly power use
+MEDIAN EEMEM eePowerHours;
 
 void load_eeprom_values(void)
 {

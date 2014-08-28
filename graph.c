@@ -170,15 +170,15 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	{
 	case MINGRAPH:
 		mArray = &PowerMins;
-		strncpy(buf, "Hour", 5);
+		strncpy(buf, "Hourly", 7);
 		break;
 	case HOURGRAPH:
 		mArray = &PowerHours;
-		strncpy(buf, "Day", 4);
+		strncpy(buf, "Daily", 6);
 		break;
 	case DAYGRAPH:
 		mArray = &PowerDays;
-		strncpy(buf, "Month", 6);
+		strncpy(buf, "Monthly", 8);
 		break;
 	default:
 		mArray = &PowerMins;
@@ -187,7 +187,8 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 
 	median_getHighest(mArray, &highest);
 	median_getLowest(mArray, &lowest);
-	scale = MAX(abs(highest), abs(lowest));
+//	scale = MAX(abs(highest), abs(lowest));
+	scale = highest - lowest;
 
 	kfile_putc(TERM_CLR, stream);
 
@@ -200,7 +201,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 			{
 				uint8_t shape;
 				median_getNext(mArray, &index, &value);
-				shape = (uint8_t)((value + scale - 1) * 8 / scale);
+				shape = (uint8_t)((value - lowest) * 15 / scale);
 				buf[j] = graphmap[i][shape];
 				
 			}
@@ -210,7 +211,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	}
 	else
 	{
-		kfile_printf(stream, "\r\n%s  %d - %d", buf, lowest, highest);
+		kfile_printf(stream, "\r\n%s\r\nRange  %d - %d", buf, lowest, highest);
 	}
 
 }

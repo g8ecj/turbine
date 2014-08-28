@@ -46,8 +46,6 @@
 #include "measure.h"
 
 
-//extern Serial serial;
-
 
 MEDIAN PowerMins;
 MEDIAN PowerHours;
@@ -172,15 +170,15 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	{
 	case MINGRAPH:
 		mArray = &PowerMins;
-		strncpy(buf, "hour", 5);
+		strncpy(buf, "Hour", 5);
 		break;
 	case HOURGRAPH:
 		mArray = &PowerHours;
-		strncpy(buf, "day", 4);
+		strncpy(buf, "Day", 4);
 		break;
 	case DAYGRAPH:
 		mArray = &PowerDays;
-		strncpy(buf, "month", 6);
+		strncpy(buf, "Month", 6);
 		break;
 	default:
 		mArray = &PowerMins;
@@ -192,7 +190,6 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	scale = MAX(abs(highest), abs(lowest));
 
 	kfile_putc(TERM_CLR, stream);
-//	kfile_printf(&serial.fd, "style %d, type %d,scale %d, count = %d\r\n", style, type, scale, median_getCount(mArray));
 
 	if ((style == GRAPHSTYLE) && scale)
 	{
@@ -204,18 +201,16 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 				uint8_t shape;
 				median_getNext(mArray, &index, &value);
 				shape = (uint8_t)((value + scale - 1) * 8 / scale);
-//				kfile_printf(&serial.fd, "%4d:%d ", value, shape);
 				buf[j] = graphmap[i][shape];
 				
 			}
 			buf[j] = 0;
 			kfile_printf(stream, "%c%c%c%s", TERM_CPC, TERM_ROW + i, TERM_COL, buf);
-//			kfile_printf(&serial.fd, "\r\n");
 		}
 	}
 	else
 	{
-		kfile_printf(stream, "\r\nLast %s  +/- %d", buf, scale);
+		kfile_printf(stream, "\r\n%s  %d - %d", buf, lowest, highest);
 	}
 
 }

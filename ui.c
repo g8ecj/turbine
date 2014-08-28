@@ -73,7 +73,7 @@ static int8_t flashing[MAXFLASH];
 
 // Timings (in mS) for various activities
 #define CAROSEL 5000L
-#define HEADINGS 2000L
+#define HEADINGS 1500L
 #define BACKLIGHT 5000L
 #define REFRESH 300L
 #define FLASHON 700L
@@ -931,36 +931,33 @@ void run_ui (void)
 		switch (key)
 		{
 		case K_CENTRE:
+			graph_number = MINGRAPH;
 			if (carosel_timer == 0)
 				carosel_timer = timer_clock ();
 			else
 				carosel_timer = 0;
-
-			graph_number = MINGRAPH;
-			print_graph(&term.fd, graph_number, TEXTSTYLE);
-			refresh_timer = timer_clock () - ms_to_ticks (HEADINGS);
 			break;
 		case K_UP:
 			graph_number = (graph_number + 1) % NUMGRAPH;
-			print_graph (&term.fd, graph_number, GRAPHSTYLE);
 			break;
 		case K_DOWN:
 			graph_number = (graph_number - 1 + NUMGRAPH) % NUMGRAPH;
-			print_graph (&term.fd, graph_number, GRAPHSTYLE);
-			break;
-		case K_LEFT:
-			refresh_timer = timer_clock () + ms_to_ticks (HEADINGS);
-			print_graph (&term.fd, graph_number, TEXTSTYLE);
-			break;
-		case K_RIGHT:
-			refresh_timer = timer_clock () + ms_to_ticks (HEADINGS);
-			print_graph (&term.fd, graph_number, TEXTSTYLE);
 			break;
 		case K_LEFT | K_RIGHT:
 			// enter text monitor mode
 			mode = MONITOR;
+			// force immediate display
+			refresh_timer = timer_clock () - ms_to_ticks (REFRESH);
+			key = 0;
 			break;
 		}
+
+		if (key)
+		{
+			refresh_timer = timer_clock () + ms_to_ticks (HEADINGS);
+			print_graph (&term.fd, graph_number, TEXTSTYLE);
+		}
+
 		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))
 		{
 			carosel_timer = timer_clock ();

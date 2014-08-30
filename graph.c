@@ -59,11 +59,11 @@ static const char lcd_tophalf[8] = {0x1f, 0x1f, 0x1f, 0x1f, 0x00, 0x00, 0x00, 0x
 static const char lcd_topquar[8] = {0x1f, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 static const char lcd_block[8]   = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f };
 
-char graphmap[4][16] = {
-{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, BLOCK },
-{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, BLOCK, BLOCK, BLOCK, BLOCK },
-{BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 },
-{BLOCK, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }};
+char graphmap[4][17] = {
+{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, BLOCK, BLOCK },
+{0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, BOTQUAR, BOTHALF, BOTTHRE, BLOCK, BLOCK, BLOCK, BLOCK, BLOCK },
+{BLOCK, BLOCK, BLOCK, BLOCK, BLOCK, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 },
+{BLOCK, TOPTHRE, TOPHALF, TOPQUAR, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }};
 
 
 void
@@ -128,9 +128,9 @@ run_graph (void)
 	if (uptime() >= lastmin + 60)
 	{
 		pLastHour += pLastMin / 60;
-		if (mincount++ >= 3)
+		if (++mincount >= 3)
 		{
-			median_add(&PowerMins, (int16_t)pLastMin / 60);
+			median_add(&PowerMins, (int16_t)(pLastMin / 60));
 			mincount = 0;
 		}
 		pLastMin = 0;
@@ -141,7 +141,7 @@ run_graph (void)
 	if (uptime() >= lasthour + 3600)
 	{
 		pLastDay += pLastHour / 60;
-		median_add(&PowerHours, (int16_t)pLastHour / 60);
+		median_add(&PowerHours, (int16_t)(pLastHour / 60));
 		eeprom_write_block ((const void *) &PowerHours, (void *) &eePowerHours, sizeof (PowerHours));
 		pLastHour = 0;
 		lasthour = uptime();
@@ -150,7 +150,7 @@ run_graph (void)
 	// see if a day has passed, if so advance the pointer to track the last 20 days
 	if (uptime() >= lastday + 86400)
 	{
-		median_add(&PowerDays, (int16_t)pLastDay / 24);
+		median_add(&PowerDays, (int16_t)(pLastDay / 24000));
 		eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
 		pLastDay = 0;
 		lastday = uptime();
@@ -187,8 +187,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 
 	median_getHighest(mArray, &highest);
 	median_getLowest(mArray, &lowest);
-//	scale = MAX(abs(highest), abs(lowest));
-	scale = highest - lowest;
+	scale = MAX(abs(highest), abs(lowest));
 
 	kfile_putc(TERM_CLR, stream);
 
@@ -199,11 +198,8 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 			index = median_getStart(mArray);
 			for (j = 0; j < median_getCount(mArray); j++)
 			{
-				uint8_t shape;
 				median_getNext(mArray, &index, &value);
-				shape = (uint8_t)((value - lowest) * 15 / scale);
-				buf[j] = graphmap[i][shape];
-				
+				buf[j] = graphmap[i][(value + scale) * 8 / scale];
 			}
 			buf[j] = 0;
 			kfile_printf(stream, "%c%c%c%s", TERM_CPC, TERM_ROW + i, TERM_COL, buf);
@@ -211,7 +207,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	}
 	else
 	{
-		kfile_printf(stream, "\r\n%s\r\nRange  %d - %d", buf, lowest, highest);
+		kfile_printf(stream, "\r\n%s\r\nRange  %d to %d", buf, lowest, highest);
 	}
 
 }

@@ -591,13 +591,13 @@ static void print_screen (int8_t screen)
 
 		i++;
 	}
-	// indicate there is an sd card plugged in (or not!!) with icon or space
+	// indicate there is an sd card plugged in (or not!!), charge mode and if inverter on
 	tmp[0] = gLoad ? 'I' : 0x20;
 	tmp[1] = charge_mode;
 	tmp[2] = sd_ok ? SDCARD : 0x20;
-	tmp[3] = 0;
-	kfile_printf (&term.fd, "%c%c%c%s", TERM_CPC, TERM_ROW + 0, TERM_COL + 17, tmp);
-
+	kfile_printf (&term.fd, "%c%c%c", TERM_CPC, TERM_ROW + 0, TERM_COL + 17);
+	for (i = 0; i < 3; i++)
+		kfile_putc (tmp[i], &term.fd);             // user defined character is a null so can't put into a string!!
 }
 
 
@@ -912,6 +912,9 @@ void run_ui (void)
 		case K_LEFT | K_RIGHT:
 			// enter graph mode
 			mode = GRAPH;
+			graph_number = MINGRAPH;
+			refresh_timer = timer_clock () + ms_to_ticks (HEADINGS);
+			print_graph (&term.fd, graph_number, TEXTSTYLE);
 			break;
 		}
 		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))

@@ -150,7 +150,7 @@ run_graph (void)
 	// see if a day has passed, if so advance the pointer to track the last 20 days
 	if (uptime() >= lastday + 86400)
 	{
-		median_add(&PowerDays, (int16_t)(pLastDay / 24000));
+		median_add(&PowerDays, (int16_t)(pLastDay / 24));
 		eeprom_write_block ((const void *) &PowerDays, (void *) &eePowerDays, sizeof (PowerDays));
 		pLastDay = 0;
 		lastday = uptime();

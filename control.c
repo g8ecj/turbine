@@ -135,10 +135,12 @@ apply_brake(bool state)
 	if (state)
 	{
 	// turn on brake
+		kfile_printf (&serial.fd, "Brake ON\r\n");
 	}
 	else
 	{
-	// turn off break
+	// turn off brake
+		kfile_printf (&serial.fd, "Brake OFF\r\n");
 	}
 }
 

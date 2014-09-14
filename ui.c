@@ -928,7 +928,7 @@ void run_ui (void)
 		break;
 
 // up/down moves round graph screens
-// left right displays the scale and time, resets the refresh timer so the graph is displayed after a short delay
+// left/right displays the scale and time, resets the refresh timer so the graph is displayed after a short delay
 // centre toggles carosel mode
 	case GRAPH:
 		switch (key)
@@ -964,7 +964,7 @@ void run_ui (void)
 		if (carosel_timer && timer_clock () - carosel_timer > ms_to_ticks (CAROSEL))
 		{
 			carosel_timer = timer_clock ();
-			refresh_timer = timer_clock () - ms_to_ticks (HEADINGS);
+			refresh_timer = timer_clock () + ms_to_ticks (HEADINGS);
 			if (++graph_number >= (int8_t) NUMGRAPH)
 				graph_number = MINGRAPH;
 			print_graph (&term.fd, graph_number, TEXTSTYLE);

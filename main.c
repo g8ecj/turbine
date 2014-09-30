@@ -103,7 +103,7 @@ int main(void)
       run_rpm();
       // save values for graphic display of power in/out
       run_graph();
-      // display stuff on the LCD
+      // display stuff on the LCD & get user input
       run_ui();
 
 	}

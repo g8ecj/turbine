@@ -70,7 +70,6 @@ int16_t gAmps;
 int16_t gPower;
 int16_t gShunt;
 int16_t gTemp;
-int16_t gLoops = 0;
 float gVoffset;
 int16_t gVoltage;
 uint16_t gDCA;
@@ -88,8 +87,9 @@ uint32_t self_discharge_time;
 uint8_t ids[4][OW_ROMCODE_SIZE];	// only expect to find up to 3 actually!!
 int8_t battid = -1, gpioid = -1, thermid = -1;
 
-
-
+#if DEBUG > 0
+int16_t gLoops = 0;
+#endif
 
 
 void
@@ -200,7 +200,9 @@ run_measure(void)
 	static uint16_t lastcharge;
 	static uint32_t lastmin = 0, lasthour = 0, lastday = 0;
 	int16_t power;
+#if DEBUG > 0
 	static uint16_t loopcount = 0;
+#endif
 
 	if (firstrun)
 	{
@@ -286,17 +288,20 @@ run_measure(void)
 	if (power < gMinday)
 		log_event(LOG_NEWDAYMIN);
 
+#if DEBUG > 0
 	// come through here every iteration so count how often
 	loopcount++;
+#endif
 
 	// see if a minute has passed, if so advance the pointer to track the last hour
 	if (uptime() >= lastmin + 60)
 	{
+#if DEBUG > 0
 		int32_t tmp0; //calcs must be done in 32-bit math to avoid overflow
 		tmp0 = gLoops * 59 + loopcount;
 		gLoops = tmp0 / 60;
 		loopcount = 0;
-
+#endif
 		lastmin = uptime();
 		minmax_add(&hourmax);
 		minmax_add(&hourmin);

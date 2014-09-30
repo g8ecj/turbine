@@ -909,7 +909,7 @@ void run_ui (void)
 			screen_number = NUM_INFO;
 			print_screen (screen_number);
 			break;
-		case K_LEFT | K_RIGHT:
+		case K_UP | K_DOWN:
 			// enter graph mode
 			mode = GRAPH;
 			graph_number = MINGRAPH;
@@ -946,7 +946,7 @@ void run_ui (void)
 		case K_DOWN:
 			graph_number = (graph_number - 1 + NUMGRAPH) % NUMGRAPH;
 			break;
-		case K_LEFT | K_RIGHT:
+		case K_UP | K_DOWN:
 			// enter text monitor mode
 			mode = MONITOR;
 			// force immediate display

@@ -648,9 +648,9 @@ process_command (char *command, uint8_t count)
 		kfile_printf(&serial.fd, "Min/Max Charge - Bank    %d/%d - %d\r\n", gMinCharge, gMaxCharge,  gBankSize);
 		kfile_printf(&serial.fd, "Self Discharge - Leak    %d  - %d.%02u\r\n", gSelfDischarge, gIdleCurrent / 100, gIdleCurrent % 100);
 		kfile_printf(&serial.fd, "Float Cycle - Target     %d/%d - %d\r\n", gDischarge, gMaxDischarge, TargetC);
-		kfile_printf(&serial.fd, "Loop                     %d\r\n", gLoops);
-
 #if DEBUG > 0
+extern int16_t gLoops;
+		kfile_printf(&serial.fd, "Loop                     %d\r\n", gLoops);
 extern uint16_t StackCount(void);
 		kfile_printf(&serial.fd, "Stack free       %d\r\n", StackCount());
 #endif

@@ -42,8 +42,8 @@ bool median_getLowest(MEDIAN *M, int16_t *value);
 uint8_t median_getSize(MEDIAN *M);
 uint8_t median_getCount(MEDIAN *M);
 bool median_getStatus(MEDIAN *M);
-bool median_getNext(MEDIAN *M, int8_t *index, int16_t *value);
-int8_t median_getStart(MEDIAN *M);
+bool median_getNext(MEDIAN *M, uint8_t *index, int16_t *value);
+uint8_t median_getStart(MEDIAN *M);
 
 
 #endif

@@ -89,7 +89,7 @@ void median_add(MEDIAN *M, int16_t value)
 //< \param M pointer to a struct that holds the variables for this instance of median calculator
 //< \param index 8 bit (un)signed index into median array
 //< \param value pointer to indexed value returned
-bool median_getNext(MEDIAN *M, int8_t *index, int16_t *value)
+bool median_getNext(MEDIAN *M, uint8_t *index, int16_t *value)
 {
 	uint8_t idx = *index;
 	if (M->cnt > 0) {
@@ -157,8 +157,8 @@ bool median_getLowest(MEDIAN *M, int16_t *value)
 
 
 //< \param M pointer to a struct that holds the variables for this instance of median calculator
-//< \return index into median array wheer data starts (opposite end to where we write!!)
-int8_t median_getStart(MEDIAN *M) 
+//< \return index into median array where data starts (opposite end to where we write!!)
+uint8_t median_getStart(MEDIAN *M) 
 {
 	return M->idx;
 }

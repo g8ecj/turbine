@@ -162,8 +162,7 @@ void
 print_graph (KFile *stream, uint8_t type, uint8_t style)
 {
 	MEDIAN *mArray;
-	uint8_t i, j;
-	int8_t index;
+	uint8_t i, j, index;
 	int16_t highest, lowest, scale, value;
 	char buf[21];
 
@@ -200,7 +199,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 			for (j = 0; j < median_getCount(mArray); j++)
 			{
 				median_getNext(mArray, &index, &value);
-				buf[j] = graphmap[i][(value + scale) * 8 / scale];
+				buf[j] = graphmap[i][(int32_t)(value + scale) * 8 / scale];
 			}
 			buf[j] = 0;
 			kfile_printf(stream, "%c%c%c%s", TERM_CPC, TERM_ROW + i, TERM_COL, buf);

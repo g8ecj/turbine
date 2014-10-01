@@ -207,7 +207,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	}
 	else
 	{
-		kfile_printf(stream, "\r\n%s\r\nRange  %d to %d", buf, lowest, highest);
+		kfile_printf(stream, "\r\n%s Range:\r\n    %d to %d", buf, lowest, highest);
 	}
 
 }

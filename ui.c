@@ -181,6 +181,7 @@ enum STYLE
 	eDATE,
 	eLARGE,
 	eDECIMAL,
+	eBOOLEAN,
 	eTRILEAN
 };
 
@@ -228,16 +229,16 @@ Vars variables[eNUMVARS] = {
 	{&gYEAR, 12, 99, ddYEAR, eDATE, int_inc},                       // year
 
 	{&gInverter, 0, 2, ddInverter, eTRILEAN, int_inc},              // control active
-	{&gLoad, 0, 1, ddLoad, eTRILEAN, int_inc},                      // manual on/off
-	{&gRPMMax, 1, 999, ddRPMMax, eNORMAL, int_inc},                       // year
-	{&gRPMSafe, 1, 999, ddRPMSafe, eNORMAL, int_inc},                       // year
+	{&gLoad, 0, 1, ddLoad, eBOOLEAN, int_inc},                      // manual on/off
+	{&gRPMMax, 1, 999, ddRPMMax, eNORMAL, int_inc},                 // rpm  at which to want shutdown
+	{&gRPMSafe, 1, 999, ddRPMSafe, eNORMAL, int_inc},               // rpm at which to apply short to stop turbine
 
 	{&gShunt, 0, 9999, ddShunt, eNORMAL, int_inc},                  // shunt conductance in Siemens
 	{&gPoles, 0, 99, ddPoles, eNORMAL, int_inc},                    // magnetic poles in generator
 	{&gSelfDischarge, 1, 90, ddSelfDischarge, eNORMAL, int_inc},    // battery leakage in days for 1% loss
 	{&gIdleCurrent, 0, 999, ddIdleCurrent, eDECIMAL, int_inc},      // idle current of controller, router etc
 	{&gAdjustTime, -719, 719, ddAdjustTime, eNORMAL, int_inc},      // clock adjuster
-	{&gUSdate, 0, 1, ddUsdate, eTRILEAN, int_inc},                  // date format
+	{&gUSdate, 0, 1, ddUsdate, eBOOLEAN, int_inc},                  // date format
 };
 
 
@@ -484,6 +485,9 @@ static void print_field(int16_t value, int8_t field, uint8_t screen)
 				whole = abs (value / 100);
 				part = abs (value % 100);
 				kfile_printf (&term.fd, "%.*s%d.%02u", value < 0 ? 1 : 0, "-",  whole, part);
+				break;
+			case eBOOLEAN:
+				kfile_printf (&term.fd, "%s", tritext[value & 1]);
 				break;
 			case eTRILEAN:
 				kfile_printf (&term.fd, "%s", tritext[value & 3]);

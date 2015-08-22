@@ -391,7 +391,7 @@ log_print (uint8_t event)
 }
 
 static char *
-get_decimal (char *ptr, int16_t * v)
+get_decimal (char *ptr, uint16_t * v)
 {
 	int16_t t = 0;
 
@@ -429,7 +429,7 @@ process_command (char *command, uint8_t count)
 
 	else if (strncmp (command, "sync", 4) == 0)	// set the charge value now
 	{
-		int16_t c = gCharge;
+		uint16_t c = gCharge;
 
 		command += 4;
 		if (command[0] != '\0')
@@ -438,7 +438,7 @@ process_command (char *command, uint8_t count)
 				command++;
 			command = get_decimal (command, &c);
 		}
-		if ((c > (gBankSize / 10)) && (c < (gBankSize * 2)))       // between 1/10th and double bank size
+		if (((int16_t)c > (gBankSize / 10)) && ((int16_t)c < (gBankSize * 2)))       // between 1/10th and double bank size
 		{
 			set_charge (c);
 			kfile_printf (&serial.fd, "Charge synced to %d\r\n", c);
@@ -451,7 +451,7 @@ process_command (char *command, uint8_t count)
 
 	else if (strncmp (command, "dcs", 3) == 0)	// set the ratio of the DCS and CCS registers as a % value (0-99)
 	{
-		int16_t p = 0, b = 0;
+		uint16_t p = 0, b = 0;
 
 		command += 3;
 		if (command[0] != '\0')
@@ -500,7 +500,7 @@ process_command (char *command, uint8_t count)
 
 	else if (strncmp (command, "date", 4) == 0)
 	{
-		int16_t t;
+		uint16_t t;
 		bool res = false;
 		uint8_t month, day;
 
@@ -532,7 +532,7 @@ process_command (char *command, uint8_t count)
 
 	else if (strncmp (command, "time", 4) == 0)
 	{
-		int16_t t;
+		uint16_t t;
 		bool res = false;
 
 		// skip command string
@@ -606,7 +606,7 @@ process_command (char *command, uint8_t count)
 	else if (strncmp (command, "find ", 5) == 0)
 	{
 		char filename[20];
-		int16_t days = 0;
+		uint16_t days = 0;
 
 		command += 5;
 		while (*command == ' ')
@@ -629,7 +629,7 @@ process_command (char *command, uint8_t count)
 			kfile_printf(&serial.fd, "Can't `find` back to last month!!\r\n");
 			return;
 		}
-		while (days >= 0)
+		while ((int16_t)days >= 0)
 		{
 			sprintf (filename, "log-%02d%02d%02d.txt", gYEAR, gMONTH, gDAY - days);
 			kfile_printf(&serial.fd, "Checking %s for %s\r\n", filename, command);

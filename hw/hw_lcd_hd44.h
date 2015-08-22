@@ -158,7 +158,6 @@
 	} while (0)
 
 
-
 INLINE void lcd_hd44_hw_bus_init(void)
 {
 	cpu_flags_t flags;

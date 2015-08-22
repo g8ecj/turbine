@@ -423,7 +423,7 @@ process_command (char *command, uint8_t count)
 
 	else if (strncmp (command, "cal", 3) == 0)	// calibrate (especially current)
 	{
-		lcd_bl_off();
+		lcd_backlight(0);
 		do_calibration ();
 	}
 

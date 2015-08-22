@@ -693,7 +693,7 @@ void run_ui (void)
 	// if key pressed then ignite backlight for a short while
 	if (key)
 	{
-		lcd_bl_on();
+		lcd_backlight(1);
 		backlight_timer = timer_clock ();
 		key &= K_CENTRE | K_RIGHT | K_LEFT | K_UP | K_DOWN;
 	}
@@ -701,7 +701,7 @@ void run_ui (void)
 	{
 		if (timer_clock () - backlight_timer > ms_to_ticks (BACKLIGHT))
 		{
-			lcd_bl_off();
+			lcd_backlight(0);
 		}
 	}
 
@@ -736,7 +736,7 @@ void run_ui (void)
 			{
 			case eCAL_VOLTS:
 				// turn off backlight to reduce current before calibration
-				lcd_bl_off();
+				lcd_backlight(0);
 				do_calibration ();
 				break;
 			case eSYNC:

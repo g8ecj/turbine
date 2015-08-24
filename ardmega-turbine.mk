@@ -35,6 +35,8 @@ ardmega-turbine_WIZARD_CSRC = \
 	bertos/drv/ser.c \
 	bertos/drv/term.c \
 	bertos/drv/timer.c \
+	bertos/drv/spi_bitbang.c \
+	bertos/net/nrf24l01.c \
 	bertos/io/kblock.c \
 	bertos/io/kfile.c \
 	bertos/mware/event.c \

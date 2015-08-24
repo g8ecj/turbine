@@ -26,6 +26,7 @@ ardmega-turbine_USER_CSRC = \
 	$(ardmega-turbine_SRC_PATH)/median.c \
 	$(ardmega-turbine_SRC_PATH)/eeprommap.c \
 	$(ardmega-turbine_SRC_PATH)/minmax.c \
+	$(ardmega-turbine_SRC_PATH)/nrf.c \
 	#
 
 # Files included by the user.

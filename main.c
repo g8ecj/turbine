@@ -42,6 +42,7 @@
 #include "rtc.h"
 #include "graph.h"
 #include "ui.h"
+#include "nrf.h"
 
 Serial serial;
 
@@ -74,12 +75,20 @@ static void init(void)
 	rtc_init();
 	// read a few more values out of eeprom and init the display etc
 	load_eeprom_values();
+	// user interface
 	ui_init();
+	// voltage, current and temperature measurement
 	measure_init();
+	// dump load and inverter control
 	control_init();
+	// measure turbine speed
 	rpm_init();
+	// block graphics
 	graph_init();
+	// data reporting and serial command interface
 	log_init();
+   // initialise RF link to remote
+   nrf_init();
 
 }
 
@@ -87,6 +96,8 @@ static void init(void)
 
 int main(void)
 {
+   uint8_t key = 0;
+
 	init();
 
 	while (1)
@@ -103,8 +114,10 @@ int main(void)
       run_rpm();
       // save values for graphic display of power in/out
       run_graph();
+      // send data back to base
+      key = run_nrf ();
       // display stuff on the LCD & get user input
-      run_ui();
+      run_ui (key);
 
 	}
 }

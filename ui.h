@@ -80,10 +80,13 @@ extern int16_t gUSdate;
 
 
 void ui_init(void);
-void run_ui(void);
+void run_ui (uint8_t remote_key);
 void set_flash(int8_t field, int8_t set);
 bool check_value(enum VARS var, int16_t value);
 void get_month_day (uint8_t *month, uint8_t *day);
+int8_t ui_termrowget(uint8_t * buffer);
+int8_t ui_termcursorget(uint8_t * row, uint8_t * column);
+bool ui_refresh_check(void);
 
 #endif
 

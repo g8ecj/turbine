@@ -30,52 +30,22 @@
  * All Rights Reserved.
  * -->
  *
- * \brief Hardware macro definition.
+ * \brief Configuration file for SPI bitbang module.
+ *
  *
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#ifndef HW_SPI_H
-#define HW_SPI_H
+#ifndef CFG_SPI_BITBANG_H
+#define CFG_SPI_BITBANG_H
 
-#include <avr/io.h>
-#include "cfg/macros.h"   /* BV() */
 /**
- * SPI pin definition.
+ * Set data order for emulated SPI.
+ *
+ * $WIZ$ type = "enum"
+ * $WIZ$ value_list = "ordet_bit_list"
  */
-#define SS       PB2
-#define SCK      PB5
-#define MOSI     PB3
-#define MISO     PB4
-/*\}*/
+#define CONFIG_SPI_DATAORDER  SPI_MSB_FIRST
 
-#define MOSI_LOW()       do { PORTB &= ~BV(MOSI); } while(0)
-#define MOSI_HIGH()      do { PORTB |= BV(MOSI);  } while(0)
-
-#define SS_ACTIVE()      do { PORTB &= ~BV(SS); } while(0)
-#define SS_INACTIVE()    do { PORTB |= BV(SS); } while(0)
-
-#define SCK_INACTIVE()   do { PORTB &= ~BV(SCK); } while(0)
-#define SCK_ACTIVE()     do { PORTB |= BV(SCK); } while(0)
-
-#define IS_MISO_HIGH()   (PINB & BV(MISO))
-
-#define SCK_PULSE()\
-	do { \
-			SCK_ACTIVE();\
-			/* NOP; */ \
-			SCK_INACTIVE();\
-	} while(0)
-
-
-#define SPI_HW_INIT() \
-	do { \
-		DDRB |= BV(MOSI) | BV(SS) | BV(SCK); \
-		DDRB &= ~BV(MISO); \
-		SS_INACTIVE(); \
-		MOSI_LOW(); \
-		SCK_INACTIVE(); \
-	} while(0)
-
-#endif /* HW_SPI_H */
+#endif /* CFG_SPI_BITBANG_H */
 

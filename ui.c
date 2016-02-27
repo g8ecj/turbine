@@ -229,7 +229,7 @@ Vars variables[eNUMVARS] = {
 	{&gYEAR, 12, 99, ddYEAR, eDATE, int_inc},                       // year
 
 	{&gInverter, 0, 2, ddInverter, eTRILEAN, int_inc},              // control active
-	{&gLoad, 0, 1, ddLoad, eBOOLEAN, int_inc},                      // manual on/off
+	{&gLoad, 0, 1, ddLoad, eBOOLEAN, null_inc},                     // manual on/off - don't change value, just toggle!!
 	{&gRPMMax, 1, 999, ddRPMMax, eNORMAL, int_inc},                 // rpm  at which to want shutdown
 	{&gRPMSafe, 1, 999, ddRPMSafe, eNORMAL, int_inc},               // rpm at which to apply short to stop turbine
 

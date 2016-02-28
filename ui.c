@@ -701,7 +701,7 @@ void run_ui (void)
 	{
 		lcd_backlight(1);
 		backlight_timer = timer_clock ();
-		key &= K_CENTRE | K_RIGHT | K_LEFT | K_UP | K_DOWN;
+		key &= K_CENTRE | K_RIGHT | K_LEFT | K_UP | K_DOWN | K_LONG;
 	}
 	else
 	{

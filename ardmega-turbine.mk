@@ -22,10 +22,12 @@ ardmega-turbine_WIZARD_CSRC = \
 	bertos/algo/crc8.c \
 	bertos/cpu/avr/drv/ser_avr.c \
 	bertos/cpu/avr/drv/ser_mega.c \
-	bertos/cpu/avr/drv/timer_avr.c \
 	bertos/cpu/avr/drv/timer_mega.c \
-	bertos/drv/kbd.c \
+	bertos/cpu/avr/drv/i2c_mega.c \
+	bertos/drv/pcf8574.c \
 	bertos/drv/lcd_hd44780.c \
+	bertos/drv/i2c.c \
+	bertos/drv/kbd.c \
 	bertos/drv/ow_1wire.c \
 	bertos/drv/ow_ds18x20.c \
 	bertos/drv/ow_ds2413.c \

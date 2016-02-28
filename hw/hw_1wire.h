@@ -110,6 +110,4 @@ void ow_set_bus (volatile uint8_t * in, volatile uint8_t * out, volatile uint8_t
 
 #endif
 
-
-
 #endif

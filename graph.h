@@ -39,7 +39,7 @@
 #define TOPTHRE 5
 #define TOPHALF 6
 #define TOPQUAR 7
-#define DEGREE  0xb2
+#define DEGREE  0xdf
 
 void graph_init (void);
 void run_graph (void);

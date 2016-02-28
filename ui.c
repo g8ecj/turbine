@@ -240,7 +240,7 @@ Vars variables[eNUMVARS] = {
 	{&gYEAR, 12, 99, ddYEAR, eDATE, int_inc},                       // year
 
 	{&gInverter, 0, 2, ddInverter, eTRILEAN, int_inc},              // control active
-	{&gLoad, 0, 1, ddLoad, eBOOLEAN, int_inc},                      // manual on/off
+	{&gLoad, 0, 1, ddLoad, eBOOLEAN, null_inc},                     // manual on/off - don't change value, just toggle!!
 	{&gRPMMax, 1, 999, ddRPMMax, eNORMAL, int_inc},                 // rpm  at which to want shutdown
 	{&gRPMSafe, 1, 999, ddRPMSafe, eNORMAL, int_inc},               // rpm at which to apply short to stop turbine
 
@@ -590,10 +590,16 @@ static int8_t find_next_line (int8_t field, int8_t screen, int8_t dirn)
 static void print_screen (int8_t screen)
 {
 	int8_t i = 0;
+	static int8_t last_screen = -1;
 	Screen *scrn = screen_list[screen];
 	char tmp[4];
 
-	kfile_printf (&term.fd, "%c", TERM_CLR);
+	if (screen != last_screen)
+	{
+		kfile_printf (&term.fd, "%c", TERM_CLR);
+		last_screen = screen;
+	}
+
 	while (scrn[i].field != -2)
 	{
 		kfile_printf (&term.fd, "%c%c%c", TERM_CPC, TERM_ROW + scrn[i].row, TERM_COL + scrn[i].col);
@@ -728,11 +734,10 @@ void run_ui (uint8_t remote_key)
 	static int8_t screen_number = 0, field = 0, graph_number = MINGRAPH;
 	static ticks_t backlight_timer, refresh_timer;
 	static int16_t working_value;
+   keymask_t key;
 
 	flag_warnings();
 
-
-   keymask_t key;
    key = kbd_peek ();
 
    if (key == 0)
@@ -880,7 +885,7 @@ void run_ui (uint8_t remote_key)
 			// refresh the value
 			working_value = *variables[field].value;
 			break;
-		case K_LEFT | K_RIGHT:
+		case K_CENTRE | K_LONG:
 			// exit edit mode
 			// turn off cursor
 			kfile_printf (&term.fd, "%c", TERM_BLINK_OFF);
@@ -980,7 +985,7 @@ void run_ui (uint8_t remote_key)
 			screen_number = NUM_INFO;
 			print_screen (screen_number);
 			break;
-		case K_UP | K_DOWN:
+		case K_CENTRE | K_LONG:
 			// enter graph mode
 			mode = GRAPH;
 			graph_number = MINGRAPH;
@@ -1017,7 +1022,7 @@ void run_ui (uint8_t remote_key)
 		case K_DOWN:
 			graph_number = (graph_number - 1 + NUMGRAPH) % NUMGRAPH;
 			break;
-		case K_UP | K_DOWN:
+		case K_CENTRE | K_LONG:
 			// enter text monitor mode
 			mode = MONITOR;
 			// force immediate display

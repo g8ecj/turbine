@@ -650,7 +650,7 @@ bool check_value(enum VARS var, int16_t value)
 void ui_init (void)
 {
 
-	lcd_hw_init ();
+	lcd_init ();
 	lcd_display (1, 0, 0);
 //	lcd_remapChar (lcd_degree, DEGREE);        // put the degree symbol on character 0x01
 	lcd_remapChar (lcd_sdcard, SDCARD);        // put the sd card symbol on character 0x02

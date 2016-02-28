@@ -43,22 +43,22 @@
 /**
  * SPI pin definition.
  */
-#define SS       PB2
-#define SCK      PB5
-#define MOSI     PB3
-#define MISO     PB4
+#define SS       PA0
+#define SCK      PA1
+#define MOSI     PA2
+#define MISO     PA3
 /*\}*/
 
-#define MOSI_LOW()       do { PORTB &= ~BV(MOSI); } while(0)
-#define MOSI_HIGH()      do { PORTB |= BV(MOSI);  } while(0)
+#define MOSI_LOW()       do { PORTA &= ~BV(MOSI); } while(0)
+#define MOSI_HIGH()      do { PORTA |= BV(MOSI);  } while(0)
 
-#define SS_ACTIVE()      do { PORTB &= ~BV(SS); } while(0)
-#define SS_INACTIVE()    do { PORTB |= BV(SS); } while(0)
+#define SS_ACTIVE()      do { PORTA &= ~BV(SS); } while(0)
+#define SS_INACTIVE()    do { PORTA |= BV(SS); } while(0)
 
-#define SCK_INACTIVE()   do { PORTB &= ~BV(SCK); } while(0)
-#define SCK_ACTIVE()     do { PORTB |= BV(SCK); } while(0)
+#define SCK_INACTIVE()   do { PORTA &= ~BV(SCK); } while(0)
+#define SCK_ACTIVE()     do { PORTA |= BV(SCK); } while(0)
 
-#define IS_MISO_HIGH()   (PINB & BV(MISO))
+#define IS_MISO_HIGH()   (PINA & BV(MISO))
 
 #define SCK_PULSE()\
 	do { \
@@ -70,8 +70,8 @@
 
 #define SPI_HW_INIT() \
 	do { \
-		DDRB |= BV(MOSI) | BV(SS) | BV(SCK); \
-		DDRB &= ~BV(MISO); \
+		DDRA |= BV(MOSI) | BV(SS) | BV(SCK); \
+		DDRA &= ~BV(MISO); \
 		SS_INACTIVE(); \
 		MOSI_LOW(); \
 		SCK_INACTIVE(); \

@@ -30,7 +30,7 @@ Please refer to LICENSE file for licensing information.
  * $WIZ$ type = "enum"
  * $WIZ$ value_list = "nrf24l01_rf24_speed"
  */
-#define NRF24L01_RF24_SPEED NRF24L01_RF24_SPEED_1MBPS
+#define NRF24L01_RF24_SPEED NRF24L01_RF24_SPEED_250KBPS
 
 /**
  * crc setting
@@ -88,13 +88,13 @@ Please refer to LICENSE file for licensing information.
 #define NRF24L01_ENABLEDP5 0    //pipe 5
 
 //pipe address. For pipes 1-5, only the last 8 bits can be changed
-#define NRF24L01_ADDRP0 {0xE8, 0xE8, 0xF0, 0xF0, 0xE2}  //pipe 0, 5 byte address
-#define NRF24L01_ADDRP1 {0xC1, 0xC2, 0xC2, 0xC2, 0xC2}  //pipe 1, 5 byte address
-#define NRF24L01_ADDRP2 {0xC1, 0xC2, 0xC2, 0xC2, 0xC3}  //pipe 2, 5 byte address
-#define NRF24L01_ADDRP3 {0xC1, 0xC2, 0xC2, 0xC2, 0xC4}  //pipe 3, 5 byte address
-#define NRF24L01_ADDRP4 {0xC1, 0xC2, 0xC2, 0xC2, 0xC5}  //pipe 4, 5 byte address
-#define NRF24L01_ADDRP5 {0xC1, 0xC2, 0xC2, 0xC2, 0xC6}  //pipe 5, 5 byte address
-#define NRF24L01_ADDRTX {0xE8, 0xE8, 0xF0, 0xF0, 0xE2}  //tx default address*/
+#define NRF24L01_ADDRP0 {0xE0, 0xE8, 0xF0, 0xF8, 0xE2}  //pipe 0, 5 byte address
+#define NRF24L01_ADDRP1 {0xC1, 0xC2, 0xC3, 0xC4, 0xC1}  //pipe 1, 5 byte address
+#define NRF24L01_ADDRP2 {0xC1, 0xC2, 0xC3, 0xC4, 0xC2}  //pipe 2, 5 byte address
+#define NRF24L01_ADDRP3 {0xC1, 0xC2, 0xC3, 0xC4, 0xC3}  //pipe 3, 5 byte address
+#define NRF24L01_ADDRP4 {0xC1, 0xC2, 0xC3, 0xC4, 0xC4}  //pipe 4, 5 byte address
+#define NRF24L01_ADDRP5 {0xC1, 0xC2, 0xC3, 0xC4, 0xC5}  //pipe 5, 5 byte address
+#define NRF24L01_ADDRTX {0xE0, 0xE8, 0xF0, 0xF8, 0xE2}  //tx default address*/
 
  //enable print info function
 #define NRF24L01_PRINTENABLE 1

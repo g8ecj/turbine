@@ -164,6 +164,7 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	MEDIAN *mArray;
 	uint8_t i, j, index;
 	int16_t highest, lowest, scale, value;
+	static uint8_t last_type = 99, last_style = 99;
 	char buf[21];
 
 	switch(type)
@@ -189,7 +190,12 @@ print_graph (KFile *stream, uint8_t type, uint8_t style)
 	median_getLowest(mArray, &lowest);
 	scale = MAX(abs(highest), abs(lowest));
 
-	kfile_putc(TERM_CLR, stream);
+	if ((last_type != type) || (last_style != style))
+	{
+		kfile_putc(TERM_CLR, stream);
+		last_type = type;
+		last_style = style;
+	}
 
 	if ((style == GRAPHSTYLE) && scale)
 	{

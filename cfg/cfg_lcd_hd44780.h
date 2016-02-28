@@ -39,10 +39,20 @@
 #define CFG_LCD_H
 
 /**
+ * Use I2C adapter to address LCD.
+ * $WIZ$ type = "boolean"
+ */
+#define CONFIG_LCD_I2C            1
+/**
  * Use 4 bit addressing mode.
  * $WIZ$ type = "boolean"
  */
 #define CONFIG_LCD_4BIT            1
+
+// make sure we are in 4 bit mode for i2c
+#if (CONFIG_LCD_I2C == 1) && (CONFIG_LCD_4BIT == 0)
+#warning If using an HD44780 LCD with I2C interface, 4-bit mode must be selected.
+#endif
 
 /**
  * Use a table to speed up LCD memory addressing.

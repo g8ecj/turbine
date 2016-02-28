@@ -579,10 +579,16 @@ static int8_t find_next_line (int8_t field, int8_t screen, int8_t dirn)
 static void print_screen (int8_t screen)
 {
 	int8_t i = 0;
+	static int8_t last_screen = -1;
 	Screen *scrn = screen_list[screen];
 	char tmp[4];
 
-	kfile_printf (&term.fd, "%c", TERM_CLR);
+	if (screen != last_screen)
+	{
+		kfile_printf (&term.fd, "%c", TERM_CLR);
+		last_screen = screen;
+	}
+
 	while (scrn[i].field != -2)
 	{
 		kfile_printf (&term.fd, "%c%c%c", TERM_CPC, TERM_ROW + scrn[i].row, TERM_COL + scrn[i].col);
@@ -639,7 +645,7 @@ bool check_value(enum VARS var, int16_t value)
 void ui_init (void)
 {
 
-	lcd_hw_init ();
+	lcd_init ();
 	lcd_display (1, 0, 0);
 //	lcd_remapChar (lcd_degree, DEGREE);        // put the degree symbol on character 0x01
 	lcd_remapChar (lcd_sdcard, SDCARD);        // put the sd card symbol on character 0x02
@@ -813,7 +819,7 @@ void run_ui (void)
 			// refresh the value
 			working_value = *variables[field].value;
 			break;
-		case K_LEFT | K_RIGHT:
+		case K_CENTRE | K_LONG:
 			// exit edit mode
 			// turn off cursor
 			kfile_printf (&term.fd, "%c", TERM_BLINK_OFF);
@@ -913,7 +919,7 @@ void run_ui (void)
 			screen_number = NUM_INFO;
 			print_screen (screen_number);
 			break;
-		case K_UP | K_DOWN:
+		case K_CENTRE | K_LONG:
 			// enter graph mode
 			mode = GRAPH;
 			graph_number = MINGRAPH;
@@ -950,7 +956,7 @@ void run_ui (void)
 		case K_DOWN:
 			graph_number = (graph_number - 1 + NUMGRAPH) % NUMGRAPH;
 			break;
-		case K_UP | K_DOWN:
+		case K_CENTRE | K_LONG:
 			// enter text monitor mode
 			mode = MONITOR;
 			// force immediate display
